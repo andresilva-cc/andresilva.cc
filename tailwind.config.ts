@@ -28,7 +28,11 @@ const config: Config = {
         400: '#b6b0d4',
         500: '#aaa3cc'
       }
-    }
+    },
+    fontFamily: {
+      'sans': "var(--sans-font)",
+      "mono": "var(--mono-font)",
+    },
   },
   plugins: [],
 }

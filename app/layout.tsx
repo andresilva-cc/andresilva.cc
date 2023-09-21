@@ -1,8 +1,20 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Fira_Code, Fira_Sans } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+const firaSans = Fira_Sans({
+  weight: ['400', '500'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--sans-font'
+})
+
+const firaCode = Fira_Code({
+  weight: ['400', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--mono-font'
+})
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${firaSans.variable} ${firaCode.variable}`}>{children}</body>
     </html>
   )
 }
