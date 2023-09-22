@@ -2,13 +2,23 @@
   "extends": [
     "airbnb",
     "airbnb-typescript",
-    "next/core-web-vitals"
+    "next/core-web-vitals",
+    "plugin:storybook/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "rules": {
     "import/prefer-default-export": "off",
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.stories.tsx",
+          ".storybook/**/*.ts"
+        ]
+      }
+    ]
   }
 }

@@ -1,24 +1,10 @@
-import './globals.css'
-import type { Metadata } from 'next'
-import { Fira_Code, Fira_Sans } from 'next/font/google'
-
-const firaSans = Fira_Sans({
-  weight: ['400', '500'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--sans-font'
-})
-
-const firaCode = Fira_Code({
-  weight: ['400', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--mono-font'
-})
+import type { Metadata } from 'next';
+import { firaCode, firaSans } from './fonts';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'André Silva'
-}
+  title: 'André Silva',
+};
 
 export default function RootLayout({
   children,
@@ -29,5 +15,5 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${firaSans.variable} ${firaCode.variable}`}>{children}</body>
     </html>
-  )
+  );
 }
