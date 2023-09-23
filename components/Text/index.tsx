@@ -25,7 +25,7 @@ const textStyles: TextStyles = {
     element: 'h3',
     classes: 'font-sans font-medium text-base',
   },
-  menu: {
+  button: {
     element: 'span',
     classes: 'font-mono font-bold text-base uppercase',
   },
@@ -48,7 +48,7 @@ const textStyles: TextStyles = {
 };
 
 export interface TextProps {
-  textStyle?: 'h1' | 'h2-sans' | 'h2-mono' | 'h3' | 'menu' | 'body-1' | 'body-2' | 'body-3' | 'caption'
+  textStyle?: 'h1' | 'h2-sans' | 'h2-mono' | 'h3' | 'button' | 'body-1' | 'body-2' | 'body-3' | 'caption'
   element?: keyof JSX.IntrinsicElements
   children: ReactNode
   className?: string

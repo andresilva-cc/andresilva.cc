@@ -41,10 +41,10 @@ export const Header3: StoryObj<TextProps> = {
   },
 };
 
-export const Menu: StoryObj<TextProps> = {
+export const Button: StoryObj<TextProps> = {
   args: {
-    textStyle: 'menu',
-    children: 'Menu',
+    textStyle: 'button',
+    children: 'Button',
   },
 };
 
