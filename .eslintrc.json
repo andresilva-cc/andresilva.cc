@@ -10,7 +10,6 @@
   },
   "rules": {
     "import/prefer-default-export": "off",
-    "react/require-default-props": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
@@ -18,6 +17,13 @@
           "**/*.stories.tsx",
           ".storybook/**/*.ts"
         ]
+      }
+    ],
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": [
+      "error",
+      {
+        "exceptions": ["Link"]
       }
     ]
   }

@@ -1,14 +1,8 @@
 import { ReactNode } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 
-type TextStyles = {
-  [key: string]: {
-    element: keyof JSX.IntrinsicElements,
-    classes: string
-  }
-};
-
-const textStyles: TextStyles = {
+const variants = {
   h1: {
     element: 'h1',
     classes: 'font-mono font-bold text-6xl',
@@ -48,21 +42,21 @@ const textStyles: TextStyles = {
 };
 
 export interface TextProps {
-  textStyle?: 'h1' | 'h2-sans' | 'h2-mono' | 'h3' | 'button' | 'body-1' | 'body-2' | 'body-3' | 'caption'
+  variant?: keyof typeof variants
   element?: keyof JSX.IntrinsicElements
   children: ReactNode
+  asChild?: boolean
   className?: string
 }
 
 export function Text({
-  textStyle = 'body-1', element, children, className,
+  variant = 'body-1', element, children, asChild = false, className,
 }: TextProps) {
-  const style = textStyles[textStyle];
-  const Element = (element || style.element) as keyof JSX.IntrinsicElements;
+  const Tag = asChild ? Slot : element || variants[variant].element;
 
   return (
-    <Element className={clsx(style.classes, className)}>
+    <Tag className={clsx(variants[variant].classes, className)}>
       { children }
-    </Element>
+    </Tag>
   );
 }
