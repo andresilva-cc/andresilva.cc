@@ -33,6 +33,10 @@ const config: Config = {
       sans: 'var(--sans-font)',
       mono: 'var(--mono-font)',
     },
+    borderRadius: {
+      DEFAULT: '5px',
+      lg: '10px',
+    },
   },
   plugins: [],
 };
