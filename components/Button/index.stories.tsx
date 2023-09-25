@@ -9,8 +9,8 @@ export default {
     children: 'Download Resume',
     href: 'https://andresilva.cc',
     target: '_blank',
-  } as Meta<ButtonProps>,
-};
+  },
+} as Meta<ButtonProps>;
 
 export const Default: StoryObj<ButtonProps> = {};
 

@@ -7,8 +7,8 @@ export default {
   args: {
     children: 'Text',
     asChild: false,
-  } as Meta<TextProps>,
-};
+  },
+} as Meta<TextProps>;
 
 export const Default: StoryObj<TextProps> = {};
 

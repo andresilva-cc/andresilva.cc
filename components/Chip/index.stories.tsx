@@ -6,7 +6,7 @@ export default {
   component: Chip,
   args: {
     children: 'TypeScript',
-  } as Meta<ChipProps>,
-};
+  },
+} as Meta<ChipProps>;
 
 export const Default: StoryObj<ChipProps> = {};

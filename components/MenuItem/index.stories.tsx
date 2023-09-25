@@ -7,8 +7,8 @@ export default {
   args: {
     children: 'About',
     href: '/about',
-  } as Meta<MenuItemProps>,
-};
+  },
+} as Meta<MenuItemProps>;
 
 export const Default: StoryObj<MenuItemProps> = {};
 
