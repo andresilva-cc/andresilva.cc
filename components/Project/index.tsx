@@ -17,7 +17,7 @@ export function Project({
   const content = (
     <div
       className={clsx(
-        'group p-4 rounded-lg bg-gray-200 bg-opacity-0 hover:bg-opacity-5 active:bg-opacity-10 select-none transition-colors hover:transition-none duration-300',
+        'group p-4 rounded-lg bg-primary-300 bg-opacity-0 hover:bg-opacity-5 active:bg-opacity-10 select-none transition-colors hover:transition-none duration-300',
         { 'outline outline-1 outline-auxiliary-500 hover:outline-auxiliary-400 active:outline-auxiliary-300': featured },
       )}
     >
