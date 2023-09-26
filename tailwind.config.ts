@@ -37,6 +37,11 @@ const config: Config = {
       DEFAULT: '5px',
       lg: '10px',
     },
+    extend: {
+      listStyleType: {
+        dash: '"- "',
+      },
+    },
   },
   plugins: [],
 };
