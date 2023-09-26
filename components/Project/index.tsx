@@ -36,7 +36,7 @@ export function Project({
 
       <Text variant="body-2" className="mt-2">{ description }</Text>
 
-      <div className="flex gap-2 mt-4">
+      <div className="flex flex-wrap gap-2 mt-4">
         { technologies.map((technology) => (
           <Chip key={technology}>{ technology }</Chip>
         ))}
