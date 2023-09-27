@@ -11,7 +11,7 @@ export default function Home() {
         Front-end Engineering Consultant @ Atlas Technologies
       </Text>
 
-      <Text variant="body-1" className="mt-8">
+      <Text className="mt-8">
         A software engineer with professional experience in web and mobile applications
       </Text>
     </>
