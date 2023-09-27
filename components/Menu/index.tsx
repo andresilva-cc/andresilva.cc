@@ -24,7 +24,7 @@ export function Menu({ className }: MenuProps) {
         className,
       )}
     >
-      <ul className="flex relative top-[3px] h-[29px] gap-8 md:gap-16">
+      <ul className="flex gap-8 md:gap-16">
         { items.map((item) => (
           <li key={item.path} className="first:ml-auto last:mr-auto">
             <Button
