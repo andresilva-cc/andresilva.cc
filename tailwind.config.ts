@@ -37,6 +37,7 @@ const config: Config = {
     borderRadius: {
       DEFAULT: '5px',
       lg: '10px',
+      full: '100%',
     },
     extend: {
       listStyleType: {
