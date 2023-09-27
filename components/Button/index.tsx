@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import Link, { LinkProps } from 'next/link';
-import { Text } from '@/components/Text';
+import Link from 'next/link';
 import clsx from 'clsx';
+import { Text } from '@/components/Text';
 
 const variants = {
   default: 'text-gray-950 bg-primary-500 hover:bg-primary-400 active:bg-primary-300',
@@ -9,14 +9,15 @@ const variants = {
   icon: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block',
 };
 
-export interface ButtonProps extends LinkProps {
+export interface ButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   variant?: keyof typeof variants
+  href: string
   children: ReactNode
   className?: string
 }
 
 export function Button({
-  variant = 'default', children, className, ...props
+  variant = 'default', href, children, className, ...props
 }: ButtonProps) {
   const isIcon = variant === 'icon';
 
@@ -29,6 +30,7 @@ export function Button({
           variants[variant],
           className,
         )}
+        href={href}
         {...props}
       >
 
