@@ -12,10 +12,11 @@ const variants = {
 export interface ButtonProps extends LinkProps {
   variant?: keyof typeof variants
   children: ReactNode
+  className?: string
 }
 
 export function Button({
-  variant = 'default', children, ...props
+  variant = 'default', children, className, ...props
 }: ButtonProps) {
   const isIcon = variant === 'icon';
 
@@ -26,6 +27,7 @@ export function Button({
           'transition-colors hover:transition-none duration-300',
           { 'px-2.5 py-1 rounded': !isIcon },
           variants[variant],
+          className,
         )}
         {...props}
       >
