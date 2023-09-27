@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ArrowUpRight } from '@phosphor-icons/react';
+import { ArrowUpRight } from '@phosphor-icons/react/dist/ssr';
 import { Chip } from '@/components/Chip';
 import { Text } from '@/components/Text';
 
