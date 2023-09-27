@@ -1,6 +1,7 @@
+import clsx from 'clsx';
 import {
   Envelope, GithubLogo, LinkedinLogo, InstagramLogo,
-} from '@phosphor-icons/react';
+} from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@/components/Button';
 
 const items = [
@@ -10,9 +11,13 @@ const items = [
   { icon: InstagramLogo, url: 'https://www.instagram.com/andresilva.cc/' },
 ];
 
-export function Footer() {
+export interface FooterProps {
+  className?: string
+}
+
+export function Footer({ className }: FooterProps) {
   return (
-    <footer>
+    <footer className={clsx(className)}>
       <ul className="flex gap-8 justify-center">
         { items.map((item) => (
           <li key={item.url}>

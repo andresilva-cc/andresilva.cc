@@ -1,11 +1,21 @@
 import Image from 'next/image';
-import { Translate } from '@phosphor-icons/react';
+import clsx from 'clsx';
+import { Translate } from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@/components/Button';
 import { Menu } from '@/components/Menu';
 
-export function Header() {
+export interface HeaderProps {
+  className?: string
+}
+
+export function Header({ className }: HeaderProps) {
   return (
-    <header className="flex flex-wrap justify-between items-center">
+    <header
+      className={clsx(
+        'flex flex-wrap justify-between items-center',
+        className,
+      )}
+    >
       <Button variant="icon" href="/">
         <Image src="/logo.svg" alt="Logo" width={32} height={32} />
       </Button>
