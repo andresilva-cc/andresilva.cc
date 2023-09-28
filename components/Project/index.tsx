@@ -24,14 +24,14 @@ export function Project({
     >
       <Text
         variant="h3"
-        className="flex gap-1 items-center text-secondary-500 group-hover:text-secondary-400 group-active:text-secondary-300"
+        className="inline-block text-secondary-500 group-hover:text-secondary-400 group-active:text-secondary-300"
       >
         { title }
         { url && (
           <ArrowUpRight
             weight="bold"
             size={16}
-            className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+            className="inline-block ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
           />
         ) }
       </Text>
