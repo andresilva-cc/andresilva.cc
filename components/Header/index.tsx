@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import clsx from 'clsx';
+// @ts-ignore
 import { Translate } from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@/components/Button';
 import { Menu } from '@/components/Menu';

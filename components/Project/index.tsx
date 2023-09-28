@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+// @ts-ignore
 import { ArrowUpRight } from '@phosphor-icons/react/dist/ssr';
 import { Chip } from '@/components/Chip';
 import { Text } from '@/components/Text';

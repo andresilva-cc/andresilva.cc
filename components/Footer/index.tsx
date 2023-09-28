@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import {
   Envelope, GithubLogo, LinkedinLogo, InstagramLogo,
+// @ts-ignore
 } from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@/components/Button';
 

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+// @ts-ignore
 import { Link as LinkIcon } from '@phosphor-icons/react/dist/ssr';
 import { Text } from '@/components/Text';
 
