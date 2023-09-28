@@ -25,7 +25,7 @@ export default function RootLayout({
         )}
       >
         <Header className="pt-4 md:pt-8 pb-8 md:pb-16" />
-        <main className="flex-grow flex flex-col justify-center px-0 sm:px-12 md:px-24 lg:px-48 2xl:px-96">
+        <main className="flex-grow flex flex-col justify-center px-0 sm:px-6 md:px-12 lg:px-24 2xl:px-48">
           { children }
         </main>
         <Footer className="py-8 md:py-16" />
