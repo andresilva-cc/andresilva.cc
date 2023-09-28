@@ -43,6 +43,9 @@ const config: Config = {
       listStyleType: {
         dash: '"- "',
       },
+      gridTemplateColumns: {
+        job: '140px 1fr',
+      },
     },
   },
   plugins: [scrollbar],

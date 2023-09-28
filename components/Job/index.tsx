@@ -21,18 +21,18 @@ export function Job({
   title, company, startDate, endDate = undefined, links = undefined, technologies, children,
 }: JobProps) {
   return (
-    <div className="sm:grid md:grid md:grid-cols-12 md:gap-8">
-      <div className="md:col-span-3 lg:col-span-2 md:text-right mb-2 md:mb-0">
+    <div className="md:grid md:grid-cols-job md:gap-8">
+      <div className="md:text-right mb-2 md:mb-0">
         <Text variant="caption" className="text-auxiliary-500">
           { `${toMonthYear(startDate)} — ${endDate ? toMonthYear(endDate) : 'Present'}` }
         </Text>
       </div>
 
-      <div className="md:col-span-9 lg:col-span-10">
+      <div>
         <Text variant="h3" className="text-secondary-500">
           { `${title} @ ${company}` }
         </Text>
-        <Text variant="body-2" asChild className="mt-2 list-dash list-inside">
+        <Text variant="body-2" element="div" className="mt-2 [&>ul]:list-dash [&>ul]:list-inside">
           { children }
         </Text>
 
