@@ -12,6 +12,7 @@ export function JobLink({ href, children, ...props }: JobLinkProps) {
     <Text variant="body-3" asChild>
       <a
         href={href}
+        target="_blank"
         className="flex gap-1 text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 transition-colors hover:transition-none"
         {...props}
       >
