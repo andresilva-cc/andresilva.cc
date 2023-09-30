@@ -20,7 +20,7 @@ export interface JobProps {
 export function Job({
   title, company, startDate, endDate = undefined, links = undefined, technologies, children,
 }: JobProps) {
-  const t = useTranslations('career');
+  const t = useTranslations();
   const format = useFormatter();
 
   const formattedStartDate = format.dateTime(startDate, {
@@ -33,7 +33,7 @@ export function Job({
       year: 'numeric',
       month: 'short',
     }).replace('. de', '')
-    : t('present');
+    : t('career.present');
 
   return (
     <div className="md:grid md:grid-cols-job md:gap-8">

@@ -3,20 +3,18 @@ import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import { Button } from '@/components/Button';
 import { LanguageButton } from '@/components/LanguageButton';
-import { Menu, MenuProps } from '@/components/Menu';
+import { Menu } from '@/components/Menu';
+import { useRepositories } from '@/repositories';
 
 export interface HeaderProps {
   className?: string
 }
 
 export function Header({ className }: HeaderProps) {
-  const t = useTranslations('menu');
+  const t = useTranslations();
 
-  const items: MenuProps['items'] = [
-    { name: t('about'), path: '/about' },
-    { name: t('career'), path: '/career' },
-    { name: t('projects'), path: '/projects' },
-  ];
+  const { menuRepository } = useRepositories(t);
+  const items = menuRepository.getAll();
 
   return (
     <header

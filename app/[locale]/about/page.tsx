@@ -6,20 +6,20 @@ import { Text } from '@/components/Text';
 import { Button } from '@/components/Button';
 
 export default function About() {
-  const t = useTranslations('about');
+  const t = useTranslations();
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
       <Image src="/me.jpg" width={192} height={192} alt="Picture of myself" className="rounded-full" />
       <div>
         <Text variant="h2-mono" element="h1">
-          { t('title') }
+          { t('about.title') }
         </Text>
         <Text className="mt-4">
-          { t.rich('bio') }
+          { t.rich('about.bio') }
         </Text>
         <Button href="/resume.pdf" target="_blank" className="mt-8">
-          { t('downloadResume') }
+          { t('about.downloadResume') }
         </Button>
       </div>
     </div>

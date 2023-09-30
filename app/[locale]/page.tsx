@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import { Text } from '@/components/Text';
 
 export default function Home() {
-  const t = useTranslations('home');
+  const t = useTranslations();
 
   return (
     <>
@@ -15,7 +15,7 @@ export default function Home() {
       </Text>
 
       <Text className="mt-8">
-        { t('bio') }
+        { t('home.bio') }
       </Text>
     </>
   );
