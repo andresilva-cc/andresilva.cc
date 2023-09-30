@@ -6,10 +6,10 @@ import {
 import { Button } from '@/components/Button';
 
 const items = [
-  { icon: Envelope, url: 'mailto:hello@andresilva.cc' },
-  { icon: GithubLogo, url: 'https://github.com/andresilva-cc' },
-  { icon: LinkedinLogo, url: 'https://www.linkedin.com/in/andresilvacc/' },
-  { icon: InstagramLogo, url: 'https://www.instagram.com/andresilva.cc/' },
+  { title: 'E-mail', icon: Envelope, url: 'mailto:hello@andresilva.cc' },
+  { title: 'GitHub', icon: GithubLogo, url: 'https://github.com/andresilva-cc' },
+  { title: 'LinkedIn', icon: LinkedinLogo, url: 'https://www.linkedin.com/in/andresilvacc/' },
+  { title: 'Instagram', icon: InstagramLogo, url: 'https://www.instagram.com/andresilva.cc/' },
 ];
 
 export interface FooterProps {
@@ -22,7 +22,12 @@ export function Footer({ className }: FooterProps) {
       <ul className="flex gap-8 justify-center">
         { items.map((item) => (
           <li key={item.url}>
-            <Button variant="icon" href={item.url} target="_blank">
+            <Button
+              variant="icon"
+              href={item.url}
+              target="_blank"
+              title={item.title}
+            >
               <item.icon
                 size={32}
                 className="text-auxiliay-500 hover:text-auxiliary-400 active:text-auxiliary-300 transition-colors hover:transition-none duration-300"
