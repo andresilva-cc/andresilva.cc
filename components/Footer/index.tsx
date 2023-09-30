@@ -1,22 +1,18 @@
 import clsx from 'clsx';
-import {
-  Envelope, GithubLogo, LinkedinLogo, InstagramLogo,
-// @ts-ignore
-} from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@/components/Button';
-
-const items = [
-  { title: 'E-mail', icon: Envelope, url: 'mailto:hello@andresilva.cc' },
-  { title: 'GitHub', icon: GithubLogo, url: 'https://github.com/andresilva-cc' },
-  { title: 'LinkedIn', icon: LinkedinLogo, url: 'https://www.linkedin.com/in/andresilvacc/' },
-  { title: 'Instagram', icon: InstagramLogo, url: 'https://www.instagram.com/andresilva.cc/' },
-];
+import { useRepositories } from '@/repositories';
+import { useTranslations } from 'next-intl';
 
 export interface FooterProps {
   className?: string
 }
 
 export function Footer({ className }: FooterProps) {
+  const t = useTranslations();
+  const { footerRepository } = useRepositories(t);
+
+  const items = footerRepository.getAll();
+
   return (
     <footer className={clsx(className)}>
       <ul className="flex gap-8 justify-center">
