@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import Link from 'next/link';
+import { ComponentProps, ReactNode } from 'react';
+import { Link } from '@/navigation';
 import clsx from 'clsx';
 import { Text } from '@/components/Text';
 
@@ -9,7 +9,7 @@ const variants = {
   icon: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block',
 };
 
-export interface ButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+export interface ButtonProps extends ComponentProps<typeof Link> {
   variant?: keyof typeof variants
   href: string
   children: ReactNode

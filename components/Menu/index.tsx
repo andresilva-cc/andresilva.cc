@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname } from '@/navigation';
 import clsx from 'clsx';
 import { Button } from '@/components/Button';
 
@@ -13,7 +13,7 @@ export interface MenuProps {
 }
 
 export function Menu({ items, className }: MenuProps) {
-  const currentPath = usePathname().substring(3);
+  const currentPath = usePathname();
 
   return (
     <nav
