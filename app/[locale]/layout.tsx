@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import clsx from 'clsx';
-import './globals.css';
+import { firaCode, firaSans } from '@/app/fonts';
+import '@/app/globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { firaCode, firaSans } from './fonts';
 
 export const metadata: Metadata = {
   title: 'André Silva',

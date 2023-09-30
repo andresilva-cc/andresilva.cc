@@ -1,0 +1,73 @@
+{
+  "menu": {
+    "about": "Sobre",
+    "career": "Carreira",
+    "projects": "Projetos"
+  },
+  "home": {
+    "bio": "Um engenheiro de software com experiência profissional em aplicações web e mobile"
+  },
+  "about": {
+    "title": "Sobre",
+    "bio": "Um <strong>engenheiro de software</strong> com experiência profissional em aplicações web e mobile. Liderou e participou do projeto e desenvolvimento de aplicações para empresas públicas e privadas nos mais diversos segmentos, utilizando linguagens e ferramentas como JavaScript, TypeScript, Vue.js, Nuxt, Drupal, PHP, Laravel, Node.js e NativeScript. Possui <strong>bacharelado em Ciência da Computação</strong> e está constantemente se aperfeiçoando e estudando novas tecnologias.",
+    "downloadResume": "Baixar Currículo"
+  },
+  "career": {
+    "title": "Carreira",
+    "present": "Presente",
+    "consultantAtlas": {
+      "title": "Front-end Engineering Consultant",
+      "description": "<ul><li>Mentoria e orientação técnica aos engenheiros front-end</li><li>Acompanhamento das iniciativas das squads</li><li>Estudo e desenvolvimento de melhorias nos projetos</li><li>Criação e atualização de documentações do chapter</li><li>Revisão de código</li></ul>"
+    },
+    "frontAtlas": {
+      "title": "Front-end Engineer",
+      "description": "<p>Atribuições em uma squad:</p><ul><li>Desenvolvimento front-end para uma plataforma com mais de 20 milhões de acessos mensais</li><li>Front-end responsável pelo processo de deploy</li><li>Revisão de código</li><li>Acompanhamento e organização de tarefas no Jira utilizando Scrum</li></ul>"
+    },
+    "ceoNuxstep": {
+      "title": "CEO & Co-Founder",
+      "description": "<ul><li>Planejamento, desenvolvimento e deploy de aplicações web e mobile</li><li>Participação na execução de projetos de infraestrutura de TI</li><li>Desenvolvimento de um plugin que integra o SDK do Spotify ao NativeScript utilizando TypeScript</li></ul>"
+    },
+    "internGmaes": {
+      "title": "Estagiário de Desenvolvimento de Software",
+      "description": "<ul><li>Participação no desenvolvimento de um sistema de estoque web para a Prefeitura de Francisco Beltrão utilizando Vue.js e Laravel</li><li>Planejamento e desenvolvimento do novo site do Conselho Federal de Engenharia e Agronomia (CONFEA) utilizando Drupal</li><li>Desenvolvimento de integração entre a plataforma de e-commerce Nuvemshop e a integradora de marketplace SkyHub utilizando Nuxt e Node.js</li><li>Deploy de aplicações em servidores Linux e Windows</li></ul>"
+    }
+  },
+  "projects": {
+    "title": "Projetos",
+    "featuredProjects": "Projetos em Destaque",
+    "allProjects": "Todos os Projetos",
+    "andresilvacc": {
+      "description": "O site pessoal que você está vendo agora"
+    },
+    "customBurger": {
+      "description": "Um pequeno projeto onde você pode montar o seu próprio hambúrguer"
+    },
+    "injektion": {
+      "description": "Injeção de dependência sem decorator para JavaScript e TypeScript"
+    },
+    "pocVueUniversalComponent": {
+      "description": "Prova de conceito de componentes universais em Vue.js"
+    },
+    "expressApiTemplate": {
+      "description": "Um template de projeto em constante evolução para criar APIs usando Express, TypeScript e Sequelize"
+    },
+    "reflectionFunction": {
+      "description": "Reflection de função para JavaScript e TypeScript"
+    },
+    "firebirdPermissions": {
+      "description": "Um script que adiciona permissões em vários bancos de dados Firebird"
+    },
+    "nativescriptSpotify": {
+      "description": "Integre o SDK do Spotify App Remote ao seu app NativeScript"
+    },
+    "teseu": {
+      "description": "Uma aplicação colaborativa para notificação de ocorrências criminais em tempo real"
+    },
+    "oac": {
+      "description": "Uma aplicação onde você instrui uma Rede Neural Artificial a dirigir um carro evitando obstáculos"
+    },
+    "voucherPrinter": {
+      "description": "Impressor de vouchers de hotspot através da MikroTik RouterBoard API"
+    }
+  }
+}

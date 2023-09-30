@@ -4,18 +4,16 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { Button } from '@/components/Button';
 
-const items = [
-  { name: 'About', path: '/about' },
-  { name: 'Career', path: '/career' },
-  { name: 'Projects', path: '/projects' },
-];
-
 export interface MenuProps {
+  items: Array<{
+    name: string
+    path: string
+  }>
   className?: string
 }
 
-export function Menu({ className }: MenuProps) {
-  const currentPath = usePathname();
+export function Menu({ items, className }: MenuProps) {
+  const currentPath = usePathname().substring(3);
 
   return (
     <nav

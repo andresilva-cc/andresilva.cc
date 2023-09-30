@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Chip } from '@/components/Chip';
 import { Text } from '@/components/Text';
-import { toMonthYear } from '@/utils/date';
 import { JobLink } from '../JobLink';
 
 export interface JobProps {
@@ -20,11 +20,26 @@ export interface JobProps {
 export function Job({
   title, company, startDate, endDate = undefined, links = undefined, technologies, children,
 }: JobProps) {
+  const t = useTranslations('career');
+  const format = useFormatter();
+
+  const formattedStartDate = format.dateTime(startDate, {
+    year: 'numeric',
+    month: 'short',
+  }).replace('. de', '');
+
+  const formattedEndDate = endDate
+    ? format.dateTime(endDate, {
+      year: 'numeric',
+      month: 'short',
+    }).replace('. de', '')
+    : t('present');
+
   return (
     <div className="md:grid md:grid-cols-job md:gap-8">
       <div className="md:text-right mb-2 md:mb-0">
         <Text variant="caption" className="text-auxiliary-500">
-          { `${toMonthYear(startDate)} — ${endDate ? toMonthYear(endDate) : 'Present'}` }
+          { `${formattedStartDate} — ${formattedEndDate}` }
         </Text>
       </div>
 

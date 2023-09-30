@@ -1,15 +1,23 @@
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
-// @ts-ignore
-import { Translate } from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@/components/Button';
-import { Menu } from '@/components/Menu';
+import { LanguageButton } from '@/components/LanguageButton';
+import { Menu, MenuProps } from '@/components/Menu';
 
 export interface HeaderProps {
   className?: string
 }
 
 export function Header({ className }: HeaderProps) {
+  const t = useTranslations('menu');
+
+  const items: MenuProps['items'] = [
+    { name: t('about'), path: '/about' },
+    { name: t('career'), path: '/career' },
+    { name: t('projects'), path: '/projects' },
+  ];
+
   return (
     <header
       className={clsx(
@@ -21,11 +29,9 @@ export function Header({ className }: HeaderProps) {
         <Image src="/logo.svg" alt="Logo" width={32} height={32} />
       </Button>
 
-      <Menu className="mt-6 md:mt-0 order-3 md:order-2 w-full md:w-auto" />
+      <Menu items={items} className="mt-6 md:mt-0 order-3 md:order-2 w-full md:w-auto" />
 
-      <Button variant="icon" href="/" className="order-2 md:order-3">
-        <Translate size={32} />
-      </Button>
+      <LanguageButton className="order-2 md:order-3" />
     </header>
   );
 }

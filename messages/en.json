@@ -1,0 +1,73 @@
+{
+  "menu": {
+    "about": "About",
+    "career": "Career",
+    "projects": "Projects"
+  },
+  "home": {
+    "bio": "A software engineer with professional experience in web and mobile applications"
+  },
+  "about": {
+    "title": "About",
+    "bio": "A <strong>software engineer</strong> with professional experience in web and mobile applications. Led and participated in the project and development of applications for public and private companies in the most diverse segments, using languages and tools such as JavaScript, TypeScript, Vue.js, Nuxt, Drupal, PHP, Laravel, Node.js, and NativeScript. Holds a <strong>BS in Computer Science</strong> and is constantly improving himself and studying new technologies.",
+    "downloadResume": "Download Resume"
+  },
+  "career": {
+    "title": "Career",
+    "present": "Present",
+    "consultantAtlas": {
+      "title": "Front-end Engineering Consultant",
+      "description": "<ul><li>Mentoring and technical guidance to front-end engineers</li><li>Monitoring of squad initiatives</li><li>Study and development of project improvements</li><li>Creating and updating chapter documentation</li><li>Code review</li></ul>"
+    },
+    "frontAtlas": {
+      "title": "Front-end Engineer",
+      "description": "<p>Assignments in a squad:</p><ul><li>Front-end development for a platform with more than 20 million monthly visits</li><li>Front-end responsible for the deployment process</li><li>Code review</li><li>Tracking and organization of tasks in Jira using Scrum</li></ul>"
+    },
+    "ceoNuxstep": {
+      "title": "CEO & Co-Founder",
+      "description": "<ul><li>Planning, development and deployment of web and mobile applications</li><li>Participation in the execution of IT infrastructure projects</li><li>Development of a plugin that integrates Spotify's SDK into NativeScript using TypeScript</li></ul>"
+    },
+    "internGmaes": {
+      "title": "Software Development Intern",
+      "description": "<ul><li>Participation in the development of a web inventory system for the City Hall of Francisco Beltrão using Vue.js and Laravel</li><li>Planning and development of the new website of the Federal Council of Engineering and Agronomy (CONFEA) using Drupal</li><li>Development of an integration between the Nuvemshop e-commerce platform and SkyHub marketplace integrator using Nuxt and Node.js</li><li>Deploy of applications on Linux and Windows servers</li></ul>"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "featuredProjects": "Featured Projects",
+    "allProjects": "All Projects",
+    "andresilvacc": {
+      "description": "The personal website that you are seeing right now"
+    },
+    "customBurger": {
+      "description": "A small project where you can build your own burger"
+    },
+    "injektion": {
+      "description": "Decorator-less dependency injection for JavaScript and TypeScript"
+    },
+    "pocVueUniversalComponent": {
+      "description": "Proof of concept of universal components in Vue.js"
+    },
+    "expressApiTemplate": {
+      "description": "An always evolving project template for creating APIs using Express, TypeScript, and Sequelize"
+    },
+    "reflectionFunction": {
+      "description": "Function reflection for JavaScript and TypeScript"
+    },
+    "firebirdPermissions": {
+      "description": "A script that add permissions to multiple Firebird databases"
+    },
+    "nativescriptSpotify": {
+      "description": "Integrate Spotify App Remote SDK into your NativeScript app"
+    },
+    "teseu": {
+      "description": "A collaborative application for notification of criminal occurrences in real-time"
+    },
+    "oac": {
+      "description": "An application where you instruct an Artificial Neural Network to drive a car while avoiding obstacles"
+    },
+    "voucherPrinter": {
+      "description": "Hotspot voucher printer via MikroTik RouterBoard API"
+    }
+  }
+}
