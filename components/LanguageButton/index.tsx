@@ -20,6 +20,7 @@ export function LanguageButton({ className }: LanguageButtonProps) {
       variant="icon"
       href={currentPath}
       className={className}
+      title={alternateLocale === 'en' ? 'English' : 'Português'}
       locale={alternateLocale}
     >
       <Translate size={32} />
