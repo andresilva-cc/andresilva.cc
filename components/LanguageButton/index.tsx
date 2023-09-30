@@ -2,8 +2,7 @@
 
 import { usePathname as usePathnameWithLocale } from 'next/navigation';
 import { usePathname } from '@/navigation';
-// @ts-ignore
-import { Translate } from '@phosphor-icons/react/dist/ssr';
+import { Translate } from '@phosphor-icons/react/dist/ssr/index';
 import { Button } from '@/components/Button';
 
 export interface LanguageButtonProps {
