@@ -31,7 +31,6 @@ export default function Projects() {
         )}
       >
         { featuredProjects.map((project) => (
-          // eslint-disable-next-line react/no-array-index-key
           <li key={project.title}>
             <Project
               title={project.title}
@@ -53,7 +52,6 @@ export default function Projects() {
         )}
       >
         { allProjects.map((project) => (
-          // eslint-disable-next-line react/no-array-index-key
           <li key={project.title}>
             <Project
               title={project.title}

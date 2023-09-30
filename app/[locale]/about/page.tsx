@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-one-expression-per-line */
-/* eslint-disable max-len */
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Text } from '@/components/Text';

@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-one-expression-per-line */
-/* eslint-disable max-len */
 import { useTranslations } from 'next-intl';
 import { Job } from '@/components/Job';
 import { Text } from '@/components/Text';
