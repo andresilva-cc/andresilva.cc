@@ -46,6 +46,13 @@ export const ProjectsRepository = (t: TranslateFunction) => ({
         technologies: ['TypeScript'],
       },
       {
+        title: 'CRCMG',
+        description: t('projects.crcmg.description'),
+        url: 'https://crcmg.org.br/',
+        featured: false,
+        technologies: ['Adobe XD'],
+      },
+      {
         title: 'Firebird - Add permissions to multiple databases',
         description: t('projects.firebirdPermissions.description'),
         url: 'https://github.com/andresilva-cc/firebird-add-permissions-to-multiple-databases',
@@ -67,11 +74,24 @@ export const ProjectsRepository = (t: TranslateFunction) => ({
         technologies: ['Vue.js', 'Nuxt', 'Vuetify', 'NativeScript', 'Sass', 'Node.js', 'Express', 'Sequelize'],
       },
       {
+        title: 'CONFEA',
+        description: t('projects.confea.description'),
+        url: 'https://www.confea.org.br/',
+        featured: false,
+        technologies: ['Drupal'],
+      },
+      {
         title: 'OAC - Obstacle Avoiding Car',
         description: t('projects.oac.description'),
         url: 'https://github.com/andresilva-cc/OAC-API',
         featured: false,
         technologies: ['Vue.js', 'Nuxt', 'Konva', 'Vuesax', 'Node.js', 'Express'],
+      },
+      {
+        title: 'Marketplace Bridge',
+        description: t('projects.marketplaceBridge.description'),
+        featured: false,
+        technologies: ['Vue.js', 'Nuxt', 'Vuetify', 'Node.js'],
       },
       {
         title: 'Voucher-Printer',

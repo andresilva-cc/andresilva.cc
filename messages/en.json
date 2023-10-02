@@ -54,6 +54,9 @@
     "reflectionFunction": {
       "description": "Function reflection for JavaScript and TypeScript"
     },
+    "crcmg": {
+      "description": "Design for the new website of Minas Gerais state's Regional Accounting Council (CRCMG)"
+    },
     "firebirdPermissions": {
       "description": "A script that add permissions to multiple Firebird databases"
     },
@@ -63,8 +66,14 @@
     "teseu": {
       "description": "A collaborative application for notification of criminal occurrences in real-time"
     },
+    "confea": {
+      "description": "The new website of Brazil's Federal Council of Engineering and Agronomy (CONFEA)"
+    },
     "oac": {
       "description": "An application where you instruct an Artificial Neural Network to drive a car while avoiding obstacles"
+    },
+    "marketplaceBridge": {
+      "description": "Integration between the Nuvemshop e-commerce platform and SkyHub marketplace integrator"
     },
     "voucherPrinter": {
       "description": "Hotspot voucher printer via MikroTik RouterBoard API"

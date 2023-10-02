@@ -54,6 +54,9 @@
     "reflectionFunction": {
       "description": "Reflection de função para JavaScript e TypeScript"
     },
+    "crcmg": {
+      "description": "Wireframe e design para o novo site do Conselho Regional de Contabilidade de Minas Gerais (CRCMG)"
+    },
     "firebirdPermissions": {
       "description": "Um script que adiciona permissões em vários bancos de dados Firebird"
     },
@@ -63,8 +66,14 @@
     "teseu": {
       "description": "Uma aplicação colaborativa para notificação de ocorrências criminais em tempo real"
     },
+    "confea": {
+      "description": "O novo site do Conselho Federal de Engenharia e Agronomia (CONFEA)"
+    },
     "oac": {
       "description": "Uma aplicação onde você instrui uma Rede Neural Artificial a dirigir um carro evitando obstáculos"
+    },
+    "marketplaceBridge": {
+      "description": "Integração entre a plataforma de e-commerce Nuvemshop e a integradora de marketplace SkyHub"
     },
     "voucherPrinter": {
       "description": "Impressor de vouchers de hotspot através da MikroTik RouterBoard API"
