@@ -37,45 +37,59 @@
     "featuredProjects": "Projetos em Destaque",
     "allProjects": "Todos os Projetos",
     "andresilvacc": {
+      "title": "andresilva.cc",
       "description": "O site pessoal que você está vendo agora"
     },
     "customBurger": {
+      "title": "CustomBurger",
       "description": "Um pequeno projeto onde você pode montar o seu próprio hambúrguer"
     },
     "injektion": {
+      "title": "Injektion",
       "description": "Injeção de dependência sem decorator para JavaScript e TypeScript"
     },
     "pocVueUniversalComponent": {
+      "title": "poc-vue-universal-component",
       "description": "Prova de conceito de componentes universais em Vue.js"
     },
     "expressApiTemplate": {
+      "title": "Express API Template",
       "description": "Um template de projeto em constante evolução para criar APIs usando Express, TypeScript e Sequelize"
     },
     "reflectionFunction": {
+      "title": "Reflection Function",
       "description": "Reflection de função para JavaScript e TypeScript"
     },
     "crcmg": {
+      "title": "CRCMG",
       "description": "Wireframe e design para o novo site do Conselho Regional de Contabilidade de Minas Gerais (CRCMG)"
     },
     "firebirdPermissions": {
+      "title": "Firebird - Add permissions to multiple databases",
       "description": "Um script que adiciona permissões em vários bancos de dados Firebird"
     },
     "nativescriptSpotify": {
+      "title": "NativeScript Spotify",
       "description": "Integre o SDK do Spotify App Remote ao seu app NativeScript"
     },
     "teseu": {
+      "title": "Teseu",
       "description": "Uma aplicação colaborativa para notificação de ocorrências criminais em tempo real"
     },
     "confea": {
+      "title": "CONFEA",
       "description": "O novo site do Conselho Federal de Engenharia e Agronomia (CONFEA)"
     },
     "oac": {
+      "title": "OAC - Obstacle Avoiding Car",
       "description": "Uma aplicação onde você instrui uma Rede Neural Artificial a dirigir um carro evitando obstáculos"
     },
     "marketplaceBridge": {
+      "title": "Marketplace Bridge",
       "description": "Integração entre a plataforma de e-commerce Nuvemshop e a integradora de marketplace SkyHub"
     },
     "voucherPrinter": {
+      "title": "Voucher-Printer",
       "description": "Impressor de vouchers de hotspot através da MikroTik RouterBoard API"
     }
   }

@@ -37,45 +37,59 @@
     "featuredProjects": "Featured Projects",
     "allProjects": "All Projects",
     "andresilvacc": {
+      "title": "andresilva.cc",
       "description": "The personal website that you are seeing right now"
     },
     "customBurger": {
+      "title": "CustomBurger",
       "description": "A small project where you can build your own burger"
     },
     "injektion": {
+      "title": "Injektion",
       "description": "Decorator-less dependency injection for JavaScript and TypeScript"
     },
     "pocVueUniversalComponent": {
+      "title": "poc-vue-universal-component",
       "description": "Proof of concept of universal components in Vue.js"
     },
     "expressApiTemplate": {
+      "title": "Express API Template",
       "description": "An always evolving project template for creating APIs using Express, TypeScript, and Sequelize"
     },
     "reflectionFunction": {
+      "title": "Reflection Function",
       "description": "Function reflection for JavaScript and TypeScript"
     },
     "crcmg": {
+      "title": "CRCMG",
       "description": "Design for the new website of Minas Gerais state's Regional Accounting Council (CRCMG)"
     },
     "firebirdPermissions": {
+      "title": "Firebird - Add permissions to multiple databases",
       "description": "A script that add permissions to multiple Firebird databases"
     },
     "nativescriptSpotify": {
+      "title": "NativeScript Spotify",
       "description": "Integrate Spotify App Remote SDK into your NativeScript app"
     },
     "teseu": {
+      "title": "Teseu",
       "description": "A collaborative application for notification of criminal occurrences in real-time"
     },
     "confea": {
+      "title": "CONFEA",
       "description": "The new website of Brazil's Federal Council of Engineering and Agronomy (CONFEA)"
     },
     "oac": {
+      "title": "OAC - Obstacle Avoiding Car",
       "description": "An application where you instruct an Artificial Neural Network to drive a car while avoiding obstacles"
     },
     "marketplaceBridge": {
+      "title": "Marketplace Bridge",
       "description": "Integration between the Nuvemshop e-commerce platform and SkyHub marketplace integrator"
     },
     "voucherPrinter": {
+      "title": "Voucher-Printer",
       "description": "Hotspot voucher printer via MikroTik RouterBoard API"
     }
   }
