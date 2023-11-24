@@ -17,7 +17,7 @@
     "present": "Presente",
     "consultantAtlas": {
       "title": "Front-end Engineering Consultant",
-      "description": "<ul><li>Mentoria e orientação técnica aos engenheiros front-end</li><li>Acompanhamento das iniciativas das squads</li><li>Estudo e desenvolvimento de melhorias nos projetos</li><li>Criação e atualização de documentações do chapter</li><li>Revisão de código</li></ul>"
+      "description": "<ul><li>Mentoria e orientação técnica aos engenheiros front-end</li><li>Estudo e desenvolvimento de melhorias nos projetos</li><li>Participação no desenvolvimento de uma biblioteca de componentes utilizando Lerna, TypeScript e Vue.js</li><li>Participação na migração de páginas para um projeto em Nuxt com foco em SEO</li></ul>"
     },
     "frontAtlas": {
       "title": "Front-end Engineer",
