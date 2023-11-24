@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'André Silva',
+  description: 'A software engineer with professional experience in web and mobile applications',
 };
 
 export default function RootLayout({
