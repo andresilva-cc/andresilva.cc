@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import { NextIntlClientProvider } from 'next-intl';
 import { firaCode, firaSans } from '@/app/fonts';
 import '@/app/globals.css';
 
@@ -14,6 +15,13 @@ const preview: Preview = {
       },
     },
   },
+  decorators: [
+    (Story) => (
+      <NextIntlClientProvider locale="en">
+        <Story />
+      </NextIntlClientProvider>
+    ),
+  ],
 };
 
 export default preview;
