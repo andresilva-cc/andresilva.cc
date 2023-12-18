@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Chip } from '@/components/Chip';
 import { Text } from '@/components/Text';
-import { JobLink } from '../JobLink';
+import { Link } from '../Link';
 
 export interface JobProps {
   title: string
@@ -54,9 +54,9 @@ export function Job({
         { links && (
           <div className="flex gap-4 mt-4">
             { links.map((link) => (
-              <JobLink href={link.url} key={link.url}>
+              <Link href={link.url} key={link.url}>
                 { link.name }
-              </JobLink>
+              </Link>
             ))}
           </div>
         )}

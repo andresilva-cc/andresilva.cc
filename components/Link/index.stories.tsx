@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { JobLink, JobLinkProps } from './index';
+import { Link, LinkProps } from './index';
 
 export default {
-  title: 'Components/Job Link',
-  component: JobLink,
+  title: 'Components/Link',
+  component: Link,
   args: {
     href: 'https://github.com/Nuxstep/nativescript-plugins/tree/master/packages/nativescript-spotify',
     target: '_blank',
     children: 'NativeScript Spotify',
   },
-} as Meta<JobLinkProps>;
+} as Meta<LinkProps>;
 
-export const Default: StoryObj<JobLinkProps> = {};
+export const Default: StoryObj<LinkProps> = {};

@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 import { Link as LinkIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Text } from '@/components/Text';
 
-export interface JobLinkProps extends React.HTMLProps<HTMLAnchorElement> {
+export interface LinkProps extends React.HTMLProps<HTMLAnchorElement> {
   href: string
   children: ReactNode
 }
 
-export function JobLink({ href, children, ...props }: JobLinkProps) {
+export function Link({ href, children, ...props }: LinkProps) {
   return (
     <Text variant="body-3" asChild>
       <a
