@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Button } from '@/components/Button';
+import { LinkButton } from '@/components/LinkButton';
 
 export interface MenuItemProps {
   href: string
@@ -13,8 +13,8 @@ export function MenuItem({
   const variant = active ? 'default' : 'text';
 
   return (
-    <Button variant={variant} href={href}>
+    <LinkButton variant={variant} href={href}>
       { children }
-    </Button>
+    </LinkButton>
   );
 }

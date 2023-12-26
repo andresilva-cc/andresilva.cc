@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Button } from '@/components/Button';
+import { LinkButton } from '@/components/LinkButton';
 import { useRepositories } from '@/repositories';
 import { useTranslations } from 'next-intl';
 
@@ -18,7 +18,7 @@ export function Footer({ className }: FooterProps) {
       <ul className="flex gap-8 justify-center">
         { items.map((item) => (
           <li key={item.url}>
-            <Button
+            <LinkButton
               variant="icon"
               href={item.url}
               target="_blank"
@@ -28,7 +28,7 @@ export function Footer({ className }: FooterProps) {
                 size={32}
                 className="text-auxiliay-500 hover:text-auxiliary-400 active:text-auxiliary-300 transition-colors hover:transition-none duration-300"
               />
-            </Button>
+            </LinkButton>
           </li>
         ))}
       </ul>

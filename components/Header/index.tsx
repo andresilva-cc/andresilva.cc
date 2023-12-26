@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
-import { Button } from '@/components/Button';
+import { LinkButton } from '@/components/LinkButton';
 import { LanguageButton } from '@/components/LanguageButton';
 import { Menu } from '@/components/Menu';
 import { useRepositories } from '@/repositories';
@@ -23,9 +23,9 @@ export function Header({ className }: HeaderProps) {
         className,
       )}
     >
-      <Button variant="icon" href="/">
+      <LinkButton variant="icon" href="/">
         <Image src="/logo.svg" alt="Logo" width={32} height={32} />
-      </Button>
+      </LinkButton>
 
       <Menu items={items} className="mt-6 md:mt-0 order-3 md:order-2 w-full md:w-auto" />
 

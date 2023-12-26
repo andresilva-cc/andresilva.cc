@@ -1,6 +1,6 @@
-import { ComponentProps, ReactNode } from 'react';
-import { Link } from '@/navigation';
+import { ReactNode } from 'react';
 import clsx from 'clsx';
+import { Slot } from '@radix-ui/react-slot';
 import { Text } from '@/components/Text';
 
 const variants = {
@@ -9,33 +9,34 @@ const variants = {
   icon: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block',
 };
 
-export interface ButtonProps extends ComponentProps<typeof Link> {
+export interface ButtonProps {
   variant?: keyof typeof variants
-  href: string
   children: ReactNode
+  asChild?: boolean
   className?: string
+  onClick?: () => void
 }
 
 export function Button({
-  variant = 'default', href, children, className, ...props
+  variant = 'default', children, asChild = false, className, onClick = undefined,
 }: ButtonProps) {
   const isIcon = variant === 'icon';
+  const Tag = asChild ? Slot : 'button';
 
   return (
     <Text variant="button" asChild>
-      <Link
+      <Tag
         className={clsx(
           'inline-block transition-colors hover:transition-none duration-300',
           { 'px-2.5 py-1 rounded': !isIcon },
           variants[variant],
           className,
         )}
-        href={href}
-        {...props}
+        onClick={onClick}
       >
 
         { children }
-      </Link>
+      </Tag>
     </Text>
   );
 }

@@ -2,7 +2,7 @@
 
 import { usePathname } from '@/navigation';
 import clsx from 'clsx';
-import { Button } from '@/components/Button';
+import { LinkButton } from '@/components/LinkButton';
 
 export interface MenuProps {
   items: Array<{
@@ -25,12 +25,12 @@ export function Menu({ items, className }: MenuProps) {
       <ul className="flex gap-8 md:gap-16">
         { items.map((item) => (
           <li key={item.path} className="first:ml-auto last:mr-auto">
-            <Button
+            <LinkButton
               variant={currentPath === item.path ? 'default' : 'text'}
               href={item.path}
             >
               { item.name }
-            </Button>
+            </LinkButton>
           </li>
         ))}
       </ul>

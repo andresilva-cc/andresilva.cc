@@ -3,7 +3,7 @@
 import { usePathname as usePathnameWithLocale } from 'next/navigation';
 import { usePathname } from '@/navigation';
 import { Translate } from '@phosphor-icons/react/dist/ssr/index';
-import { Button } from '@/components/Button';
+import { LinkButton } from '@/components/LinkButton';
 
 export interface LanguageButtonProps {
   className?: string
@@ -15,7 +15,7 @@ export function LanguageButton({ className }: LanguageButtonProps) {
   const alternateLocale = currentPathWithLocale.includes('/pt') ? 'en' : 'pt';
 
   return (
-    <Button
+    <LinkButton
       variant="icon"
       href={currentPath}
       className={className}
@@ -23,6 +23,6 @@ export function LanguageButton({ className }: LanguageButtonProps) {
       locale={alternateLocale}
     >
       <Translate size={32} />
-    </Button>
+    </LinkButton>
   );
 }

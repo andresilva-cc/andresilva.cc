@@ -1,14 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { GithubLogo } from '@phosphor-icons/react';
+import { X as CloseIcon } from '@phosphor-icons/react';
 import { Button, ButtonProps } from './index';
 
 export default {
   title: 'Components/Button',
   component: Button,
   args: {
-    children: 'Download Resume',
-    href: 'https://andresilva.cc',
-    target: '_blank',
+    children: 'Close',
   },
 } as Meta<ButtonProps>;
 
@@ -23,7 +21,6 @@ export const Text: StoryObj<ButtonProps> = {
 export const Icon: StoryObj<ButtonProps> = {
   args: {
     variant: 'icon',
-    href: 'https://github.com/andresilva-cc',
-    children: <GithubLogo size="32" />,
+    children: <CloseIcon size="32" />,
   },
 };

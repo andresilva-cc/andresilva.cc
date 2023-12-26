@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Text } from '@/components/Text';
-import { Button } from '@/components/Button';
+import { LinkButton } from '@/components/LinkButton';
 
 export default function About() {
   const t = useTranslations();
@@ -16,9 +16,9 @@ export default function About() {
         <Text className="mt-4">
           { t.rich('about.bio') }
         </Text>
-        <Button href="/resume.pdf" target="_blank" className="mt-8">
+        <LinkButton href="/resume.pdf" target="_blank" className="mt-8">
           { t('about.downloadResume') }
-        </Button>
+        </LinkButton>
       </div>
     </div>
   );
