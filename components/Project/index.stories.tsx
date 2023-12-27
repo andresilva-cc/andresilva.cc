@@ -22,23 +22,27 @@ export default {
 
 export const Default: StoryObj<ProjectProps> = {};
 
-export const DefaultURL: StoryObj<ProjectProps> = {
-  name: 'Default (with URL)',
+export const DefaultSingleURL: StoryObj<ProjectProps> = {
+  name: 'Default (with single URL)',
   args: {
-    url: 'https://customburger.andresilva.cc/',
+    links: [
+      { url: 'https://customburger.andresilva.cc/' },
+    ],
+  },
+};
+
+export const DefaultMultipleURL: StoryObj<ProjectProps> = {
+  name: 'Default (with mulitple URL)',
+  args: {
+    links: [
+      { name: 'CustomBurger', url: 'https://customburger.andresilva.cc/' },
+      { name: 'CustomBurger', url: 'https://customburger.andresilva.cc/' },
+    ],
   },
 };
 
 export const Featured: StoryObj<ProjectProps> = {
   args: {
-    featured: true,
-  },
-};
-
-export const FeaturedURL: StoryObj<ProjectProps> = {
-  name: 'Featured (with URL)',
-  args: {
-    url: 'https://customburger.andresilva.cc/',
     featured: true,
   },
 };
