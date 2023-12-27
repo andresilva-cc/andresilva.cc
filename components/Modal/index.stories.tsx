@@ -23,7 +23,7 @@ export default {
     const [, updateArgs] = useArgs();
 
     function onClose() {
-      updateArgs({ visible: false });
+      updateArgs({ isOpen: false });
     }
 
     return <Modal {...args} onClose={() => onClose()} />;
