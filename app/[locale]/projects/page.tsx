@@ -1,10 +1,11 @@
-import { useTranslations } from 'next-intl';
+import { NextIntlClientProvider, useTranslations, useMessages } from 'next-intl';
 import clsx from 'clsx';
 import { Project } from '@/components/Project';
 import { Text } from '@/components/Text';
 import { useRepositories } from '@/repositories';
 
 export default function Projects() {
+  const messages = useMessages();
   const t = useTranslations();
 
   const { projectsRepository } = useRepositories(t);
@@ -32,13 +33,15 @@ export default function Projects() {
       >
         { featuredProjects.map((project) => (
           <li key={project.title}>
-            <Project
-              title={project.title}
-              description={project.description}
-              url={project.url}
-              featured={project.featured}
-              technologies={project.technologies}
-            />
+            <NextIntlClientProvider messages={messages}>
+              <Project
+                title={project.title}
+                description={project.description}
+                links={project.links}
+                featured={project.featured}
+                technologies={project.technologies}
+              />
+            </NextIntlClientProvider>
           </li>
         )) }
       </ul>
@@ -53,13 +56,15 @@ export default function Projects() {
       >
         { allProjects.map((project) => (
           <li key={project.title}>
-            <Project
-              title={project.title}
-              description={project.description}
-              url={project.url}
-              featured={project.featured}
-              technologies={project.technologies}
-            />
+            <NextIntlClientProvider messages={messages}>
+              <Project
+                title={project.title}
+                description={project.description}
+                links={project.links}
+                featured={project.featured}
+                technologies={project.technologies}
+              />
+            </NextIntlClientProvider>
           </li>
         )) }
       </ul>

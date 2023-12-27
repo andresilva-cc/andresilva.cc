@@ -18,7 +18,7 @@ export interface ButtonProps {
 }
 
 export function Button({
-  variant = 'default', children, asChild = false, className, onClick = undefined,
+  variant = 'default', children, asChild = false, className, onClick = undefined, ...props
 }: ButtonProps) {
   const isIcon = variant === 'icon';
   const Tag = asChild ? Slot : 'button';
@@ -33,6 +33,7 @@ export function Button({
           className,
         )}
         onClick={onClick}
+        {...props}
       >
 
         { children }

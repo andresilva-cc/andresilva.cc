@@ -1,4 +1,7 @@
 {
+  "common": {
+    "close": "Fechar"
+  },
   "menu": {
     "about": "Sobre",
     "career": "Carreira",

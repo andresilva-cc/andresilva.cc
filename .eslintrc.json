@@ -23,7 +23,7 @@
     "react/jsx-props-no-spreading": [
       "error",
       {
-        "exceptions": ["Link", "a"]
+        "exceptions": ["a", "Link", "Tag"]
       }
     ]
   }
