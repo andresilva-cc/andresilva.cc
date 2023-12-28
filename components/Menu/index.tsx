@@ -18,7 +18,7 @@ export function Menu({ items, className }: MenuProps) {
   return (
     <nav
       className={clsx(
-        'overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-gray-950',
+        'scrollbar-thin scrollbar-thumb-gray-950',
         className,
       )}
     >
