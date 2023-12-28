@@ -4,9 +4,9 @@ import { Slot } from '@radix-ui/react-slot';
 import { Text } from '@/components/Text';
 
 const variants = {
-  default: 'text-gray-950 bg-primary-500 hover:bg-primary-400 active:bg-primary-300',
-  text: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300',
-  icon: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block',
+  default: 'text-gray-950 bg-primary-500 hover:bg-primary-400 active:bg-primary-300 focus:outline-primary-500',
+  text: 'text-auxiliary-500 bg-gray-900 hover:text-auxiliary-400 active:text-auxiliary-300 focus:outline-auxiliary-500',
+  icon: 'text-auxiliary-500 bg-gray-900 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block focus:outline-auxiliary-500',
 };
 
 export interface ButtonProps {
@@ -27,8 +27,8 @@ export function Button({
     <Text variant="button" asChild>
       <Tag
         className={clsx(
-          'inline-block transition-colors hover:transition-none duration-300',
-          { 'px-2.5 py-1 rounded': !isIcon },
+          'inline-block rounded transition-colors hover:transition-none duration-300 focus:outline-none',
+          { 'px-2.5 py-1': !isIcon },
           variants[variant],
           className,
         )}

@@ -13,7 +13,7 @@ export function Link({ href, children, ...props }: LinkProps) {
       <a
         href={href}
         target="_blank"
-        className="flex gap-1 text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 transition-colors hover:transition-none"
+        className="flex gap-1 text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 transition-colors hover:transition-none focus:outline-none focus:outline-auxiliary-500 focus:outline-offset-4 focus:outline-1"
         {...props}
       >
         <LinkIcon size={14} />

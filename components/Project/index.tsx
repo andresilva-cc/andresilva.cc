@@ -15,6 +15,9 @@ export function Project({
   title, description, links = [], featured = false, technologies,
 }: ProjectProps) {
   const [isModalOpen, setModalVisibility] = useState(false);
+  const focusClasses = clsx('focus:rounded-lg focus:outline-none focus:outline-auxiliary-500', {
+    'focus:outline-offset-4': featured,
+  });
 
   const content = (
     <div
@@ -54,6 +57,7 @@ export function Project({
         href={links[0].url}
         target="_blank"
         aria-label={title}
+        className={clsx('block', focusClasses)}
       >
         { content }
       </a>
@@ -74,6 +78,7 @@ export function Project({
         <button
           type="button"
           aria-label={title}
+          className={focusClasses}
           onClick={() => setModalVisibility(true)}
         >
           { content }
