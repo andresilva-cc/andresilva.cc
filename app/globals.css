@@ -9,3 +9,7 @@ body {
 strong {
   @apply text-secondary-500 font-normal;
 }
+
+:focus:not(:focus-visible) {
+  outline: none !important;
+}
