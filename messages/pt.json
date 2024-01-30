@@ -18,6 +18,10 @@
   "career": {
     "title": "Carreira",
     "present": "Presente",
+    "seniorAtlas": {
+      "title": "Senior Front-end Engineer",
+      "description": ""
+    },
     "consultantAtlas": {
       "title": "Front-end Engineering Consultant",
       "description": "<ul><li>Mentoria e orientação técnica aos engenheiros front-end</li><li>Estudo e desenvolvimento de melhorias nos projetos</li><li>Participação no desenvolvimento de uma biblioteca de componentes utilizando Lerna, TypeScript e Vue.js</li><li>Participação na migração de páginas para um projeto em Nuxt com foco em SEO</li></ul>"

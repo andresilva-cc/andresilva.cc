@@ -4,9 +4,17 @@ export const JobsRepository = (t: TranslateFunction) => ({
   getAll() {
     return [
       {
+        title: t('career.seniorAtlas.title'),
+        company: 'Atlas Technologies',
+        startDate: new Date(2024, 0),
+        technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Laravel', 'Jest', 'Tailwind CSS', 'SEO'],
+        children: t.rich('career.seniorAtlas.description'),
+      },
+      {
         title: t('career.consultantAtlas.title'),
         company: 'Atlas Technologies',
         startDate: new Date(2022, 2),
+        endDate: new Date(2024, 0),
         technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Laravel', 'Jest', 'Tailwind CSS', 'Lerna', 'SEO'],
         children: t.rich('career.consultantAtlas.description'),
       },
