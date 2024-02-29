@@ -5,8 +5,8 @@ import { Text } from '@/components/Text';
 
 const variants = {
   default: 'text-gray-950 bg-primary-500 hover:bg-primary-400 active:bg-primary-300 focus:outline-primary-500',
-  text: 'text-auxiliary-500 bg-gray-900 hover:text-auxiliary-400 active:text-auxiliary-300 focus:outline-auxiliary-500',
-  icon: 'text-auxiliary-500 bg-gray-900 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block focus:outline-auxiliary-500',
+  text: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 focus:outline-auxiliary-500',
+  icon: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block focus:outline-auxiliary-500',
 };
 
 export interface ButtonProps {

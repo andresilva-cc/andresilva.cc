@@ -6,10 +6,19 @@ body {
   @apply bg-gray-900 text-gray-200 font-sans;
 }
 
+body.animate {
+  animation: 1s linear infinite alternate background;
+}
+
 strong {
   @apply text-secondary-500 font-normal;
 }
 
 :focus:not(:focus-visible) {
   outline: none !important;
+}
+
+@keyframes background {
+  from { @apply bg-gray-900 }
+  to { @apply bg-gray-950 }
 }
