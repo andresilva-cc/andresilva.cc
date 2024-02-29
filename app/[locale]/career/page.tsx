@@ -17,9 +17,8 @@ export default function Career() {
         </Text>
       </div>
       <ul className="flex flex-col gap-8 mt-8">
-        { jobs.map((job, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <li key={index}>
+        { jobs.map((job) => (
+          <li key={job.startDate.getTime()}>
             <Job
               title={job.title}
               company={job.company}
