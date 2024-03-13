@@ -1,9 +1,9 @@
 'use client';
 
-import { usePathname as usePathnameWithLocale } from 'next/navigation';
 import { usePathname } from '@/navigation';
 import { Translate } from '@phosphor-icons/react/dist/ssr/index';
 import { LinkButton } from '@/components/LinkButton';
+import { useCurrentLocale } from '@/hooks/useCurrentLocale';
 
 export interface LanguageButtonProps {
   className?: string
@@ -11,8 +11,8 @@ export interface LanguageButtonProps {
 
 export function LanguageButton({ className }: LanguageButtonProps) {
   const currentPath = usePathname();
-  const currentPathWithLocale = usePathnameWithLocale();
-  const alternateLocale = currentPathWithLocale.includes('/pt') ? 'en' : 'pt';
+  const currentLocale = useCurrentLocale();
+  const alternateLocale = currentLocale === 'pt' ? 'en' : 'pt';
 
   return (
     <LinkButton
