@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { Job } from '@/components/Job';
 import { Text } from '@/components/Text';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 
 export default function Career() {
   const t = useTranslations();

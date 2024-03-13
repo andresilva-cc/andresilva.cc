@@ -2,7 +2,7 @@ import { NextIntlClientProvider, useTranslations, useMessages } from 'next-intl'
 import clsx from 'clsx';
 import { Project } from '@/components/Project';
 import { Text } from '@/components/Text';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 
 export default function Projects() {
   const messages = useMessages();
