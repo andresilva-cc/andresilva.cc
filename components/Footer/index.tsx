@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { LinkButton } from '@/components/LinkButton';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 import { useTranslations } from 'next-intl';
 
 export interface FooterProps {

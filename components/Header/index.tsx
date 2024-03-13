@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { HomeButton } from '@/components/HomeButton';
 import { LanguageButton } from '@/components/LanguageButton';
 import { Menu } from '@/components/Menu';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 
 export interface HeaderProps {
   className?: string
