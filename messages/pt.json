@@ -4,6 +4,7 @@
   },
   "menu": {
     "about": "Sobre",
+    "articles": "Artigos",
     "career": "Carreira",
     "projects": "Projetos"
   },
@@ -14,6 +15,9 @@
     "title": "Sobre",
     "bio": "Um engenheiro de software com <strong>experiência profissional</strong> em aplicações web e mobile. <strong>Liderou e participou</strong> do projeto e desenvolvimento de aplicações para <strong>empresas públicas e privadas</strong> nos mais diversos segmentos, utilizando linguagens e ferramentas como JavaScript, TypeScript, Vue.js, Nuxt, Drupal, PHP, Laravel, Node.js e NativeScript. Possui <strong>bacharelado em Ciência da Computação</strong> e está continuamente se aperfeiçoando e estudando novas tecnologias.",
     "downloadResume": "Baixar Currículo"
+  },
+  "articles": {
+    "title": "Artigos"
   },
   "career": {
     "title": "Carreira",

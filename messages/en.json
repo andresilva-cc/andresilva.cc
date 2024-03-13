@@ -4,6 +4,7 @@
   },
   "menu": {
     "about": "About",
+    "articles": "Artigos",
     "career": "Career",
     "projects": "Projects"
   },
@@ -14,6 +15,9 @@
     "title": "About",
     "bio": "A software engineer with <strong>professional experience</strong> in web and mobile applications. <strong>Led and participated</strong> in the project and development of applications for <strong>public and private companies</strong> in the most diverse segments, using languages and tools such as JavaScript, TypeScript, Vue.js, Nuxt, Drupal, PHP, Laravel, Node.js, and NativeScript. Holds a <strong>BS in Computer Science</strong> and is continually improving himself and studying new technologies.",
     "downloadResume": "Download Resume"
+  },
+  "articles": {
+    "title": "Articles"
   },
   "career": {
     "title": "Career",
