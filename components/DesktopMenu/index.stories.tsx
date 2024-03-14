@@ -1,13 +1,20 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Menu, DesktopMenuProps } from './index';
+import { DesktopMenu, DesktopMenuProps } from './index';
 
 export default {
-  title: 'Components/Menu',
-  component: Menu,
+  title: 'Components/Desktop Menu',
+  component: DesktopMenu,
   parameters: {
     nextjs: {
       appDirectory: true,
     },
+  },
+  args: {
+    items: [
+      { name: 'About', path: '/about' },
+      { name: 'Career', path: '/career' },
+      { name: 'Projects', path: '/projects' },
+    ],
   },
 } as Meta<DesktopMenuProps>;
 
