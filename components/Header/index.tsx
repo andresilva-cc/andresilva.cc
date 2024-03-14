@@ -3,7 +3,8 @@ import clsx from 'clsx';
 
 import { HomeButton } from '@/components/HomeButton';
 import { LanguageButton } from '@/components/LanguageButton';
-import { Menu } from '@/components/Menu';
+import { DesktopMenu } from '@/components/DesktopMenu';
+import { MobileMenu } from '@/components/MobileMenu';
 import { useRepositories } from '@/repositories';
 
 export interface HeaderProps {
@@ -19,15 +20,25 @@ export function Header({ className }: HeaderProps) {
   return (
     <header
       className={clsx(
-        'flex flex-wrap justify-between items-center',
+        'flex justify-between items-center',
         className,
       )}
     >
+      <MobileMenu
+        items={items}
+        openMenuLabel={t('common.openMenu')}
+        closeMenuLabel={t('common.closeMenu')}
+        className="md:hidden"
+      />
+
       <HomeButton />
 
-      <Menu items={items} className="mt-6 md:mt-0 order-3 md:order-2 w-full md:w-auto" />
+      <DesktopMenu
+        items={items}
+        className="hidden md:block mt-0 w-auto"
+      />
 
-      <LanguageButton className="order-2 md:order-3" />
+      <LanguageButton />
     </header>
   );
 }

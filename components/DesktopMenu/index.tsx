@@ -4,27 +4,24 @@ import { usePathname } from '@/navigation';
 import clsx from 'clsx';
 import { LinkButton } from '@/components/LinkButton';
 
-export interface MenuProps {
+export interface DesktopMenuProps {
   items: Array<{
     name: string
     path: string
+    hideOnDesktop?: boolean
   }>
   className?: string
 }
 
-export function Menu({ items, className }: MenuProps) {
+export function DesktopMenu({ items, className }: DesktopMenuProps) {
   const currentPath = usePathname();
+  const desktopOnlyItems = items.filter((item) => !item.hideOnDesktop);
 
   return (
-    <nav
-      className={clsx(
-        'scrollbar-thin scrollbar-thumb-gray-950',
-        className,
-      )}
-    >
-      <ul className="flex gap-8 md:gap-16">
-        { items.map((item) => (
-          <li key={item.path} className="first:ml-auto last:mr-auto">
+    <nav className={clsx(className)}>
+      <ul className="flex gap-16">
+        { desktopOnlyItems.map((item) => (
+          <li key={item.path}>
             <LinkButton
               variant={currentPath === item.path ? 'default' : 'text'}
               href={item.path}
