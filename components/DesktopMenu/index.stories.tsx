@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Menu, MenuProps } from './index';
+import { Menu, DesktopMenuProps } from './index';
 
 export default {
   title: 'Components/Menu',
@@ -9,11 +9,11 @@ export default {
       appDirectory: true,
     },
   },
-} as Meta<MenuProps>;
+} as Meta<DesktopMenuProps>;
 
-export const Default: StoryObj<MenuProps> = {};
+export const Default: StoryObj<DesktopMenuProps> = {};
 
-export const ActiveItem: StoryObj<MenuProps> = {
+export const ActiveItem: StoryObj<DesktopMenuProps> = {
   parameters: {
     nextjs: {
       navigation: {
