@@ -1,8 +1,11 @@
 {
   "common": {
-    "close": "Fechar"
+    "close": "Fechar",
+    "closeMenu": "Fechar menu",
+    "openMenu": "Abrir menu"
   },
   "menu": {
+    "home": "Página inicial",
     "about": "Sobre",
     "articles": "Artigos",
     "career": "Carreira",
