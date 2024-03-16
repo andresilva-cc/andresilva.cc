@@ -17,7 +17,7 @@ export default function Articles() {
       <EnglishOnly className="mt-4">
         Os artigos estão disponíveis apenas em inglês
       </EnglishOnly>
-      <ul className="mt-8 flex flex-col gap-4">
+      <ul className="mt-4 flex flex-col gap-2">
         { articles.map((article) => (
           <li key={article.id}>
             <Article

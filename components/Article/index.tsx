@@ -20,10 +20,13 @@ export function Article({
   });
 
   return (
-    <Link href={`/articles/${id}/${slug}`} className="block group p-4 rounded-lg bg-primary-300 bg-opacity-0 hover:bg-opacity-5 active:bg-opacity-10 transition-colors hover:transition-none duration-300">
+    <Link
+      href={`/articles/${id}/${slug}`}
+      className="block group p-4 rounded-lg bg-primary-300 bg-opacity-0 hover:bg-opacity-5 active:bg-opacity-10 transition-colors hover:transition-none duration-300"
+    >
       <div className="md:flex md:justify-between">
         <Text variant="h3" className="text-secondary-500 group-hover:text-secondary-400 group-active:text-secondary-300">{ title }</Text>
-        <Text variant="caption" className="block mt-2 md:mt-0 text-auxiliary-500">{ formattedPostedAt }</Text>
+        <Text variant="caption" className="block mt-1 md:mt-0 text-auxiliary-500">{ formattedPostedAt }</Text>
       </div>
       <Text variant="body-2" className="mt-2">{ summary }</Text>
     </Link>
