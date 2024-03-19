@@ -6,7 +6,7 @@ My personal website :)
 
 ## Figma
 
-Made some changes during the development, but the essence is there:
+I made some improvements after the first version, but the essence is there:
 
 Wireframe: https://www.figma.com/file/hEknpRUxnxyKDsUgAMVqVh/andresilva.cc-Wireframe
 
