@@ -10,7 +10,7 @@ import { Footer } from '@/components/Footer';
 import { RouteParams } from '@/types/RouteParams';
 
 export async function generateMetadata({ params }: RouteParams) {
-  const t = await getTranslator({ locale: params.locale });
+  const t = await getTranslator(params.locale);
 
   return {
     title: 'André Silva',

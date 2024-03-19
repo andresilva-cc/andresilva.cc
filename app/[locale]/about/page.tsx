@@ -7,7 +7,7 @@ import { LinkButton } from '@/components/LinkButton';
 import { RouteParams } from '@/types/RouteParams';
 
 export async function generateMetadata({ params }: RouteParams) {
-  const t = await getTranslator({ locale: params.locale });
+  const t = await getTranslator(params.locale);
 
   return {
     title: `${t('about.title')} | André Silva`,
