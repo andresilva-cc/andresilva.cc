@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import clsx from 'clsx';
 import { firaCode, firaSans } from '@/app/fonts';
 import '@/app/globals.css';
@@ -31,6 +32,7 @@ export default function RootLayout({
         </main>
         <Footer className="py-8 md:py-16" />
       </body>
+      <GoogleAnalytics gaId="G-TLHZYGS1SJ" />
     </html>
   );
 }
