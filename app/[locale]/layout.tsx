@@ -1,16 +1,22 @@
 import { ReactNode } from 'react';
-import type { Metadata } from 'next';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { getTranslator } from 'next-intl/server';
 import clsx from 'clsx';
+
 import { firaCode, firaSans } from '@/app/fonts';
 import '@/app/globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { RouteParams } from '@/types/RouteParams';
 
-export const metadata: Metadata = {
-  title: 'André Silva',
-  description: 'A software engineer with professional experience in web and mobile applications',
-};
+export async function generateMetadata({ params }: RouteParams) {
+  const t = await getTranslator({ locale: params.locale });
+
+  return {
+    title: 'André Silva',
+    description: t('home.bio'),
+  };
+}
 
 export default function RootLayout({
   children,
