@@ -1,7 +1,18 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { getTranslator } from 'next-intl/server';
+
 import { Text } from '@/components/Text';
 import { LinkButton } from '@/components/LinkButton';
+import { RouteParams } from '@/types/RouteParams';
+
+export async function generateMetadata({ params }: RouteParams) {
+  const t = await getTranslator({ locale: params.locale });
+
+  return {
+    title: `${t('about.title')} | André Silva`,
+  };
+}
 
 export default function About() {
   const t = useTranslations();
