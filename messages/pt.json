@@ -58,6 +58,10 @@
       "title": "Injektion",
       "description": "Injeção de dependência sem decorator para JavaScript e TypeScript"
     },
+    "renderingModesDemo": {
+      "title": "Rendering Modes Demo",
+      "description": "Demonstração de modos de renderização com Nuxt 3"
+    },
     "pocVueUniversalComponent": {
       "title": "poc-vue-universal-component",
       "description": "Prova de conceito de componentes universais em Vue.js"

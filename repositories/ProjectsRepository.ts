@@ -26,6 +26,16 @@ export const ProjectsRepository = (t: TranslateFunction) => ({
         technologies: ['TypeScript'],
       },
       {
+        title: t('projects.renderingModesDemo.title'),
+        description: t('projects.renderingModesDemo.description'),
+        links: [
+          { name: 'Website', url: 'https://renderingmodes.andresilva.cc/' },
+          { name: 'GitHub', url: 'https://github.com/andresilva-cc/demo-nuxt3-rendering-modes' },
+        ],
+        featured: false,
+        technologies: ['Vue.js', 'Nuxt'],
+      },
+      {
         title: t('projects.pocVueUniversalComponent.title'),
         description: t('projects.pocVueUniversalComponent.description'),
         links: [{ url: 'https://github.com/andresilva-cc/poc-vue-universal-component' }],
