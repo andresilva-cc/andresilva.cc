@@ -62,6 +62,10 @@
       "title": "Injektion",
       "description": "Decorator-less dependency injection for JavaScript and TypeScript"
     },
+    "renderingModesDemo": {
+      "title": "Rendering Modes Demo",
+      "description": "Demo of rendering modes in Nuxt 3"
+    },
     "pocVueUniversalComponent": {
       "title": "poc-vue-universal-component",
       "description": "Proof of concept of universal components in Vue.js"
@@ -106,5 +110,9 @@
       "title": "Voucher-Printer",
       "description": "Hotspot voucher printer via MikroTik RouterBoard API"
     }
+  },
+  "notFound": {
+    "title": "404",
+    "description": "Oops, this page doesn't exist."
   }
 }

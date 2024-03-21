@@ -1,7 +1,17 @@
 import { useTranslations } from 'next-intl';
+import { getTranslator } from 'next-intl/server';
 import { Job } from '@/components/Job';
 import { Text } from '@/components/Text';
 import { useRepositories } from '@/hooks/useRepositories';
+import { RouteParams } from '@/types/RouteParams';
+
+export async function generateMetadata({ params }: RouteParams) {
+  const t = await getTranslator(params.locale);
+
+  return {
+    title: `${t('career.title')} | André Silva`,
+  };
+}
 
 export default function Career() {
   const t = useTranslations();

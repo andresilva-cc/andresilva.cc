@@ -14,11 +14,11 @@ strong {
   @apply text-secondary-500 font-normal;
 }
 
-:focus:not(:focus-visible) {
-  outline: none !important;
-}
-
 @keyframes background {
   from { @apply bg-gray-900 }
   to { @apply bg-gray-950 }
+}
+
+html:not([data-headlessui-focus-visible]) *:focus {
+  outline: none !important;
 }

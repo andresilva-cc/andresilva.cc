@@ -1,8 +1,19 @@
 import { NextIntlClientProvider, useTranslations, useMessages } from 'next-intl';
+import { getTranslator } from 'next-intl/server';
 import clsx from 'clsx';
+
 import { Project } from '@/components/Project';
 import { Text } from '@/components/Text';
 import { useRepositories } from '@/hooks/useRepositories';
+import { RouteParams } from '@/types/RouteParams';
+
+export async function generateMetadata({ params }: RouteParams) {
+  const t = await getTranslator(params.locale);
+
+  return {
+    title: `${t('projects.title')} | André Silva`,
+  };
+}
 
 export default function Projects() {
   const messages = useMessages();
