@@ -19,7 +19,7 @@ export default function About() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
-      <Image src="/me.jpg" width={192} height={192} alt="Picture of myself" className="rounded-full" />
+      <Image src="/me.jpg" width={192} height={192} alt="Picture of myself" priority className="rounded-full" />
       <div>
         <Text variant="h2-mono" element="h1">
           { t('about.title') }
