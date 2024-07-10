@@ -11,6 +11,8 @@ export interface LinkButtonProps extends ButtonProps, Partial<ComponentProps<typ
 export function LinkButton({
   variant, className, href, children, onClick, ...props
 }: LinkButtonProps) {
+  const isExternal = href.startsWith('http');
+
   return (
     <Button
       variant={variant}
@@ -20,6 +22,7 @@ export function LinkButton({
     >
       <Link
         href={href}
+        target={isExternal ? '_blank' : '_self'}
         {...props}
       >
         { children }
