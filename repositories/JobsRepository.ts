@@ -7,7 +7,7 @@ export const JobsRepository = (t: TranslateFunction) => ({
         title: t('career.seniorAtlas.title'),
         company: 'Atlas Technologies',
         startDate: new Date(2024, 0),
-        technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Laravel', 'Jest', 'Tailwind CSS', 'SEO'],
+        technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Pinia', 'Nuxt', 'Laravel', 'Vitest', 'Tailwind CSS', 'Storybook', 'SEO'],
         children: t.rich('career.seniorAtlas.description'),
       },
       {
@@ -15,7 +15,7 @@ export const JobsRepository = (t: TranslateFunction) => ({
         company: 'Atlas Technologies',
         startDate: new Date(2022, 2),
         endDate: new Date(2024, 0),
-        technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Laravel', 'Jest', 'Tailwind CSS', 'Lerna', 'SEO'],
+        technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Vuex', 'Nuxt', 'Laravel', 'Jest', 'Tailwind CSS', 'Lerna', 'Storybook', 'SEO'],
         children: t.rich('career.consultantAtlas.description'),
       },
       {
@@ -23,7 +23,7 @@ export const JobsRepository = (t: TranslateFunction) => ({
         company: 'Atlas Technologies',
         startDate: new Date(2021, 10),
         endDate: new Date(2022, 2),
-        technologies: ['JavaScript', 'Vue.js', 'Laravel', 'Sass'],
+        technologies: ['JavaScript', 'Vue.js', 'Vuex', 'Laravel', 'Sass'],
         children: t.rich('career.frontAtlas.description'),
       },
       {
@@ -34,7 +34,7 @@ export const JobsRepository = (t: TranslateFunction) => ({
         links: [
           { name: 'NativeScript Spotify', url: 'https://github.com/Nuxstep/nativescript-plugins/tree/master/packages/nativescript-spotify' },
         ],
-        technologies: ['Node.js', 'Vue.js', 'Laravel', 'JavaScript', 'TypeScript', 'NativeScript'],
+        technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Vuex', 'Vuetify', 'NativeScript', 'Jest', 'Node.js', 'Laravel'],
         children: t.rich('career.ceoNuxstep.description'),
       },
       {
@@ -45,7 +45,7 @@ export const JobsRepository = (t: TranslateFunction) => ({
         links: [
           { name: 'CONFEA', url: 'https://www.confea.org.br/novo-portal-institucional-do-confea-traz-recursos-de-acessibilidade' },
         ],
-        technologies: ['Node.js', 'Vue.js', 'Laravel', 'JavaScript', 'Sass', 'Drupal', 'Linux', 'Windows Server'],
+        technologies: ['JavaScript', 'Vue.js', 'Vuex', 'Sass', 'Vuetify', 'Node.js', 'Laravel', 'Drupal', 'Linux', 'Windows Server'],
         children: t.rich('career.internGmaes.description'),
       },
     ];
