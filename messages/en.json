@@ -24,23 +24,23 @@
     "present": "Present",
     "seniorAtlas": {
       "title": "Senior Front-end Engineer",
-      "description": "<ul><li>Performance and DX improvements through the platform team</li><li>Upgrade of projects to Vue 3 and Nuxt 3</li><li>Migration of pages to a Nuxt 3 project</li><li>74% increase in performance of a key page</li></ul>"
+      "description": "<ul><li>Work on performance and developer experience (DX) improvements as part of the platform team</li><li>Upgrade projects to Vue 3 and Nuxt 3</li><li>Migrate pages to a Nuxt 3 project</li><li>Achieve a 74% increase in the performance of a key page</li></ul>"
     },
     "consultantAtlas": {
       "title": "Front-end Engineering Consultant",
-      "description": "<ul><li>Mentoring and technical guidance to front-end engineers</li><li>Study and development of project improvements</li><li>Participation in the development of a component library using Lerna, TypeScript and Vue.js</li><li>Participation in the migration of public pages to a Nuxt project with a focus on SEO</li></ul>"
+      "description": "<ul><li>Mentored and provided technical guidance to front-end engineers</li><li>Analyzed and developed project improvements</li><li>Contributed to the development of a component library using Lerna, TypeScript, and Vue.js</li><li>Contributed to the migration of key pages to a Nuxt project</li></ul>"
     },
     "frontAtlas": {
       "title": "Front-end Engineer",
-      "description": "<p>Assignments in a squad:</p><ul><li>Front-end development for a platform with more than 20 million monthly visits</li><li>Front-end responsible for the deployment process</li><li>Code review</li><li>Tracking and organization of tasks in Jira using Scrum</li></ul>"
+      "description": "<ul><li>Contributed to the development of a security feature for a platform with over 20 million monthly visits</li><li>Deployed and monitored front-end tasks in production</li><li>Contributed with code reviews across multiple teams</li><li>Tracked and organized tasks in Jira using Scrum</li></ul>"
     },
     "ceoNuxstep": {
       "title": "CEO & Co-Founder",
-      "description": "<ul><li>Planning, development and deployment of web and mobile applications</li><li>Participation in the execution of IT infrastructure projects</li><li>Development of a plugin that integrates Spotify's SDK into NativeScript using TypeScript</li></ul>"
+      "description": "<ul><li>Planned, developed, and deployed web and mobile applications</li><li>Contributed to the execution of IT infrastructure projects</li><li>Developed a plugin that integrates Spotify's SDK into NativeScript using TypeScript</li></ul>"
     },
     "internGmaes": {
       "title": "Software Development Intern",
-      "description": "<ul><li>Participation in the development of a web inventory system for the City Hall of Francisco Beltrão using Vue.js and Laravel</li><li>Planning and development of the new website of the Federal Council of Engineering and Agronomy (CONFEA) using Drupal</li><li>Development of an integration between the Nuvemshop e-commerce platform and SkyHub marketplace integrator using Nuxt and Node.js</li><li>Deploy of applications on Linux and Windows servers</li></ul>"
+      "description": "<ul><li>Developed an inventory system for the City Hall of Francisco Beltrão using Vue.js and Laravel</li><li>Planned and developed the new website for the Federal Council of Engineering and Agronomy (CONFEA) using Drupal</li><li>Developed an integration between the Nuvemshop e-commerce platform and the SkyHub marketplace integrator using Nuxt and Node.js</li><li>Deployed and managed applications on Linux and Windows servers</li></ul>"
     }
   },
   "projects": {

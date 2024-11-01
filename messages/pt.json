@@ -24,23 +24,23 @@
     "present": "Presente",
     "seniorAtlas": {
       "title": "Senior Front-end Engineer",
-      "description": "<ul><li>Melhorias de performance e DX através do time de plataforma</li><li>Atualização de projetos para Vue 3 e Nuxt 3</li><li>Migração de páginas para um projeto em Nuxt 3</li><li>Aumento de 74% na performance de uma página-chave</li></ul>"
+      "description": "<ul><li>Melhorias de performance e experiência do desenvolvedor (DX) como parte da equipe de plataforma</li><li>Atualização de projetos para Vue 3 e Nuxt 3</li><li>Migração de páginas para um projeto em Nuxt 3</li><li>Aumento de 74% na performance de uma página-chave</li></ul>"
     },
     "consultantAtlas": {
       "title": "Front-end Engineering Consultant",
-      "description": "<ul><li>Mentoria e orientação técnica aos engenheiros front-end</li><li>Estudo e desenvolvimento de melhorias nos projetos</li><li>Participação no desenvolvimento de uma biblioteca de componentes utilizando Lerna, TypeScript e Vue.js</li><li>Participação na migração de páginas para um projeto em Nuxt com foco em SEO</li></ul>"
+      "description": "<ul><li>Mentoreou e forneceu orientação técnica para engenheiros front-end</li><li>Analisou e desenvolveu melhorias para os projetos</li><li>Contribuiu para o desenvolvimento de uma biblioteca de componentes utilizando Lerna, TypeScript e Vue.js</li><li>Contribuiu para a migração de páginas-chave para um projeto em Nuxt</li></ul>"
     },
     "frontAtlas": {
       "title": "Front-end Engineer",
-      "description": "<p>Atribuições em uma squad:</p><ul><li>Desenvolvimento front-end para uma plataforma com mais de 20 milhões de acessos mensais</li><li>Front-end responsável pelo processo de deploy</li><li>Revisão de código</li><li>Acompanhamento e organização de tarefas no Jira utilizando Scrum</li></ul>"
+      "description": "<ul><li>Contribuiu para o desenvolvimento de uma funcionalidade de segurança para uma plataforma com mais de 20 milhões de visitas mensais</li><li>Implantou e monitorou tarefas de front-end em produção</li><li>Contribuiu com revisões de código em várias equipes</li><li>Acompanhou e organizou tarefas no Jira utilizando Scrum</li></ul>"
     },
     "ceoNuxstep": {
       "title": "CEO & Co-Founder",
-      "description": "<ul><li>Planejamento, desenvolvimento e deploy de aplicações web e mobile</li><li>Participação na execução de projetos de infraestrutura de TI</li><li>Desenvolvimento de um plugin que integra o SDK do Spotify ao NativeScript utilizando TypeScript</li></ul>"
+      "description": "<ul><li>Planejou, desenvolveu e implantou aplicações web e mobile</li><li>Contribuiu para a execução de projetos de infraestrutura de TI</li><li>Desenvolveu um plugin que integra o SDK do Spotify ao NativeScript utilizando TypeScript</li></ul>"
     },
     "internGmaes": {
       "title": "Estagiário de Desenvolvimento de Software",
-      "description": "<ul><li>Participação no desenvolvimento de um sistema de estoque web para a Prefeitura de Francisco Beltrão utilizando Vue.js e Laravel</li><li>Planejamento e desenvolvimento do novo site do Conselho Federal de Engenharia e Agronomia (CONFEA) utilizando Drupal</li><li>Desenvolvimento de integração entre a plataforma de e-commerce Nuvemshop e a integradora de marketplace SkyHub utilizando Nuxt e Node.js</li><li>Deploy de aplicações em servidores Linux e Windows</li></ul>"
+      "description": "<ul><li>Desenvolveu um sistema de estoque para a Prefeitura de Francisco Beltrão utilizando Vue.js e Laravel</li><li>Planejou e desenvolveu o novo site do Conselho Federal de Engenharia e Agronomia (CONFEA) utilizando Drupal</li><li>Desenvolveu uma integração entre a plataforma de e-commerce Nuvemshop e a integradora de marketplace SkyHub utilizando Nuxt e Node.js</li><li>Implantou e gerenciou aplicações em servidores Linux e Windows</li></ul>"
     }
   },
   "projects": {
