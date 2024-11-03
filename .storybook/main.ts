@@ -2,7 +2,7 @@ import path from 'path';
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
-  stories: ['../components/**/*.mdx', '../components/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ['../src/components/**/*.mdx', '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   staticDirs: ['../public'],
   addons: [
     '@storybook/addon-links',
@@ -22,7 +22,7 @@ const config: StorybookConfig = {
       // eslint-disable-next-line no-param-reassign
       webpackConfig.resolve.alias = {
         ...webpackConfig.resolve.alias,
-        '@': path.resolve(__dirname, '../'),
+        '@': path.resolve(__dirname, '../src/'),
       };
     }
 
