@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Chip } from '@/components/Chip';
 import { Link } from '@/components/Link';
-import { RichText } from '@/components/RichText';
 import { Text } from '@/components/Text';
 
 export interface JobProps {
