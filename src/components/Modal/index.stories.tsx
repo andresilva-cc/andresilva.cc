@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 import { Meta, StoryObj } from '@storybook/react';
-import { useArgs } from '@storybook/preview-api';
+import { useArgs } from '@storybook/manager-api';
 import { Link } from '@/components/Link';
 import { Modal, ModalProps } from './index';
 
