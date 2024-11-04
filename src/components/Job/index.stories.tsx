@@ -10,15 +10,23 @@ export default {
     startDate: new Date(2022, 2),
     endDate: undefined,
     links: undefined,
-    technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Laravel', 'Jest', 'Tailwind CSS'],
-    children:
-  <ul>
-    <li>Mentoring and technical guidance to front-end engineers</li>
-    <li>Monitoring of squad initiatives</li>
-    <li>Study and development of project improvements</li>
-    <li>Creating and updating chapter documentation</li>
-    <li>Code review</li>
-  </ul>,
+    technologies: [
+      'JavaScript',
+      'TypeScript',
+      'Vue.js',
+      'Laravel',
+      'Jest',
+      'Tailwind CSS',
+    ],
+    children: (
+      <ul>
+        <li>Mentoring and technical guidance to front-end engineers</li>
+        <li>Monitoring of squad initiatives</li>
+        <li>Study and development of project improvements</li>
+        <li>Creating and updating chapter documentation</li>
+        <li>Code review</li>
+      </ul>
+    ),
   },
 } as Meta<JobProps>;
 
@@ -33,7 +41,10 @@ export const PastJob: StoryObj<JobProps> = {
 export const WithLink: StoryObj<JobProps> = {
   args: {
     links: [
-      { name: 'NativeScript Spotify', url: 'ttps://github.com/Nuxstep/nativescript-plugins/tree/master/packages/nativescript-spotify' },
+      {
+        name: 'NativeScript Spotify',
+        url: 'ttps://github.com/Nuxstep/nativescript-plugins/tree/master/packages/nativescript-spotify',
+      },
     ],
   },
 };
