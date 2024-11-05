@@ -5,7 +5,7 @@ import { HomeButton } from '@/components/HomeButton';
 import { LanguageButton } from '@/components/LanguageButton';
 import { DesktopMenu } from '@/components/DesktopMenu';
 import { MobileMenu } from '@/components/MobileMenu';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 
 export interface HeaderProps {
   className?: string

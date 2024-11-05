@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { Job } from '@/components/Job';
 import { RichText } from '@/components/RichText';
 import { Text } from '@/components/Text';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 
 export async function generateMetadata() {
   const t = await getTranslations();

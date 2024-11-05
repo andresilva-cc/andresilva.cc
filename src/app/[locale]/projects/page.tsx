@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 import { Project } from '@/components/Project';
 import { Text } from '@/components/Text';
-import { useRepositories } from '@/repositories';
+import { useRepositories } from '@/hooks/useRepositories';
 
 export async function generateMetadata() {
   const t = await getTranslations();
