@@ -1,11 +1,11 @@
-import { FooterRepository } from './FooterRepository';
-import { JobsRepository } from './JobsRepository';
-import { MenuRepository } from './MenuRepository';
-import { ProjectsRepository } from './ProjectsRepository';
+import { StaticFooterRepository } from './Implementations/StaticFooterRepository';
+import { StaticJobsRepository } from './Implementations/StaticJobsRepository';
+import { StaticMenuRepository } from './Implementations/StaticMenuRepository';
+import { StaticProjectsRepository } from './Implementations/StaticProjectsRepository';
 
 export const useRepositories = () => ({
-  footerRepository: FooterRepository(),
-  jobsRepository: JobsRepository(),
-  menuRepository: MenuRepository(),
-  projectsRepository: ProjectsRepository(),
+  footerRepository: new StaticFooterRepository(),
+  jobsRepository: new StaticJobsRepository(),
+  menuRepository: new StaticMenuRepository(),
+  projectsRepository: new StaticProjectsRepository(),
 });
