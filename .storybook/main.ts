@@ -1,6 +1,8 @@
 import path from 'path';
 import type { StorybookConfig } from '@storybook/nextjs';
 
+// https://github.com/storybookjs/storybook/issues/26586
+// @ts-ignore
 const config: StorybookConfig = {
   stories: ['../src/components/**/*.mdx', '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   staticDirs: ['../public'],
@@ -33,4 +35,5 @@ const config: StorybookConfig = {
     reactDocgen: 'react-docgen-typescript',
   },
 };
+
 export default config;
