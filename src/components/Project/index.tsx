@@ -23,7 +23,7 @@ export function Project({
     <div
       className={clsx(
         'group text-left p-4 rounded-lg bg-primary-300 bg-opacity-0 hover:bg-opacity-5 active:bg-opacity-10 select-none transition-colors hover:transition-none duration-300',
-        { 'outline outline-1 outline-auxiliary-500 hover:outline-auxiliary-400 active:outline-auxiliary-300': featured },
+        { 'h-full flex flex-col outline outline-1 outline-auxiliary-500 hover:outline-auxiliary-400 active:outline-auxiliary-300': featured },
         { 'cursor-pointer': links.length > 0 },
       )}
     >
@@ -41,7 +41,12 @@ export function Project({
         ) }
       </Text>
 
-      <Text variant="body-2" className="mt-2">{ description }</Text>
+      <Text
+        variant="body-2"
+        className={clsx('mt-2', { 'flex-1': featured })}
+      >
+        { description }
+      </Text>
 
       <div className="flex flex-wrap gap-2 mt-4">
         { technologies.map((technology) => (
@@ -57,7 +62,7 @@ export function Project({
         href={links[0].url}
         target="_blank"
         aria-label={title}
-        className={clsx('block w-full', focusClasses)}
+        className={clsx('block w-full', { 'h-full': featured }, focusClasses)}
       >
         { content }
       </a>
@@ -78,7 +83,7 @@ export function Project({
         <button
           type="button"
           aria-label={title}
-          className={clsx('w-full', focusClasses)}
+          className={clsx('w-full', { 'h-full': featured }, focusClasses)}
           onClick={() => setModalVisibility(true)}
         >
           { content }

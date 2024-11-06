@@ -2,6 +2,6 @@ export interface Project {
   title: string
   description: string
   links?: Array<{ name?: string, url: string }>
-  featured: boolean
+  featured?: boolean
   technologies: Array<string>
 }

@@ -24,7 +24,7 @@ export default function Projects() {
   const featuredProjects = projects.filter((project) => project.featured);
   const allProjects = projects.filter((project) => !project.featured);
 
-  const gridClasses = 'grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4';
+  const gridClasses = 'grid gap-4 grid-rows-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4';
 
   return (
     <>
@@ -41,14 +41,14 @@ export default function Projects() {
         )}
       >
         { featuredProjects.map((project) => (
-          <li key={project.title}>
+          <li key={project.title} className="h-full">
             { /* TODO: fix dynamic key type */ }
             <Project
               title={t(project.title as any)}
               description={t(project.description as any)}
               links={project.links}
-              featured={project.featured}
               technologies={project.technologies}
+              featured
             />
           </li>
         )) }
@@ -69,7 +69,6 @@ export default function Projects() {
               title={t(project.title as any)}
               description={t(project.description as any)}
               links={project.links}
-              featured={project.featured}
               technologies={project.technologies}
             />
           </li>
