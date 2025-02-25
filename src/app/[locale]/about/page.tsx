@@ -24,12 +24,12 @@ export default function About() {
         <Text variant="h2-mono" element="h1">
           { t('about.title') }
         </Text>
-        <Text className="mt-4">
+        <Text element="div" className="mt-4 [&>p]:mb-2">
           <RichText>
             { (tags) => t.rich('about.bio', tags) }
           </RichText>
         </Text>
-        <LinkButton href="/resume.pdf" target="_blank" className="mt-8">
+        <LinkButton href="/resume.pdf" target="_blank" className="mt-4">
           { t('about.downloadResume') }
         </LinkButton>
       </div>
