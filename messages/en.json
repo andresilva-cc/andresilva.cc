@@ -59,6 +59,10 @@
       "title": "Injektion",
       "description": "Decorator-less dependency injection for JavaScript and TypeScript"
     },
+    "eyesup": {
+      "title": "EyesUp",
+      "description": "A minimal app that helps you follow the 20-20-20 rule and rest your eyes while working"
+    },
     "renderingModesDemo": {
       "title": "Rendering Modes Demo",
       "description": "Demo of rendering modes in Nuxt 3"

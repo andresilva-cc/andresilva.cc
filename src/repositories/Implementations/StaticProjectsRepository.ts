@@ -25,6 +25,17 @@ export class StaticProjectsRepository implements ProjectsRepository {
         technologies: ['TypeScript'],
       },
       {
+        title: 'projects.eyesup.title',
+        description: 'projects.eyesup.description',
+        links: [
+          { name: 'Website', url: 'https://eyesup.andresilva.cc/' },
+          { name: 'eyesup-web', url: 'https://github.com/andresilva-cc/eyesup-web' },
+          { name: 'eyesup-sync', url: 'https://github.com/andresilva-cc/eyesup-sync' },
+        ],
+        featured: false,
+        technologies: ['Vue.js'],
+      },
+      {
         title: 'projects.renderingModesDemo.title',
         description: 'projects.renderingModesDemo.description',
         links: [
