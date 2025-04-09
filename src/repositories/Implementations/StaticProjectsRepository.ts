@@ -33,7 +33,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
           { name: 'eyesup-sync', url: 'https://github.com/andresilva-cc/eyesup-sync' },
         ],
         featured: false,
-        technologies: ['Vue.js'],
+        technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'Tailwind CSS', 'Node.js', 'WebSocket'],
       },
       {
         title: 'projects.renderingModesDemo.title',
