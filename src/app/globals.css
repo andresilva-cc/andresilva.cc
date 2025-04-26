@@ -20,7 +20,7 @@
   --color-auxiliary-500: #aaa3cc;
 
   --font-sans: var(--font-fira-sans);
-  --font-mono: var(--font-fira-mono);
+  --font-mono: var(--font-fira-code);
 
   --radius: 5px;
   --radius-lg: 10px;
