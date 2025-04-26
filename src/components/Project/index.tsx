@@ -15,15 +15,15 @@ export function Project({
   title, description, links = [], featured = false, technologies,
 }: ProjectProps) {
   const [isModalOpen, setModalVisibility] = useState(false);
-  const focusClasses = clsx('focus:rounded-lg focus:outline-none focus:outline-auxiliary-500', {
+  const focusClasses = clsx('focus:rounded-lg focus:outline-hidden focus:outline-auxiliary-500', {
     'focus:outline-offset-4': featured,
   });
 
   const content = (
     <div
       className={clsx(
-        'group text-left p-4 rounded-lg bg-primary-300 bg-opacity-0 hover:bg-opacity-5 active:bg-opacity-10 select-none transition-colors hover:transition-none duration-300',
-        { 'h-full flex flex-col outline outline-1 outline-auxiliary-500 hover:outline-auxiliary-400 active:outline-auxiliary-300': featured },
+        'group text-left p-4 rounded-lg bg-primary-300/0 hover:bg-primary-300/5 active:bg-primary-300/10 select-none transition-colors hover:transition-none duration-300',
+        { 'h-full flex flex-col outline-1 outline-auxiliary-500 hover:outline-auxiliary-400 active:outline-auxiliary-300': featured },
         { 'cursor-pointer': links.length > 0 },
       )}
     >

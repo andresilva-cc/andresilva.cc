@@ -27,7 +27,7 @@ export function Button({
     <Text variant="button" asChild>
       <Tag
         className={clsx(
-          'inline-block rounded transition-colors hover:transition-none duration-300 focus:outline-none',
+          'inline-block rounded transition-colors hover:transition-none duration-300 focus:outline-hidden',
           { 'px-2.5 py-1': !isIcon },
           variants[variant],
           className,
