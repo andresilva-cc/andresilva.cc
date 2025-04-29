@@ -11,7 +11,7 @@ export default function Home() {
       </Text>
 
       <Text variant="h2-sans" className="text-primary-500 mt-8 text-xl md:text-2xl">
-        Senior Front-end Engineer @ Atlas Technologies
+        Senior Engineer @ Healthy Labs
       </Text>
 
       <Text className="mt-8">

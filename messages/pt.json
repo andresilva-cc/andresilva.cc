@@ -22,6 +22,10 @@
   "career": {
     "title": "Carreira",
     "present": "Presente",
+    "seniorHealthyLabs": {
+      "title": "Senior Engineer",
+      "description": ""
+    },
     "seniorAtlas": {
       "title": "Senior Front-end Engineer",
       "description": "<ul><li>Melhorias de performance e experiência do desenvolvedor (DX) como parte da equipe de plataforma</li><li>Atualização de projetos para Vue 3 e Nuxt 3</li><li>Migração de páginas para um projeto em Nuxt 3</li><li>Aumento de 74% na performance de uma página-chave</li></ul>"
