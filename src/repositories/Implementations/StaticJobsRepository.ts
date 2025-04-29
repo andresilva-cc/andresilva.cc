@@ -6,7 +6,7 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'career.seniorHealthyLabs.title',
         company: 'Healthy Labs',
-        startDate: new Date(2024, 3),
+        startDate: new Date(2025, 3),
         description: 'career.seniorHealthyLabs.description',
         technologies: [],
       },
@@ -14,7 +14,7 @@ export class StaticJobsRepository implements JobsRepository {
         title: 'career.seniorAtlas.title',
         company: 'Atlas Technologies',
         startDate: new Date(2024, 0),
-        endDate: new Date(2024, 3),
+        endDate: new Date(2025, 3),
         description: 'career.seniorAtlas.description',
         technologies: ['JavaScript', 'TypeScript', 'Vue.js', 'Pinia', 'Nuxt', 'Laravel', 'Vitest', 'Tailwind CSS', 'Storybook', 'SEO'],
       },
