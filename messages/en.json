@@ -19,6 +19,9 @@
     "bio": "<p>A software engineer with over 8 years of experience in web application development, with a strong background in <strong>problem-solving</strong>, <strong>adaptability</strong>, and driving solutions from <strong>start to finish</strong>.</p><p>Led and contributed to the development of applications for public and private companies across <strong>diverse sectors</strong>, using languages and tools such as TypeScript, Vue.js, Nuxt, PHP, Laravel, and Node.js. Takes <strong>ownership</strong> of solutions while <strong>collaborating effectively</strong> with teams, <strong>quickly adapting</strong> to new technologies and challenges.</p><p>Holds a <strong>BS in Computer Science</strong> and a specialization certificate in <strong>Technical Leadership</strong>.</p>",
     "downloadResume": "Download Resume"
   },
+  "articles": {
+    "title": "Articles"
+  },
   "career": {
     "title": "Career",
     "present": "Present",

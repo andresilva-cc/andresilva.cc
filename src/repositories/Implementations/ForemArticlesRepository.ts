@@ -3,7 +3,7 @@ import { ArticlesRepository, ArticlesRepositoryResponse } from '../ArticlesRepos
 
 export class ForemArticlesRepository implements ArticlesRepository {
   async getAll() {
-    const response = await ForemClient.get<Array<ArticlesRepositoryResponse>>('/articles/latest');
+    const response = await ForemClient.get<Array<ArticlesRepositoryResponse>>('/articles?username=andresilva-cc');
     return response.data;
   }
 
