@@ -5,7 +5,7 @@ export class StaticMenuRepository implements MenuRepository {
     return [
       { name: 'menu.home', path: '/', hideOnDesktop: true },
       { name: 'menu.about', path: '/about' },
-      { name: 'menu.articles', path: 'https://dev.to/andresilva-cc/' },
+      { name: 'menu.articles', path: '/articles', activeRegex: '^/article' },
       { name: 'menu.career', path: '/career' },
       { name: 'menu.projects', path: '/projects' },
     ];

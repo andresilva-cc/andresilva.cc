@@ -1,7 +1,8 @@
 export interface MenuRepositoryResponse {
   name: string
   path: string
-  hiddenOnDesktop?: boolean
+  activeRegex?: string
+  hideOnDesktop?: boolean
 }
 
 export interface MenuRepository {
