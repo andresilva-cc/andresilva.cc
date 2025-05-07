@@ -20,7 +20,12 @@
     "downloadResume": "Download Resume"
   },
   "articles": {
-    "title": "Articles"
+    "title": "Articles",
+    "englishOnly": "",
+    "readingTime": "{minutes} min read",
+    "comments": "{count, plural, =1 {# comment} other {# comments}}",
+    "reactions": "{count, plural, =1 {# reaction} other {# reactions}}",
+    "readOn": "Read on"
   },
   "career": {
     "title": "Career",

@@ -20,7 +20,12 @@
     "downloadResume": "Baixar Currículo"
   },
   "articles": {
-    "title": "Artigos"
+    "title": "Artigos",
+    "readingTime": "{minutes} min de leitura",
+    "comments": "{count, plural, =1 {# comentário} other {# comentários}}",
+    "reactions": "{count, plural, =1 {# reação} other {# reações}}",
+    "englishOnly": "Os artigos estão disponíveis apenas em inglês",
+    "readOn": "Leia em"
   },
   "career": {
     "title": "Carreira",
