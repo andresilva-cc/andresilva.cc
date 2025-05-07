@@ -21,8 +21,8 @@ export interface Article {
   published_at: string
   last_comment_at: string
   reading_time_minutes: number
-  tag_list: string
-  tags: Array<string>
+  tag_list: Array<string>
+  tags: string
   body_html: string
   body_markdown: string
   user: {
