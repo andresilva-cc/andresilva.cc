@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { usePathname } from '@/i18n/routing';
 import { Dialog, Transition } from '@headlessui/react';
@@ -9,12 +9,10 @@ import { List, X as CloseIcon } from '@phosphor-icons/react/dist/ssr/index';
 
 import { Button } from '@/components/Button';
 import { LinkButton } from '@/components/LinkButton';
+import type { MenuRepositoryResponse } from '@/repositories/MenuRepository';
 
 export interface MobileMenuProps {
-  items: Array<{
-    name: string
-    path: string
-  }>
+  items: Array<MenuRepositoryResponse>
   openMenuLabel: string
   closeMenuLabel: string
   className?: string
@@ -26,6 +24,13 @@ export function MobileMenu({
   const t = useTranslations();
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const currentPath = usePathname();
+
+  const menuItems = useMemo(() => items.map((item) => ({
+    ...item,
+    active: item.activeRegex
+      ? new RegExp(item.activeRegex).test(currentPath)
+      : item.path === currentPath,
+  })).filter((item) => !item.hideOnDesktop), [items, currentPath]);
 
   function toggleMenu() {
     setMenuVisibility(!isMenuVisible);
@@ -72,10 +77,10 @@ export function MobileMenu({
 
               <nav>
                 <ul className="flex flex-col gap-4">
-                  { items.map((item) => (
+                  { menuItems.map((item) => (
                     <li key={item.path}>
                       <LinkButton
-                        variant={currentPath === item.path ? 'default' : 'text'}
+                        variant={item.active ? 'default' : 'text'}
                         href={item.path}
                         onClick={() => toggleMenu()}
                       >
