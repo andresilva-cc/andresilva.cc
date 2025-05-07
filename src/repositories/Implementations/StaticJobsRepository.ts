@@ -8,7 +8,7 @@ export class StaticJobsRepository implements JobsRepository {
         company: 'Healthy Labs',
         startDate: new Date(2025, 3),
         description: 'career.seniorHealthyLabs.description',
-        technologies: [],
+        technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'React', 'TanStack', 'Tailwind CSS'],
       },
       {
         title: 'career.seniorAtlas.title',
