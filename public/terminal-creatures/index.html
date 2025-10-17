@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Creatures - Evolution Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TERMINAL CREATURES</h1>
+            <p class="subtitle">An ASCII Evolution Simulator</p>
+        </header>
+
+        <div class="main-content">
+            <div class="left-column">
+                <div class="canvas-container">
+                    <canvas id="worldCanvas"></canvas>
+                </div>
+
+                <div class="graph-container">
+                    <h2>Population Dynamics</h2>
+                    <canvas id="populationGraph"></canvas>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel stats-panel">
+                    <h2>Statistics</h2>
+                    <div class="stat-row prey-stat">
+                        <span class="stat-label">● Prey:</span>
+                        <span id="population" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row stat-secondary">
+                        <span class="stat-label">Gen:</span>
+                        <span id="generation" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row stat-secondary">
+                        <span class="stat-label">Peak:</span>
+                        <span id="peakPreyGeneration" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row predator-stat">
+                        <span class="stat-label">▲ Predators:</span>
+                        <span id="predators" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row stat-secondary">
+                        <span class="stat-label">Gen:</span>
+                        <span id="predatorGeneration" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row stat-secondary">
+                        <span class="stat-label">Peak:</span>
+                        <span id="peakPredatorGeneration" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Food:</span>
+                        <span id="food" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Tick:</span>
+                        <span id="tick" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <div class="panel controls-panel">
+                    <h2>Controls</h2>
+
+                    <div class="difficulty-selector">
+                        <label for="difficultySelect">Difficulty:</label>
+                        <select id="difficultySelect" class="difficulty-select">
+                            <option value="easy">🟢 Easy</option>
+                            <option value="normal" selected>🟡 Normal</option>
+                            <option value="hard">🔴 Hard</option>
+                        </select>
+                        <small class="difficulty-hint">Change requires reset</small>
+                    </div>
+
+                    <button id="playPauseBtn" class="btn btn-primary">▶ Play</button>
+                    <button id="resetBtn" class="btn">🔄 Reset</button>
+                    <button id="spawnFoodBtn" class="btn">🍎 Spawn Food</button>
+                    <button id="spawnPredatorsBtn" class="btn btn-danger">🔴 Spawn Predators</button>
+
+                    <div class="slider-group">
+                        <label for="speedSlider">Speed: <span id="speedValue">1x</span></label>
+                        <input type="range" id="speedSlider" min="0" max="6" value="2" step="1">
+                    </div>
+
+                    <div class="button-group">
+                        <button id="saveBtn" class="btn btn-small">💾 Save</button>
+                        <button id="loadBtn" class="btn btn-small">📂 Load</button>
+                    </div>
+                </div>
+
+                <div class="panel log-panel">
+                    <h2>Event Log</h2>
+                    <div id="eventLog" class="event-log">
+                        <div class="log-entry log-info">Simulation started...</div>
+                    </div>
+                    <button id="clearLogBtn" class="btn btn-small">Clear Log</button>
+                </div>
+
+                <div class="panel inspector-panel hidden" id="inspectorPanel">
+                    <h2>Creature Inspector</h2>
+                    <button id="closeInspector" class="btn btn-small" style="margin-bottom: 10px;">✕ Close</button>
+                    <div id="inspectorContent"></div>
+                </div>
+
+                <div class="panel info-panel">
+                    <h2>Legend</h2>
+                    <div class="legend-item">
+                        <span class="legend-symbol creature">●</span>
+                        <span>Prey</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-symbol predator">▲</span>
+                        <span>Predator</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-symbol food">*</span>
+                        <span>Food</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-symbol ground">.</span>
+                        <span>Ground</span>
+                    </div>
+
+                    <div class="info-text">
+                        <p><strong>How it works:</strong></p>
+                        <p>Prey (●) seek food and avoid predators. Predators (▲) hunt prey for energy. Both have neural networks that evolve over generations.</p>
+                        <p>Watch predator-prey cycles and evolutionary arms races emerge in real-time!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Extinction Modal -->
+    <div id="extinctionModal" class="modal hidden">
+        <div class="modal-content">
+            <button id="closeExtinctionModal" class="modal-close">✕</button>
+            <h2>💀 EXTINCTION EVENT 💀</h2>
+            <p>All creatures have died out!</p>
+            <p class="modal-stats">
+                <span>Final Generation: <strong id="finalGeneration">0</strong></span><br>
+                <span>Total Ticks: <strong id="finalTicks">0</strong></span>
+            </p>
+            <button id="resetFromExtinction" class="btn btn-primary">🔄 Start New Simulation</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
