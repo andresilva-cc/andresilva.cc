@@ -1,8 +1,6 @@
-import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
 import { HomeButton } from '@/components/HomeButton';
-import { LanguageButton } from '@/components/LanguageButton';
 import { DesktopMenu } from '@/components/DesktopMenu';
 import { MobileMenu } from '@/components/MobileMenu';
 import { useRepositories } from '@/hooks/useRepositories';
@@ -12,7 +10,6 @@ export interface HeaderProps {
 }
 
 export function Header({ className }: HeaderProps) {
-  const t = useTranslations();
   const { menuRepository } = useRepositories();
   const items = menuRepository.getAll();
 
@@ -25,8 +22,6 @@ export function Header({ className }: HeaderProps) {
     >
       <MobileMenu
         items={items}
-        openMenuLabel={t('common.openMenu')}
-        closeMenuLabel={t('common.closeMenu')}
         className="md:hidden"
       />
 
@@ -37,7 +32,7 @@ export function Header({ className }: HeaderProps) {
         className="hidden md:block mt-0 w-auto"
       />
 
-      <LanguageButton />
+      <div className="w-8" />
     </header>
   );
 }

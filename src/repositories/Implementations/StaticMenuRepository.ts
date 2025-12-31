@@ -3,11 +3,11 @@ import type { MenuRepository } from '../MenuRepository';
 export class StaticMenuRepository implements MenuRepository {
   getAll() {
     return [
-      { name: 'menu.home', path: '/', hideOnDesktop: true },
-      { name: 'menu.about', path: '/about' },
-      { name: 'menu.articles', path: '/articles', activeRegex: '^/article' },
-      { name: 'menu.career', path: '/career' },
-      { name: 'menu.projects', path: '/projects' },
+      { name: 'Home', path: '/', hideOnDesktop: true },
+      { name: 'About', path: '/about' },
+      { name: 'Articles', path: '/articles', activeRegex: '^/article' },
+      { name: 'Career', path: '/career' },
+      { name: 'Projects', path: '/projects' },
     ];
   }
 }

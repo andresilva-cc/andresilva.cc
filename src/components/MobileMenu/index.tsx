@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, Fragment, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from 'next/navigation';
 import { Dialog, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import { List, X as CloseIcon } from '@phosphor-icons/react/dist/ssr/index';
@@ -13,15 +12,12 @@ import type { MenuRepositoryResponse } from '@/repositories/MenuRepository';
 
 export interface MobileMenuProps {
   items: Array<MenuRepositoryResponse>
-  openMenuLabel: string
-  closeMenuLabel: string
   className?: string
 }
 
 export function MobileMenu({
-  items, openMenuLabel, closeMenuLabel, className,
+  items, className,
 }: MobileMenuProps) {
-  const t = useTranslations();
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const currentPath = usePathname();
 
@@ -41,7 +37,7 @@ export function MobileMenu({
       <Button
         variant="icon"
         className={clsx(className)}
-        aria-label={openMenuLabel}
+        aria-label="Open menu"
         onClick={() => toggleMenu()}
       >
         <List size={32} />
@@ -68,7 +64,7 @@ export function MobileMenu({
               <div className="flex border-b border-b-auxiliary-500 pb-4 mb-4">
                 <Button
                   variant="icon"
-                  aria-label={closeMenuLabel}
+                  aria-label="Close menu"
                   onClick={() => toggleMenu()}
                 >
                   <CloseIcon size={32} />
@@ -84,8 +80,7 @@ export function MobileMenu({
                         href={item.path}
                         onClick={() => toggleMenu()}
                       >
-                        { /* TODO: fix dynamic key type */ }
-                        { t(item.name as any) }
+                        { item.name }
                       </LinkButton>
                     </li>
                   ))}

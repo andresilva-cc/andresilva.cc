@@ -1,24 +1,15 @@
-import { useTranslations } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
 import clsx from 'clsx';
 
 import { Project } from '@/components/Project';
 import { Text } from '@/components/Text';
 import { useRepositories } from '@/hooks/useRepositories';
 
-export async function generateMetadata() {
-  const t = await getTranslations();
-
-  return {
-    title: `${t('projects.title')} | André Silva`,
-  };
-}
+export const metadata = {
+  title: 'Projects | Andre Silva',
+};
 
 export default function Projects() {
-  const t = useTranslations();
-
   const { projectsRepository } = useRepositories();
-
   const projects = projectsRepository.getAll();
 
   const featuredProjects = projects.filter((project) => project.featured);
@@ -29,10 +20,10 @@ export default function Projects() {
   return (
     <>
       <Text variant="h2-mono" element="h1">
-        { t('projects.title') }
+        Projects
       </Text>
       <Text variant="h3" element="h2" className="mt-8">
-        { t('projects.featuredProjects') }
+        Featured Projects
       </Text>
       <ul
         className={clsx(
@@ -42,10 +33,9 @@ export default function Projects() {
       >
         { featuredProjects.map((project) => (
           <li key={project.title} className="h-full">
-            { /* TODO: fix dynamic key type */ }
             <Project
-              title={t(project.title as any)}
-              description={t(project.description as any)}
+              title={project.title}
+              description={project.description}
               links={project.links}
               technologies={project.technologies}
               featured
@@ -54,7 +44,7 @@ export default function Projects() {
         )) }
       </ul>
       <Text variant="h3" element="h2" className="mt-8">
-        { t('projects.allProjects') }
+        All Projects
       </Text>
       <ul
         className={clsx(
@@ -64,10 +54,9 @@ export default function Projects() {
       >
         { allProjects.map((project) => (
           <li key={project.title}>
-            { /* TODO: fix dynamic key type */ }
             <Project
-              title={t(project.title as any)}
-              description={t(project.description as any)}
+              title={project.title}
+              description={project.description}
               links={project.links}
               technologies={project.technologies}
             />

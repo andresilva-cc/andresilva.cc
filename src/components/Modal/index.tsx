@@ -1,6 +1,5 @@
 import { ReactNode, Fragment } from 'react';
 import clsx from 'clsx';
-import { useTranslations } from 'next-intl';
 import { Dialog, Transition } from '@headlessui/react';
 import { X as CloseIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Button } from '@/components/Button';
@@ -17,8 +16,6 @@ export interface ModalProps {
 export function Modal({
   isOpen, onClose, title, children, className,
 }: ModalProps) {
-  const t = useTranslations();
-
   return (
     <Transition
       show={isOpen}
@@ -60,7 +57,7 @@ export function Modal({
               <Button
                 variant="icon"
                 className="ml-3"
-                aria-label={t('common.close')}
+                aria-label="Close"
                 onClick={() => onClose()}
               >
                 <CloseIcon size={16} weight="bold" />

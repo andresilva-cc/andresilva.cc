@@ -1,8 +1,10 @@
+import { ReactNode } from 'react';
+
 export interface JobsRepositoryResponse {
   title: string
   company: string
   startDate: Date
-  description: string
+  description: ReactNode
   technologies: Array<string>
 }
 

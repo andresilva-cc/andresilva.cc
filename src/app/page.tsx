@@ -1,9 +1,6 @@
-import { useTranslations } from 'next-intl';
 import { Text } from '@/components/Text';
 
 export default function Home() {
-  const t = useTranslations();
-
   return (
     <>
       <Text variant="h1" className="text-secondary-500 text-5xl md:text-6xl">
@@ -15,7 +12,7 @@ export default function Home() {
       </Text>
 
       <Text className="mt-8">
-        { t('home.bio') }
+        A software engineer with over 8 years of experience in web application development
       </Text>
     </>
   );

@@ -1,5 +1,5 @@
 import { ComponentProps, ReactNode } from 'react';
-import { Link } from '@/i18n/routing';
+import Link from 'next/link';
 import { Button, ButtonProps } from '@/components/Button';
 
 export interface LinkButtonProps extends ButtonProps, Partial<ComponentProps<typeof Link>> {

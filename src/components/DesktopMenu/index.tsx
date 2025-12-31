@@ -1,8 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useTranslations } from 'next-intl';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { LinkButton } from '@/components/LinkButton';
 import type { MenuRepositoryResponse } from '@/repositories/MenuRepository';
@@ -13,7 +12,6 @@ export interface DesktopMenuProps {
 }
 
 export function DesktopMenu({ items, className }: DesktopMenuProps) {
-  const t = useTranslations();
   const currentPath = usePathname();
 
   const menuItems = useMemo(() => items.map((item) => ({
@@ -32,8 +30,7 @@ export function DesktopMenu({ items, className }: DesktopMenuProps) {
               variant={item.active ? 'default' : 'text'}
               href={item.path}
             >
-              { /* TODO: fix dynamic key type */ }
-              { t(item.name as any) }
+              { item.name }
             </LinkButton>
           </li>
         ))}

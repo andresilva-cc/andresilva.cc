@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useFormatter, useTranslations } from 'next-intl';
 import { Chip } from '@/components/Chip';
 import { Link } from '@/components/Link';
 import { Text } from '@/components/Text';
@@ -20,20 +19,13 @@ export interface JobProps {
 export function Job({
   title, company, startDate, endDate = undefined, links = undefined, technologies, children,
 }: JobProps) {
-  const t = useTranslations();
-  const format = useFormatter();
-
-  const formattedStartDate = format.dateTime(startDate, {
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
-  }).replace('. de', '');
+  });
 
-  const formattedEndDate = endDate
-    ? format.dateTime(endDate, {
-      year: 'numeric',
-      month: 'short',
-    }).replace('. de', '')
-    : t('career.present');
+  const formattedStartDate = dateFormatter.format(startDate);
+  const formattedEndDate = endDate ? dateFormatter.format(endDate) : 'Present';
 
   return (
     <div className="md:grid md:grid-cols-job md:gap-8">

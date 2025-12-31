@@ -4,7 +4,6 @@ import {
 
 import { Text } from '@/components/Text';
 import type { Article as ArticleType } from '@/types/Article';
-import { useFormatter, useTranslations } from 'next-intl';
 import { Chip } from '../Chip';
 
 export interface ArticleProps {
@@ -20,12 +19,9 @@ export interface ArticleProps {
 export function Article({
   title, readingTime, publishedAt, commentsCount, reactionsCount, url, tags,
 }: ArticleProps) {
-  const t = useTranslations();
-
-  const format = useFormatter();
-  const formattedPublishedAt = format.dateTime(new Date(publishedAt), {
-    dateStyle: 'short',
-  });
+  const formattedPublishedAt = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+  }).format(new Date(publishedAt));
 
   return (
     <a
@@ -53,7 +49,7 @@ export function Article({
         <div className="flex gap-2 items-center">
           <Clock weight="bold" size={16} />
           <span className="hidden md:inline">
-            { t('articles.readingTime', { minutes: readingTime }) }
+            { `${readingTime} min read` }
           </span>
           <span className="md:hidden">
             { readingTime }
@@ -65,7 +61,7 @@ export function Article({
         <div className="flex gap-2 items-center">
           <ChatCircleDots weight="bold" size={16} />
           <span className="hidden md:inline">
-            { t('articles.comments', { count: commentsCount }) }
+            { commentsCount === 1 ? '1 comment' : `${commentsCount} comments` }
           </span>
           <span className="md:hidden">
             { commentsCount }
@@ -75,7 +71,7 @@ export function Article({
         <div className="flex gap-2 items-center">
           <Heart weight="bold" size={16} />
           <span className="hidden md:inline">
-            { t('articles.reactions', { count: reactionsCount }) }
+            { reactionsCount === 1 ? '1 reaction' : `${reactionsCount} reactions` }
           </span>
           <span className="md:hidden">
             { reactionsCount }
@@ -93,9 +89,7 @@ export function Article({
         variant="caption"
         className="flex gap-2 items-center mt-4 text-auxiliary-500 group-hover:translate-x-1 transition-transform"
       >
-        { t('articles.readOn') }
-        {' '}
-        dev.to
+        Read on dev.to
         <CaretDoubleRight weight="bold" size={14} />
       </Text>
     </a>
