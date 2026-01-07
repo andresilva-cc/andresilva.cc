@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Link as LinkIcon } from '@phosphor-icons/react/dist/ssr/index';
+import { LinkIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Text } from '@/components/text';
 
 export interface LinkProps extends React.HTMLProps<HTMLAnchorElement> {

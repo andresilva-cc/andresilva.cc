@@ -4,7 +4,7 @@ import { useState, Fragment, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { Dialog, Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { List, X as CloseIcon } from '@phosphor-icons/react/dist/ssr/index';
+import { ListIcon, XIcon } from '@phosphor-icons/react/dist/ssr/index';
 
 import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
@@ -40,7 +40,7 @@ export function MobileMenu({
         aria-label="Open menu"
         onClick={() => toggleMenu()}
       >
-        <List size={32} />
+        <ListIcon size={32} />
       </Button>
 
       <Transition
@@ -67,7 +67,7 @@ export function MobileMenu({
                   aria-label="Close menu"
                   onClick={() => toggleMenu()}
                 >
-                  <CloseIcon size={32} />
+                  <XIcon size={32} />
                 </Button>
               </div>
 

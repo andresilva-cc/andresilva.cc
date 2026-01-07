@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
-import { ArrowUpRight } from '@phosphor-icons/react/dist/ssr/index';
+import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Chip } from '@/components/chip';
 import { Link } from '@/components/link';
 import { Modal } from '@/components/modal';
@@ -33,7 +33,7 @@ export function Project({
       >
         { title }
         { links.length > 0 && (
-          <ArrowUpRight
+          <ArrowUpRightIcon
             weight="bold"
             size={16}
             className="inline-block ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"

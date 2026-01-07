@@ -1,7 +1,7 @@
 import { ReactNode, Fragment } from 'react';
 import clsx from 'clsx';
 import { Dialog, Transition } from '@headlessui/react';
-import { X as CloseIcon } from '@phosphor-icons/react/dist/ssr/index';
+import { XIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Button } from '@/components/button';
 import { Text } from '@/components/text';
 
@@ -60,7 +60,7 @@ export function Modal({
                 aria-label="Close"
                 onClick={() => onClose()}
               >
-                <CloseIcon size={16} weight="bold" />
+                <XIcon size={16} weight="bold" />
               </Button>
             </div>
 

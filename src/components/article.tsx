@@ -1,5 +1,5 @@
 import {
-  CalendarBlank, CaretDoubleRight, ChatCircleDots, Clock, Heart,
+  CalendarBlankIcon, CaretDoubleRightIcon, ChatCircleDotsIcon, ClockIcon, HeartIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
 import { Text } from '@/components/text';
@@ -42,12 +42,12 @@ export function Article({
         className="flex flex-wrap leading-[13px] gap-x-6 md:gap-x-8"
       >
         <div className="flex gap-2 items-center">
-          <CalendarBlank weight="bold" size={16} />
+          <CalendarBlankIcon weight="bold" size={16} />
           { formattedPublishedAt }
         </div>
 
         <div className="flex gap-2 items-center">
-          <Clock weight="bold" size={16} />
+          <ClockIcon weight="bold" size={16} />
           <span className="hidden md:inline">
             { `${readingTime} min read` }
           </span>
@@ -59,7 +59,7 @@ export function Article({
         </div>
 
         <div className="flex gap-2 items-center">
-          <ChatCircleDots weight="bold" size={16} />
+          <ChatCircleDotsIcon weight="bold" size={16} />
           <span className="hidden md:inline">
             { commentsCount === 1 ? '1 comment' : `${commentsCount} comments` }
           </span>
@@ -69,7 +69,7 @@ export function Article({
         </div>
 
         <div className="flex gap-2 items-center">
-          <Heart weight="bold" size={16} />
+          <HeartIcon weight="bold" size={16} />
           <span className="hidden md:inline">
             { reactionsCount === 1 ? '1 reaction' : `${reactionsCount} reactions` }
           </span>
@@ -90,7 +90,7 @@ export function Article({
         className="flex gap-2 items-center mt-4 text-auxiliary-500 group-hover:translate-x-1 transition-transform"
       >
         Read on dev.to
-        <CaretDoubleRight weight="bold" size={14} />
+        <CaretDoubleRightIcon weight="bold" size={14} />
       </Text>
     </a>
   );
