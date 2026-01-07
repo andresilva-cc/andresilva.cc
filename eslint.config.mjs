@@ -11,7 +11,6 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
-    '!.storybook',
   ]),
   stylistic.configs.customize({
     arrowParens: true,

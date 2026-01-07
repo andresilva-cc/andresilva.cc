@@ -3,8 +3,8 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 
 import { Text } from '@/components/Text';
+import { Chip } from '@/components/Chip';
 import type { Article as ArticleType } from '@/types/Article';
-import { Chip } from '../Chip';
 
 export interface ArticleProps {
   title: ArticleType['title'];

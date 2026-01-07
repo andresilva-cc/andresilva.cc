@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -31,16 +29,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@storybook/addon-essentials": "^8.4.1",
-    "@storybook/addon-interactions": "^8.4.1",
-    "@storybook/addon-links": "^8.4.1",
-    "@storybook/addon-onboarding": "^8.4.1",
-    "@storybook/blocks": "^8.4.1",
-    "@storybook/manager-api": "^8.4.1",
-    "@storybook/nextjs": "^8.4.1",
-    "@storybook/react": "^8.4.1",
-    "@storybook/test": "^8.4.1",
-    "@storybook/theming": "^8.4.1",
     "@stylistic/eslint-plugin": "^5.6.1",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -51,10 +39,8 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "eslint-plugin-storybook": "^0.10.2",
     "globals": "^17.0.0",
     "jiti": "^2.6.1",
-    "storybook": "^8.4.1",
     "tailwind-scrollbar": "^3.0.5",
     "typescript-eslint": "^8.52.0"
   },
