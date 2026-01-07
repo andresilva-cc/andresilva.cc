@@ -1,4 +1,4 @@
-import type { MenuRepository } from '../MenuRepository';
+import type { MenuRepository } from '../menu-repository';
 
 export class StaticMenuRepository implements MenuRepository {
   getAll() {

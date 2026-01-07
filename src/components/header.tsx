@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 
-import { HomeButton } from '@/components/HomeButton';
-import { DesktopMenu } from '@/components/DesktopMenu';
-import { MobileMenu } from '@/components/MobileMenu';
-import { useRepositories } from '@/hooks/useRepositories';
+import { HomeButton } from '@/components/home-button';
+import { DesktopMenu } from '@/components/desktop-menu';
+import { MobileMenu } from '@/components/mobile-menu';
+import { useRepositories } from '@/hooks/use-repositories';
 
 export interface HeaderProps {
   className?: string;

@@ -1,6 +1,6 @@
-import { Job } from '@/components/Job';
-import { Text } from '@/components/Text';
-import { useRepositories } from '@/hooks/useRepositories';
+import { Job } from '@/components/job';
+import { Text } from '@/components/text';
+import { useRepositories } from '@/hooks/use-repositories';
 
 export const metadata = {
   title: 'Career | Andre Silva',

@@ -3,8 +3,8 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import clsx from 'clsx';
 
 import '@/app/globals.css';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 import { firaCode, firaSans } from '@/app/fonts';
 
 export const metadata = {

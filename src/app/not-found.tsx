@@ -1,5 +1,5 @@
 import { SmileyXEyes } from '@phosphor-icons/react/dist/ssr/index';
-import { Text } from '@/components/Text';
+import { Text } from '@/components/text';
 
 export default function NotFound() {
   return (

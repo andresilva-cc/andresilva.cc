@@ -1,7 +1,7 @@
 import {
   Envelope, GithubLogo, LinkedinLogo, InstagramLogo,
 } from '@phosphor-icons/react/dist/ssr/index';
-import type { FooterRepository } from '../FooterRepository';
+import type { FooterRepository } from '../footer-repository';
 
 export class StaticFooterRepository implements FooterRepository {
   getAll() {

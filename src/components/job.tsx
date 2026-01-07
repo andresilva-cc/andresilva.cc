@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { Chip } from '@/components/Chip';
-import { Link } from '@/components/Link';
-import { Text } from '@/components/Text';
+import { Chip } from '@/components/chip';
+import { Link } from '@/components/link';
+import { Text } from '@/components/text';
 
 export interface JobProps {
   title: string;

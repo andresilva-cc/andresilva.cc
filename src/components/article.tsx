@@ -2,9 +2,9 @@ import {
   CalendarBlank, CaretDoubleRight, ChatCircleDots, Clock, Heart,
 } from '@phosphor-icons/react/dist/ssr';
 
-import { Text } from '@/components/Text';
-import { Chip } from '@/components/Chip';
-import type { Article as ArticleType } from '@/types/Article';
+import { Text } from '@/components/text';
+import { Chip } from '@/components/chip';
+import type { Article as ArticleType } from '@/types/article';
 
 export interface ArticleProps {
   title: ArticleType['title'];

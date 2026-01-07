@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { ArrowUpRight } from '@phosphor-icons/react/dist/ssr/index';
-import { Chip } from '@/components/Chip';
-import { Link } from '@/components/Link';
-import { Modal } from '@/components/Modal';
-import { Text } from '@/components/Text';
-import type { Project as ProjectType } from '@/types/Project';
+import { Chip } from '@/components/chip';
+import { Link } from '@/components/link';
+import { Modal } from '@/components/modal';
+import { Text } from '@/components/text';
+import type { Project as ProjectType } from '@/types/project';
 
 export interface ProjectProps extends ProjectType {}
 

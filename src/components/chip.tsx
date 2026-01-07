@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Text } from '@/components/Text';
+import { Text } from '@/components/text';
 
 export interface ChipProps {
   children: ReactNode;

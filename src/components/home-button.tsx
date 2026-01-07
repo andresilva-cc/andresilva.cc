@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
-import { LinkButton } from '@/components/LinkButton';
+import { LinkButton } from '@/components/link-button';
 
 export function HomeButton() {
   const [count, setCount] = useState(0);

@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 
-import { Project } from '@/components/Project';
-import { Text } from '@/components/Text';
-import { useRepositories } from '@/hooks/useRepositories';
+import { Project } from '@/components/project';
+import { Text } from '@/components/text';
+import { useRepositories } from '@/hooks/use-repositories';
 
 export const metadata = {
   title: 'Projects | Andre Silva',

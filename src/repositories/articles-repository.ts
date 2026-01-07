@@ -1,4 +1,4 @@
-import { Article } from '@/types/Article';
+import { Article } from '@/types/article';
 
 export interface ArticlesRepositoryResponse extends Article {}
 

@@ -1,5 +1,5 @@
 import { ForemClient } from '@/api/forem';
-import { ArticlesRepository, ArticlesRepositoryResponse } from '../ArticlesRepository';
+import { ArticlesRepository, ArticlesRepositoryResponse } from '../articles-repository';
 
 export class ForemArticlesRepository implements ArticlesRepository {
   async getAll() {

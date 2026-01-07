@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import clsx from 'clsx';
 import { Slot } from '@radix-ui/react-slot';
-import { Text } from '@/components/Text';
+import { Text } from '@/components/text';
 
 const variants = {
   default: 'text-gray-950 bg-primary-500 hover:bg-primary-400 active:bg-primary-300 focus:outline-primary-500',

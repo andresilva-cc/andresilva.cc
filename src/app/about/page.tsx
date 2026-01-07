@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-import { Text } from '@/components/Text';
-import { LinkButton } from '@/components/LinkButton';
+import { Text } from '@/components/text';
+import { LinkButton } from '@/components/link-button';
 
 export const metadata = {
   title: 'About | Andre Silva',

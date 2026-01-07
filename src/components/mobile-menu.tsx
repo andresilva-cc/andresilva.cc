@@ -6,9 +6,9 @@ import { Dialog, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import { List, X as CloseIcon } from '@phosphor-icons/react/dist/ssr/index';
 
-import { Button } from '@/components/Button';
-import { LinkButton } from '@/components/LinkButton';
-import type { MenuRepositoryResponse } from '@/repositories/MenuRepository';
+import { Button } from '@/components/button';
+import { LinkButton } from '@/components/link-button';
+import type { MenuRepositoryResponse } from '@/repositories/menu-repository';
 
 export interface MobileMenuProps {
   items: Array<MenuRepositoryResponse>;

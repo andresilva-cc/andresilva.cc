@@ -1,4 +1,4 @@
-import type { ProjectsRepository } from '../ProjectsRepository';
+import type { ProjectsRepository } from '../projects-repository';
 
 export class StaticProjectsRepository implements ProjectsRepository {
   getAll() {

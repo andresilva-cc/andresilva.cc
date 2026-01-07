@@ -1,4 +1,4 @@
-import type { JobsRepository } from '../JobsRepository';
+import type { JobsRepository } from '../jobs-repository';
 
 export class StaticJobsRepository implements JobsRepository {
   getAll() {

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { LinkButton } from '@/components/LinkButton';
-import { useRepositories } from '@/hooks/useRepositories';
+import { LinkButton } from '@/components/link-button';
+import { useRepositories } from '@/hooks/use-repositories';
 
 export interface FooterProps {
   className?: string;

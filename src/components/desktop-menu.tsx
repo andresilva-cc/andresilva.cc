@@ -3,8 +3,8 @@
 import { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { LinkButton } from '@/components/LinkButton';
-import type { MenuRepositoryResponse } from '@/repositories/MenuRepository';
+import { LinkButton } from '@/components/link-button';
+import type { MenuRepositoryResponse } from '@/repositories/menu-repository';
 
 export interface DesktopMenuProps {
   items: Array<MenuRepositoryResponse>;

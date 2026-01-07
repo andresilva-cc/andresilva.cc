@@ -1,6 +1,6 @@
-import { Article } from '@/components/Article';
-import { Text } from '@/components/Text';
-import { useRepositories } from '@/hooks/useRepositories';
+import { Article } from '@/components/article';
+import { Text } from '@/components/text';
+import { useRepositories } from '@/hooks/use-repositories';
 
 export const metadata = {
   title: 'Articles | Andre Silva',

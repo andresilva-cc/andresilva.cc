@@ -1,4 +1,4 @@
-import { Project } from '@/types/Project';
+import { Project } from '@/types/project';
 
 export interface ProjectsRepositoryResponse extends Project {}
 
