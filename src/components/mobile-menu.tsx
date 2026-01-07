@@ -2,7 +2,7 @@
 
 import { useState, Fragment, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
 import clsx from 'clsx';
 import { ListIcon, XIcon } from '@phosphor-icons/react/dist/ssr/index';
 
@@ -51,7 +51,7 @@ export function MobileMenu({
           className="w-screen h-screen fixed left-0 top-0"
           onClose={() => toggleMenu()}
         >
-          <Transition.Child
+          <TransitionChild
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="-translate-y-full"
@@ -60,7 +60,7 @@ export function MobileMenu({
             leaveFrom="translate-x-0"
             leaveTo="-translate-y-full"
           >
-            <Dialog.Panel className="bg-gray-950 p-4 absolute h-screen w-screen">
+            <DialogPanel className="bg-gray-950 p-4 absolute h-screen w-screen">
               <div className="flex border-b border-b-auxiliary-500 pb-4 mb-4">
                 <Button
                   variant="icon"
@@ -86,8 +86,8 @@ export function MobileMenu({
                   ))}
                 </ul>
               </nav>
-            </Dialog.Panel>
-          </Transition.Child>
+            </DialogPanel>
+          </TransitionChild>
         </Dialog>
       </Transition>
     </>
