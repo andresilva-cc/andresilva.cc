@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-
 import { Meta, StoryObj } from '@storybook/react';
 // @ts-ignore
 import { useArgs } from '@storybook/preview-api';

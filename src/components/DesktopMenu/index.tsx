@@ -7,8 +7,8 @@ import { LinkButton } from '@/components/LinkButton';
 import type { MenuRepositoryResponse } from '@/repositories/MenuRepository';
 
 export interface DesktopMenuProps {
-  items: Array<MenuRepositoryResponse>
-  className?: string
+  items: Array<MenuRepositoryResponse>;
+  className?: string;
 }
 
 export function DesktopMenu({ items, className }: DesktopMenuProps) {

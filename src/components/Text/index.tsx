@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, type JSX } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 
 const variants = {
-  h1: {
+  'h1': {
     element: 'h1',
     classes: 'font-mono font-bold text-6xl',
   },
@@ -15,11 +15,11 @@ const variants = {
     element: 'h2',
     classes: 'font-mono font-semibold text-2xl uppercase',
   },
-  h3: {
+  'h3': {
     element: 'h3',
     classes: 'font-sans font-medium text-base',
   },
-  button: {
+  'button': {
     element: 'span',
     classes: 'font-mono font-bold text-base uppercase',
   },
@@ -35,18 +35,18 @@ const variants = {
     element: 'p',
     classes: 'font-sans font-normal text-xs',
   },
-  caption: {
+  'caption': {
     element: 'span',
     classes: 'font-mono font-normal text-xs uppercase',
   },
 };
 
 export interface TextProps {
-  variant?: keyof typeof variants
-  element?: keyof JSX.IntrinsicElements
-  children: ReactNode
-  asChild?: boolean
-  className?: string
+  variant?: keyof typeof variants;
+  element?: keyof JSX.IntrinsicElements;
+  children: ReactNode;
+  asChild?: boolean;
+  className?: string;
 }
 
 export function Text({

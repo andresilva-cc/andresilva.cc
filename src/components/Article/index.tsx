@@ -7,13 +7,13 @@ import type { Article as ArticleType } from '@/types/Article';
 import { Chip } from '../Chip';
 
 export interface ArticleProps {
-  title: ArticleType['title']
-  publishedAt: ArticleType['published_at']
-  readingTime: ArticleType['reading_time_minutes']
-  commentsCount: ArticleType['comments_count']
-  reactionsCount: ArticleType['public_reactions_count']
-  url: ArticleType['url']
-  tags: ArticleType['tag_list']
+  title: ArticleType['title'];
+  publishedAt: ArticleType['published_at'];
+  readingTime: ArticleType['reading_time_minutes'];
+  commentsCount: ArticleType['comments_count'];
+  reactionsCount: ArticleType['public_reactions_count'];
+  url: ArticleType['url'];
+  tags: ArticleType['tag_list'];
 }
 
 export function Article({

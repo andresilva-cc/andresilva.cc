@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { Button, ButtonProps } from '@/components/Button';
 
 export interface LinkButtonProps extends ButtonProps, Partial<ComponentProps<typeof Link>> {
-  href: string
-  children: ReactNode
-  onClick?: () => any
+  href: string;
+  children: ReactNode;
+  onClick?: () => any;
 }
 
 export function LinkButton({

@@ -4,16 +4,16 @@ import { Link } from '@/components/Link';
 import { Text } from '@/components/Text';
 
 export interface JobProps {
-  title: string
-  company: string
-  startDate: Date
-  endDate?: Date
+  title: string;
+  company: string;
+  startDate: Date;
+  endDate?: Date;
   links?: Array<{
-    name: string,
-    url: string
-  }>
-  technologies: Array<string>
-  children: ReactNode
+    name: string;
+    url: string;
+  }>;
+  technologies: Array<string>;
+  children: ReactNode;
 }
 
 export function Job({

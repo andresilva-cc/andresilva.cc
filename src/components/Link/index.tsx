@@ -3,8 +3,8 @@ import { Link as LinkIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Text } from '@/components/Text';
 
 export interface LinkProps extends React.HTMLProps<HTMLAnchorElement> {
-  href: string
-  children: ReactNode
+  href: string;
+  children: ReactNode;
 }
 
 export function Link({ href, children, ...props }: LinkProps) {

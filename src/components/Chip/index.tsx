@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Text } from '@/components/Text';
 
 export interface ChipProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function Chip({ children }: ChipProps) {

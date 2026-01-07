@@ -6,11 +6,11 @@ import { Button } from '@/components/Button';
 import { Text } from '@/components/Text';
 
 export interface ModalProps {
-  isOpen: boolean
-  onClose: () => void
-  title: ReactNode
-  children: ReactNode
-  className?: string
+  isOpen: boolean;
+  onClose: () => void;
+  title: ReactNode;
+  children: ReactNode;
+  className?: string;
 }
 
 export function Modal({

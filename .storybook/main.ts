@@ -21,7 +21,6 @@ const config: StorybookConfig = {
 
   webpackFinal: async (webpackConfig) => {
     if (webpackConfig.resolve) {
-      // eslint-disable-next-line no-param-reassign
       webpackConfig.resolve.alias = {
         ...webpackConfig.resolve.alias,
         '@': path.resolve(__dirname, '../src/'),

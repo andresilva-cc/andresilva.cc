@@ -10,11 +10,11 @@ const variants = {
 };
 
 export interface ButtonProps {
-  variant?: keyof typeof variants
-  children: ReactNode
-  asChild?: boolean
-  className?: string
-  onClick?: () => void
+  variant?: keyof typeof variants;
+  children: ReactNode;
+  asChild?: boolean;
+  className?: string;
+  onClick?: () => void;
 }
 
 export function Button({

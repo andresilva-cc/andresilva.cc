@@ -6,7 +6,7 @@ import { MobileMenu } from '@/components/MobileMenu';
 import { useRepositories } from '@/hooks/useRepositories';
 
 export interface HeaderProps {
-  className?: string
+  className?: string;
 }
 
 export function Header({ className }: HeaderProps) {

@@ -7,6 +7,7 @@ export const metadata = {
 };
 
 export default async function Articles() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { articlesRepository } = useRepositories();
   const articles = await articlesRepository.getAll();
 

@@ -3,7 +3,7 @@ import { LinkButton } from '@/components/LinkButton';
 import { useRepositories } from '@/hooks/useRepositories';
 
 export interface FooterProps {
-  className?: string
+  className?: string;
 }
 
 export function Footer({ className }: FooterProps) {
