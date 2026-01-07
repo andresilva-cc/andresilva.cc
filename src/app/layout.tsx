@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
+import { cookies } from 'next/headers';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import clsx from 'clsx';
 
-import '@/app/globals.css';
+import '@/styles/globals.css';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { firaCode, firaSans } from '@/app/fonts';
@@ -12,13 +13,16 @@ export const metadata = {
   description: 'A software engineer with over 8 years of experience in web application development',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get('theme')?.value;
+
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" data-theme={theme}>
       <body
         className={clsx(
           firaSans.variable,

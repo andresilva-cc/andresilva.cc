@@ -4,7 +4,7 @@ import { Text } from '@/components/text';
 import { LinkButton } from '@/components/link-button';
 
 export const metadata = {
-  title: 'About | Andre Silva',
+  title: 'About | André Silva',
 };
 
 export default function About() {

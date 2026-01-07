@@ -3,7 +3,7 @@ import { Text } from '@/components/text';
 import { useRepositories } from '@/hooks/use-repositories';
 
 export const metadata = {
-  title: 'Articles | Andre Silva',
+  title: 'Articles | André Silva',
 };
 
 export default async function Articles() {

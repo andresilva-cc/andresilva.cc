@@ -3,7 +3,7 @@ import { Text } from '@/components/text';
 import { useRepositories } from '@/hooks/use-repositories';
 
 export const metadata = {
-  title: 'Career | Andre Silva',
+  title: 'Career | André Silva',
 };
 
 export default function Career() {

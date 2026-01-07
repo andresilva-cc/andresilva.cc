@@ -5,7 +5,7 @@ import { Text } from '@/components/text';
 import { useRepositories } from '@/hooks/use-repositories';
 
 export const metadata = {
-  title: 'Projects | Andre Silva',
+  title: 'Projects | André Silva',
 };
 
 export default function Projects() {

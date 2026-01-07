@@ -1,0 +1,20 @@
+:root,
+[data-theme='default'] {
+  --color-black: #000;
+
+  --color-gray-200: #f6f5fa;
+  --color-gray-900: #2f2b42;
+  --color-gray-950: #232032;
+
+  --color-primary-300: #b0a2f6;
+  --color-primary-400: #a190f4;
+  --color-primary-500: #9b7ef2;
+
+  --color-secondary-300: #ffc65c;
+  --color-secondary-400: #ffbf47;
+  --color-secondary-500: #ffb633;
+
+  --color-auxiliary-300: #c2bddb;
+  --color-auxiliary-400: #b6b0d4;
+  --color-auxiliary-500: #aaa3cc;
+}

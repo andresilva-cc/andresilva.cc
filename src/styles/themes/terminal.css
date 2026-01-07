@@ -1,0 +1,48 @@
+[data-theme='terminal'] {
+  --color-black: #000000;
+
+  --color-gray-200: #ffffff;
+  --color-gray-900: #000000;
+  --color-gray-950: #000000;
+
+  --color-primary-300: #99ff99;
+  --color-primary-400: #66ff66;
+  --color-primary-500: #00ff00;
+
+  --color-secondary-300: #99ff99;
+  --color-secondary-400: #66ff66;
+  --color-secondary-500: #00ff00;
+
+  --color-auxiliary-300: #c1c1c1;
+  --color-auxiliary-400: #adadad;
+  --color-auxiliary-500: #999999;
+}
+
+[data-theme='terminal'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    transparent 0px,
+    rgba(0, 0, 0, 0.3) 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+[data-theme='terminal'] body {
+  text-shadow: 0 0 3px currentColor;
+}
+
+[data-theme='terminal'] strong,
+[data-theme='terminal'] h1,
+[data-theme='terminal'] h2,
+[data-theme='terminal'] h3 {
+  text-shadow: 0 0 6px currentColor;
+}
+
+[data-theme='terminal'] button,
+[data-theme='terminal'] a {
+  text-shadow: none;
+}
