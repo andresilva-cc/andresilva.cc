@@ -1,5 +1,4 @@
-:root,
-[data-theme='default'] {
+:root[data-theme='default'] {
   --color-black: #000;
 
   --color-gray-200: #f6f5fa;

@@ -1,4 +1,4 @@
-[data-theme='terminal'] {
+:root[data-theme='terminal'] {
   --color-black: #000000;
 
   --color-gray-200: #ffffff;
