@@ -1,0 +1,19 @@
+:root[data-theme='dracula'] {
+  --color-black: #000;
+
+  --color-gray-200: #F8F8F2;
+  --color-gray-900: #282A36;
+  --color-gray-950: #20212b;
+
+  --color-primary-300: #caa8fa;
+  --color-primary-400: #c39df9;
+  --color-primary-500: #bd93f9;
+
+  --color-secondary-300: #ffcd98;
+  --color-secondary-400: #ffc689;
+  --color-secondary-500: #ffb86c;
+
+  --color-auxiliary-300: #818eb6;
+  --color-auxiliary-400: #7180ad;
+  --color-auxiliary-500: #6272a4;
+}

@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './themes/default.css';
+@import './themes/dracula.css';
 @import './themes/terminal.css';
 
 @theme inline {
