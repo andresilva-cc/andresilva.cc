@@ -5,6 +5,7 @@ export class StaticThemeRepository implements ThemeRepository {
     return [
       { id: 'default', name: 'Default' },
       { id: 'dracula', name: 'Dracula' },
+      { id: 'monokai', name: 'Monokai' },
       { id: 'terminal', name: 'Terminal' },
     ];
   }

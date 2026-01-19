@@ -1,0 +1,19 @@
+:root[data-theme='monokai'] {
+  --color-black: #000;
+
+  --color-gray-200: #fdfff1;
+  --color-gray-900: #272822;
+  --color-gray-950: #1f201b;
+
+  --color-primary-300: #84e0f2;
+  --color-primary-400: #75dcf0;
+  --color-primary-500: #66d9ef;
+
+  --color-secondary-300: #b7e757;
+  --color-secondary-400: #aee442;
+  --color-secondary-500: #a6e22e;
+
+  --color-auxiliary-300: #8b8c84;
+  --color-auxiliary-400: #7c7e75;
+  --color-auxiliary-500: #6e7066;
+}
