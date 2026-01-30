@@ -7,8 +7,15 @@ export class StaticJobsRepository implements JobsRepository {
         title: 'Senior Engineer',
         company: 'Healthy Labs',
         startDate: new Date(2025, 3),
-        description: null,
-        technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'React', 'TanStack', 'Tailwind CSS'],
+        description: (
+          <ul>
+            <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
+            <li>Built a preview orchestration server using WebSockets and Docker for instant CMS previews without deployment</li>
+            <li>Built core modules of an in-browser devtools panel for debugging page state, form values, and block rendering</li>
+            <li>Implemented lead compliance integrations (TrustedForm, Jornaya) across CMS and consumer-facing platforms</li>
+          </ul>
+        ),
+        technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'React', 'TanStack', 'Tailwind CSS', 'AI SDK'],
       },
       {
         title: 'Senior Front-end Engineer',
@@ -67,7 +74,7 @@ export class StaticJobsRepository implements JobsRepository {
               for a platform with over 20 million monthly visits
             </li>
             <li>Deployed and monitored front-end tasks in production</li>
-            <li>Contributed with code reviews across multiple teams</li>
+            <li>Contributed to code reviews across multiple teams</li>
             <li>Tracked and organized tasks in Jira using Scrum</li>
           </ul>
         ),
@@ -89,8 +96,7 @@ export class StaticJobsRepository implements JobsRepository {
             <li>Planned, developed, and deployed web and mobile applications</li>
             <li>Contributed to the execution of IT infrastructure projects</li>
             <li>
-              Developed a plugin that integrates Spotify&apos;s SDK
-              into NativeScript using TypeScript
+              Developed a NativeScript plugin integrating Spotify&apos;s SDK using TypeScript
             </li>
           </ul>
         ),
