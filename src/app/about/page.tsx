@@ -17,25 +17,27 @@ export default function About() {
         </Text>
         <Text element="div" className="mt-4 [&>p]:mb-2">
           <p>
-            A software engineer with over 8 years of experience in web application development,
-            with a strong background in
+            Software engineer with
             {' '}
-            <strong>problem-solving</strong>
+            <strong>8+ years of experience</strong>
+            {' '}
+            building
+            {' '}
+            <strong>web platforms</strong>
             ,
             {' '}
-            <strong>adaptability</strong>
-            , and driving solutions from
+            <strong>internal tools</strong>
+            , and
             {' '}
-            <strong>start to finish</strong>
-            .
+            <strong>developer tooling</strong>
+            . Works
+            {' '}
+            <strong>end-to-end</strong>
+            {' '}
+            — from architecture and infrastructure to product features and integrations.
           </p>
           <p>
-            Led and contributed to the development of applications for public and private
-            companies across
-            {' '}
-            <strong>diverse sectors</strong>
-            , using languages and tools such as TypeScript,
-            Vue.js, Nuxt, PHP, Laravel, and Node.js. Takes
+            Primarily works with TypeScript, Vue.js, Nuxt, React, and Node.js. Takes
             {' '}
             <strong>ownership</strong>
             {' '}

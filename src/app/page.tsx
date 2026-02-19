@@ -12,7 +12,7 @@ export default function Home() {
       </Text>
 
       <Text className="mt-8">
-        A software engineer with over 8 years of experience in web application development
+        Software engineer with 8+ years of experience building web platforms, internal tools, and developer tooling
       </Text>
     </>
   );
