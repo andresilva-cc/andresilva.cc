@@ -5,7 +5,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
     return [
       {
         title: 'Calcloak',
-        description: 'Calendar privacy for professionals — syncs personal calendar events as busy blocks to your work calendar without exposing details',
+        description: 'Syncs personal calendar events as busy blocks to work calendars',
         links: [{ url: 'https://calcloak.com/' }],
         featured: true,
         technologies: ['TypeScript', 'React', 'Node.js', 'Tailwind CSS'],
@@ -21,7 +21,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
         title: 'CustomBurger',
         description: 'A small project where you can build your own burger',
         links: [{ url: 'https://customburger.andresilva.cc/' }],
-        featured: true,
+        featured: false,
         technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'Tailwind CSS'],
       },
       {
