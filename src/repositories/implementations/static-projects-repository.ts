@@ -4,6 +4,16 @@ export class StaticProjectsRepository implements ProjectsRepository {
   getAll() {
     return [
       {
+        title: 'Grafex',
+        description: 'Images as Code. Write JSX, export PNG',
+        links: [
+          { name: 'Website', url: 'https://grafex.dev/' },
+          { name: 'GitHub', url: 'https://github.com/grafex-dev/grafex' },
+        ],
+        featured: true,
+        technologies: ['TypeScript', 'Playwright', 'esbuild'],
+      },
+      {
         title: 'Calcloak',
         description: 'Syncs personal calendar events as busy blocks to work calendars',
         links: [{ url: 'https://calcloak.com/' }],
@@ -14,7 +24,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
         title: 'andresilva.cc',
         description: 'The personal website that you are seeing right now',
         links: [{ url: 'https://github.com/andresilva-cc/andresilva.cc' }],
-        featured: true,
+        featured: false,
         technologies: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS'],
       },
       {
