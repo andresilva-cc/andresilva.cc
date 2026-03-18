@@ -11,7 +11,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
           { name: 'GitHub', url: 'https://github.com/grafex-dev/grafex' },
         ],
         featured: true,
-        technologies: ['TypeScript', 'Playwright', 'esbuild'],
+        technologies: ['TypeScript', 'Node.js'],
       },
       {
         title: 'Calcloak',
