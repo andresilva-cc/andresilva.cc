@@ -10,7 +10,7 @@ import { firaCode, firaSans } from '@/app/fonts';
 
 export const metadata = {
   title: 'André Silva',
-  description: 'Software engineer with 8+ years of experience building web platforms, internal tools, and developer tooling',
+  description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling',
 };
 
 export default async function RootLayout({

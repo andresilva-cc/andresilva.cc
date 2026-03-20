@@ -19,7 +19,7 @@ export default function About() {
           <p>
             Software engineer with
             {' '}
-            <strong>8+ years of experience</strong>
+            <strong>9+ years of experience</strong>
             {' '}
             building
             {' '}
