@@ -5,7 +5,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
     return [
       {
         title: 'Grafex',
-        description: 'Images as Code. Write JSX, export PNG',
+        description: 'Images as Code. Write JSX, export as images',
         links: [
           { name: 'Website', url: 'https://grafex.dev/' },
           { name: 'GitHub', url: 'https://github.com/grafex-dev/grafex' },
