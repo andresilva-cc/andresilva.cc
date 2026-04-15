@@ -5,15 +5,18 @@ export class StaticJobsRepository implements JobsRepository {
     return [
       {
         title: 'Senior Engineer',
-        company: 'Healthy Labs',
+        company: 'MPA',
         startDate: new Date(2025, 3),
         description: (
-          <ul>
-            <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
-            <li>Built a preview orchestration server using WebSockets and Docker for instant CMS previews without deployment</li>
-            <li>Built core modules of an in-browser devtools panel for debugging page state, form values, and block rendering</li>
-            <li>Implemented lead compliance integrations (TrustedForm, Jornaya) across CMS and consumer-facing platforms</li>
-          </ul>
+          <>
+            <p className="text-auxiliary-500 mb-2">Formerly Healthy Labs</p>
+            <ul>
+              <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
+              <li>Built a preview orchestration server using WebSockets and Docker for instant CMS previews without deployment</li>
+              <li>Built core modules of an in-browser devtools panel for debugging page state, form values, and block rendering</li>
+              <li>Implemented lead compliance integrations (TrustedForm, Jornaya) across CMS and consumer-facing platforms</li>
+            </ul>
+          </>
         ),
         technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'React', 'TanStack', 'Tailwind CSS', 'AI SDK'],
       },
