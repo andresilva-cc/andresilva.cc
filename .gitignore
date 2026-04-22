@@ -33,3 +33,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent pipeline (ephemeral)
+.reviews/*
+!.reviews/.gitkeep
+.reports/*
+!.reports/.gitkeep
