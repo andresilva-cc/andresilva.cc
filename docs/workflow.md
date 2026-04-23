@@ -310,7 +310,7 @@ Each review type gets its own dedicated agent instance — NEVER combine multipl
 - After completion: orchestrator must read the actual file and verify new layouts/tokens are present — do not rely on the agent's summary
 
 **UI/UX Designer** (design exploration — major redesign):
-- Tell it to read `docs/agents/ui-ux-designer.md` for the full design exploration process
+- Tell it to read `docs/agents/ui-ux-designer/ui-ux-designer.md` for the full design exploration process
 - Tell it to produce 5+ distinct design options with HTML preview pages
 - After completion: orchestrator must review previews via Chrome DevTools screenshots before presenting to user
 

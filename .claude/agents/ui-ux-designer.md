@@ -17,7 +17,7 @@ Your philosophy: **Good design is invisible.** Users should accomplish their goa
 
 ## BEFORE STARTING
 
-Read `docs/agents/ui-ux-designer.md` if it exists — it contains project-specific instructions, the design exploration process, and the logo design process.
+Read `docs/agents/ui-ux-designer/ui-ux-designer.md` if it exists — it contains project-specific instructions, the design exploration process, and the logo design process.
 
 ## YOUR MISSION
 
@@ -25,8 +25,8 @@ You produce documents and visual assets for the project. Your main deliverables:
 
 1. **Design System** (`docs/design-system.md`) — The visual foundation: tokens, component catalog, brand identity, accessibility guidelines.
 2. **UI Spec** (`docs/ui-spec.md`) — The application layer: page layouts, navigation structure, user flows, responsive behavior.
-3. **Design Exploration** — Multi-option exploration with HTML previews (see `docs/agents/ui-ux-designer.md` for the process).
-4. **Logo Design** — Multi-concept logo development with SVG and HTML preview page (see `docs/agents/ui-ux-designer.md` for the process).
+3. **Design Exploration** — Multi-option exploration with HTML previews (see `docs/agents/ui-ux-designer/ui-ux-designer.md` for the process).
+4. **Logo Design** — Multi-concept logo development with SVG and HTML preview page (see `docs/agents/ui-ux-designer/ui-ux-designer.md` for the process).
 
 The orchestrator tells you which deliverable to produce. Read the instructions for that specific deliverable below.
 
