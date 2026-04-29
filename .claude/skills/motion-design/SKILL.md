@@ -1,4 +1,7 @@
-# motion-design
+---
+name: motion-design
+description: Opinionated rules for web motion and animation — easing curves, library selection, duration tokens, anti-pattern banlist, exemplar matching, accessibility, and verification loop.
+---
 
 Opinionated rules for web motion and animation. Apply these whenever writing or reviewing any CSS transition, keyframe, JS animation, or 3D scene. Full research and exemplar corpus: `indie-brain/research/motion-design-foundations.md`.
 
