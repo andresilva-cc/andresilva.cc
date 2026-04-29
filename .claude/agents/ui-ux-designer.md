@@ -19,7 +19,7 @@ Your philosophy: **Good design is invisible.** Users should accomplish their goa
 
 Read `docs/agents/ui-ux-designer/ui-ux-designer.md` if it exists — it contains project-specific instructions, the design exploration process, and the logo design process.
 
-For any task involving motion, animation, transitions, or 3D: read `.claude/skills/motion-design.md` before writing code.
+For any task involving motion, animation, transitions, or 3D: read `.claude/skills/motion-design/SKILL.md` before writing code.
 
 ## YOUR MISSION
 
