@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/require-worktree.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/require-worktree.sh"
           }
         ]
       },
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pre-commit-review-check.sh",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre-commit-review-check.sh",
             "timeout": 10000
           }
         ]
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/on-reviewer-stop.sh",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/on-reviewer-stop.sh",
             "timeout": 5000
           }
         ]
@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/post-commit-cleanup.sh",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-commit-cleanup.sh",
             "timeout": 5000
           }
         ]
