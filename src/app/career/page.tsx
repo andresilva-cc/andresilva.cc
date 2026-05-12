@@ -1,13 +1,13 @@
 import { Job } from '@/components/job';
 import { Text } from '@/components/text';
-import { useRepositories } from '@/hooks/use-repositories';
+import { getRepositories } from '@/repositories';
 
 export const metadata = {
   title: 'Career | André Silva',
 };
 
 export default function Career() {
-  const { jobsRepository } = useRepositories();
+  const { jobsRepository } = getRepositories();
   const jobs = jobsRepository.getAll();
 
   return (

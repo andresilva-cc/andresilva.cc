@@ -2,7 +2,7 @@ import clsx from 'clsx';
 
 import { Wordmark } from '@/components/wordmark';
 import { Nav } from '@/components/nav';
-import { useRepositories } from '@/hooks/use-repositories';
+import { getRepositories } from '@/repositories';
 
 export interface HeaderProps {
   className?: string;
@@ -16,7 +16,7 @@ export interface HeaderProps {
  * mobile pass and docs/architecture.md §"Mobile menu mechanism".
  */
 export function Header({ className }: HeaderProps) {
-  const { menuRepository } = useRepositories();
+  const { menuRepository } = getRepositories();
   const items = menuRepository.getAll();
 
   return (

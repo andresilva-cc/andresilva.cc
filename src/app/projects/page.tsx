@@ -2,14 +2,14 @@ import clsx from 'clsx';
 
 import { Project } from '@/components/project';
 import { Text } from '@/components/text';
-import { useRepositories } from '@/hooks/use-repositories';
+import { getRepositories } from '@/repositories';
 
 export const metadata = {
   title: 'Projects | André Silva',
 };
 
 export default function Projects() {
-  const { projectsRepository } = useRepositories();
+  const { projectsRepository } = getRepositories();
   const projects = projectsRepository.getAll();
 
   const featuredProjects = projects.filter((project) => project.featured);

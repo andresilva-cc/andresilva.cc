@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import clsx from 'clsx';
 
 import { Text } from '@/components/text';
-import { useRepositories } from '@/hooks/use-repositories';
+import { getRepositories } from '@/repositories';
 
 export interface FooterProps {
   className?: string;
@@ -18,7 +18,7 @@ export interface FooterProps {
  * with rel="noopener noreferrer".
  */
 export function Footer({ className }: FooterProps) {
-  const { footerRepository } = useRepositories();
+  const { footerRepository } = getRepositories();
   const items = footerRepository.getAll();
 
   return (

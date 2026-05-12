@@ -1,14 +1,13 @@
 import { Article } from '@/components/article';
 import { Text } from '@/components/text';
-import { useRepositories } from '@/hooks/use-repositories';
+import { getRepositories } from '@/repositories';
 
 export const metadata = {
   title: 'Articles | André Silva',
 };
 
 export default async function Articles() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { articlesRepository } = useRepositories();
+  const { articlesRepository } = getRepositories();
   const articles = await articlesRepository.getAll();
 
   return (

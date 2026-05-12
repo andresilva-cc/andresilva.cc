@@ -49,6 +49,9 @@
   --max-width-prose-wide: 68ch;
   --max-width-prose-card: 38ch;
 
+  /* Shell width — 1240px max-width container that wraps every page */
+  --max-width-shell: 1240px;
+
   /* Breakpoint additions — kept narrow on purpose; design only reflows
      at this width (narrow phones) and at Tailwind's default md (768px). */
   --breakpoint-xs: 30rem;
