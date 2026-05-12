@@ -1,7 +1,7 @@
-import type { ProjectsRepository } from '../projects-repository';
+import type { ProjectsRepository, ProjectsRepositoryResponse } from '../projects-repository';
 
 export class StaticProjectsRepository implements ProjectsRepository {
-  getAll() {
+  getAll(): Array<ProjectsRepositoryResponse> {
     return [
       {
         title: 'Grafex',

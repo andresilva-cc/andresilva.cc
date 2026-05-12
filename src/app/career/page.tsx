@@ -1,9 +1,11 @@
-import { Job } from '@/components/job';
-import { Text } from '@/components/text';
+import { PageHead } from '@/components/page-head';
+import { SectionHead } from '@/components/section-head';
+import { RoleCard } from '@/components/role-card';
 import { getRepositories } from '@/repositories';
+import { formatDateRange } from '@/lib/format-date';
 
 export const metadata = {
-  title: 'Career | André Silva',
+  title: 'André Silva · Career',
 };
 
 export default function Career() {
@@ -12,27 +14,25 @@ export default function Career() {
 
   return (
     <>
-      <div className="md:grid md:grid-cols-job md:gap-8">
-        <Text variant="h1" as="h1" className="col-start-2">
-          Career
-        </Text>
-      </div>
-      <ul className="flex flex-col gap-8 mt-8">
-        { jobs.map((job) => (
-          <li key={job.startDate.getTime()}>
-            <Job
+      <PageHead name="CAREER" />
+
+      <section aria-labelledby="career-h" className="py-12 md:py-16">
+        <SectionHead eyebrow="// 01 / nine years, end-to-end" title="Roles" id="career-h" />
+        <ul className="flex flex-col list-none p-0 m-0">
+          { jobs.map((job) => (
+            <RoleCard
+              key={job.startDate.getTime()}
+              dates={formatDateRange(job.startDate, job.endDate)}
+              isCurrent={!job.endDate}
               title={job.title}
               company={job.company}
-              startDate={job.startDate}
-              endDate={job.endDate}
-              links={job.links}
+              formerly={job.formerly}
+              description={job.description}
               technologies={job.technologies}
-            >
-              {job.description}
-            </Job>
-          </li>
-        )) }
-      </ul>
+            />
+          )) }
+        </ul>
+      </section>
     </>
   );
 }
