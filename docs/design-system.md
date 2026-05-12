@@ -1,471 +1,241 @@
-# Design System: andresilva.cc
+# Design System — andresilva.cc
 
-> Reverse-engineered from the live codebase. This document describes the design language as it exists today, not a proposal. The source of truth for tokens is `src/styles/globals.css` (Tailwind 4 `@theme`) plus the four theme files under `src/styles/themes/`.
-
----
-
-## 1. Brand Identity
-
-André's personal website presents as a **developer-centric, editor-inspired portfolio**. The visual language borrows directly from popular code-editor color schemes (Dracula, Monokai, Terminal) and leans on monospaced typography for titles and UI chrome — the same aesthetic you'd find inside an IDE.
-
-**Personality adjectives**: technical, playful, confident.
-
-**Visual direction**:
-- Dark by default. Every built-in theme is dark-mode; there is no light theme.
-- IDE / code-editor feel — monospace titles, a purple-leaning primary, yellow/orange accent for names and titles, muted lavender-gray body copy.
-- Low chrome, high typography. Very few borders, no shadows, no cards-with-elevation. Hierarchy is carried by color and type, not by boxes.
-- Small, intentional flourishes — a rotating logo Easter egg, a scanline overlay in the Terminal theme, a subtly animated background when the Easter egg triggers.
-
-**Inspirations** (as observable in the code): Dracula editor theme, Monokai, classic CRT/green-phosphor terminal, generic IDE chrome. The "default" theme is a custom violet-on-aubergine palette in the same family.
+> Concise primer for orientation. The **visual canon** is `redesign/design-system.html` — a 3000-line, live-rendered reference page that documents every token and component verbatim from the five page mocks. Decision rationale lives in `redesign/notes.md`. Page-level usage is documented in `docs/ui-spec.md`.
 
 ---
 
-## 2. Color Palette
+## Aesthetic register
 
-The site ships **four themes** — `default`, `dracula`, `monokai`, `terminal` — each defined as a scoped CSS variable block under `:root[data-theme='<name>']` in `src/styles/themes/`. The global `@theme inline` block in `globals.css` exposes these as Tailwind 4 color utilities so that every component simply uses classes like `text-primary-500` and adapts to whichever theme is active.
-
-Every theme follows the same **token schema**:
-
-| Role | Tokens |
-|---|---|
-| Base | `--color-black` |
-| Neutrals | `--color-gray-200`, `--color-gray-900`, `--color-gray-950` |
-| Primary | `--color-primary-300`, `--color-primary-400`, `--color-primary-500` |
-| Secondary | `--color-secondary-300`, `--color-secondary-400`, `--color-secondary-500` |
-| Auxiliary | `--color-auxiliary-300`, `--color-auxiliary-400`, `--color-auxiliary-500` |
-
-The `-500` stop is the resting state, `-400` is hover, `-300` is active. This ramp is inverted vs. the Tailwind default (where `-500` is usually mid) — on this site, `-500` is the "true" color and the `-300`/`-400` variants are lighter tints used for interactive feedback.
-
-### Token semantics (shared across themes)
-
-| Token | Usage |
-|---|---|
-| `gray-200` | Body text, high-emphasis foreground |
-| `gray-900` | Page background (main body) |
-| `gray-950` | Darker surface — mobile menu panel, dropdown `data-focus` background, Easter-egg animated background target |
-| `primary-500` | Logo fill, primary CTA background, active nav item background, tech chips, active theme item |
-| `primary-400` / `-300` | Primary hover / active |
-| `secondary-500` | Name on home, section item titles (job titles, project titles, article titles), `<strong>` emphasis |
-| `secondary-400` / `-300` | Secondary hover / active |
-| `auxiliary-500` | Muted text — icons, captions, dates, secondary nav, inline links, placeholder text |
-| `auxiliary-400` / `-300` | Auxiliary hover / active |
-| `black` | Defined but not currently referenced in components (reserved) |
-
-### Theme palettes
-
-**Default** (aubergine + violet + amber)
-
-| Token | Value |
-|---|---|
-| `gray-200` | `#f6f5fa` |
-| `gray-900` | `#2f2b42` |
-| `gray-950` | `#232032` |
-| `primary-300` | `#b0a2f6` |
-| `primary-400` | `#a190f4` |
-| `primary-500` | `#9b7ef2` |
-| `secondary-300` | `#ffc65c` |
-| `secondary-400` | `#ffbf47` |
-| `secondary-500` | `#ffb633` |
-| `auxiliary-300` | `#c2bddb` |
-| `auxiliary-400` | `#b6b0d4` |
-| `auxiliary-500` | `#aaa3cc` |
-
-**Dracula**
-
-| Token | Value |
-|---|---|
-| `gray-200` | `#F8F8F2` |
-| `gray-900` | `#282A36` |
-| `gray-950` | `#20212b` |
-| `primary-300` | `#caa8fa` |
-| `primary-400` | `#c39df9` |
-| `primary-500` | `#bd93f9` |
-| `secondary-300` | `#ffcd98` |
-| `secondary-400` | `#ffc689` |
-| `secondary-500` | `#ffb86c` |
-| `auxiliary-300` | `#818eb6` |
-| `auxiliary-400` | `#7180ad` |
-| `auxiliary-500` | `#6272a4` |
-
-**Monokai**
-
-| Token | Value |
-|---|---|
-| `gray-200` | `#fdfff1` |
-| `gray-900` | `#272822` |
-| `gray-950` | `#1f201b` |
-| `primary-300` | `#84e0f2` |
-| `primary-400` | `#75dcf0` |
-| `primary-500` | `#66d9ef` |
-| `secondary-300` | `#b7e757` |
-| `secondary-400` | `#aee442` |
-| `secondary-500` | `#a6e22e` |
-| `auxiliary-300` | `#8b8c84` |
-| `auxiliary-400` | `#7c7e75` |
-| `auxiliary-500` | `#6e7066` |
-
-**Terminal** (green-on-black CRT)
-
-| Token | Value |
-|---|---|
-| `gray-200` | `#ffffff` |
-| `gray-900` | `#000000` |
-| `gray-950` | `#000000` |
-| `primary-300` | `#99ff99` |
-| `primary-400` | `#66ff66` |
-| `primary-500` | `#00ff00` |
-| `secondary-300` | `#99ff99` |
-| `secondary-400` | `#66ff66` |
-| `secondary-500` | `#00ff00` |
-| `auxiliary-300` | `#c1c1c1` |
-| `auxiliary-400` | `#adadad` |
-| `auxiliary-500` | `#999999` |
-
-### Theme persistence
-
-- The active theme is stored on `<html data-theme="...">` and mirrored into a `theme` cookie (`max-age=31536000`, path `/`).
-- The server reads the cookie in `app/layout.tsx` (`cookies()`) and renders `<html data-theme={theme}>` so the palette is correct on first paint — no flash-of-unthemed-content.
-- The `ThemeSelector` client component updates both the attribute and the cookie whenever the user picks a theme.
-
-### Dark mode
-
-All four themes currently shipping are dark — there is no light theme today. The token schema itself (`gray-200/900/950`, `primary-300/400/500`, `secondary-300/400/500`, `auxiliary-300/400/500`) is light/dark agnostic; a future light theme would just need to fill the same slots.
+A **brutalist mono** design system in service of a quiet personal site. The register is professional, terse, and craft-forward: JetBrains Mono carries everything except the identity moment on each page, where VT323 — a pixel-display face — takes over. Lime-on-near-black, square corners everywhere, hairline rules instead of shadows, chips wear borders not fills. Accent (`#C8FF3D`) lands on the **primary noun** of the surface — André's name on Home, the company on Career, the project title on Projects — and only there. The layout reads top-to-bottom like a structured document: page-head, banded sections, lists of items. No cards-with-elevation, no glass, no gradients.
 
 ---
 
-## 3. Typography
+## Token families
 
-### Font stack
+All tokens live in a single `:root` block mirrored byte-identical across the five page files (standing rule 06). 43 tokens total.
 
-Two Google fonts are loaded via `next/font/google` in `src/app/fonts.ts` and exposed as CSS variables:
+### Colors
 
-| Variable | Font family | Weights loaded | Role |
-|---|---|---|---|
-| `--font-fira-sans` → `--font-sans` | Fira Sans | 400, 500 | Body copy, sans-serif subtitles |
-| `--font-fira-code` → `--font-mono` | Fira Code | 400, 600, 700 | Headings, button labels, captions, chips, code-style UI |
+| Token | Hex | Role |
+|---|---|---|
+| `--bg` | `#0B0F0A` | Page base (near-black) |
+| `--surface-2` | `#0F1410` | Hover/raised cell |
+| `--rule` | `#1F2A1F` | 1px dividers |
+| `--rule-2` | `#2C3A2C` | Decorative SVG strokes only |
+| `--hi` | `#D7E5D0` | Primary text (14.7:1 on `--bg`, AAA) |
+| `--mid` | `#9DAA95` | Body prose (7.92:1, AAA) |
+| `--lo` | `#7E8E76` | Muted, meta (5.53:1, AA body) |
+| `--accent` | `#C8FF3D` | Brand emphasis — the primary noun (16.4:1, AAA) |
+| `--accent-hi` | `#DEFF6B` | Hover state of accent (17.1:1) |
+| `--accent-mute` | `#3D4F18` | Chip and badge borders only (2.14:1, decorative) |
+| `--accent-tint` | `rgba(200,255,61,0.08)` | CTA hover wash |
 
-Both use `display: swap`. The body default is `font-sans` (Fira Sans). There is no explicit fallback stack declared — Next.js's font-loader provides the runtime fallback.
+No semantic warning/success palette — the site has no state machinery that needs one.
 
-### Type variants
+### Typography
 
-Typography is **not** expressed as raw Tailwind classes in pages — everything flows through the `<Text variant="...">` component in `src/components/text.tsx`. Each variant binds a default HTML element (overridable via `element` or `asChild`) and a fixed set of classes.
+| Token | Stack | Role |
+|---|---|---|
+| `--ff-mono` | `'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace` | Body, UI, code |
+| `--ff-display` | `'VT323', 'JetBrains Mono', ui-monospace, monospace` | Pixel display headings |
 
-| Variant | Element | Family | Weight | Size (Tailwind) | Transform | Typical usage |
-|---|---|---|---|---|---|---|
-| `h1` | `h1` | mono | 700 (bold) | `text-6xl` (3.75rem) | — | Display title — "André Silva" on home, "404" |
-| `h2-sans` | `h2` | sans | 500 (medium) | `text-2xl` (1.5rem) | — | Role line under the home title |
-| `h2-mono` | `h2` | mono | 600 (semibold) | `text-2xl` (1.5rem) | uppercase | Page headers ("About", "Career", "Projects", "Articles") |
-| `h3` | `h3` | sans | 500 (medium) | `text-base` (1rem) | — | Job titles, project titles, article titles, section subheads, modal titles |
-| `button` | `span` | mono | 700 (bold) | `text-base` (1rem) | uppercase | Button labels (applied via `Text variant="button" asChild`) |
-| `body-1` | `p` | sans | 400 (normal) | `text-base` (1rem) | — | Default paragraph copy — this is the variant when you don't pass one |
-| `body-2` | `p` | sans | 400 (normal) | `text-sm` (0.875rem) | — | Job descriptions, project descriptions, article meta |
-| `body-3` | `p` | sans | 400 (normal) | `text-xs` (0.75rem) | — | Chips, inline `<Link>` labels |
-| `caption` | `span` | mono | 400 (normal) | `text-xs` (0.75rem) | uppercase | Dates on career page, "Read on dev.to" hint, small metadata |
+| Token | Size | Face / Weight | Line-height | Used for |
+|---|---|---|---|---|
+| `--t-display` | 56px | VT323 / 400 | 1.10 | Home hero name |
+| `--t-h1` | 28px | VT323 / 400 | 1.10 | Page-head title (`<ABOUT />`) |
+| `--t-h2` | 18px | Mono / 600 | 1.30 | Section heads (Bio, Latest, etc.) |
+| `--t-h3` | 16px | Mono / 600 | 1.30 | Card titles, role titles |
+| `--t-body` | 14px | Mono / 400 | 1.65 | Body prose, bullets |
+| `--t-meta` | 12px | Mono / 500 | 1.55 | Meta lines, chip text, nav |
+| `--t-micro` | 11px | Mono / 600 | 1.50 | Eyebrows, badges, footer |
 
-### Overrides seen in use
-
-- Home page `h1` is sized up responsively: `text-5xl md:text-6xl` (overrides the variant default).
-- Home page `h2-sans` is sized down responsively: `text-xl md:text-2xl`.
-
-### Body defaults and emphasis
-
-Set globally in `globals.css`:
-
-```css
-body { background-color: var(--color-gray-900); color: var(--color-gray-200); font-family: var(--font-sans); }
-strong { color: var(--color-secondary-500); font-weight: var(--font-weight-normal); }
-```
-
-`<strong>` is **recolored, not bolded** — it uses the secondary accent color at normal weight for in-prose emphasis (see the About page).
-
-### Custom list-style marker
-
-`globals.css` defines `--list-style-type-dash: '- '`, exposed as the `list-dash` Tailwind utility. Used on job-description bullet lists (`[&>ul]:list-dash [&>ul]:list-inside` in `src/components/job.tsx`) so bullet points render as a literal `-` instead of a disc — consistent with the IDE/markdown feel.
-
----
-
-## 4. Spacing & Layout
+Three weights only: **400** (prose), **500** (meta), **600** (headings, emphasis, CTAs). No weight below 400 is used at any size.
 
 ### Spacing
 
-No custom spacing tokens are registered. The site uses Tailwind 4's **default spacing scale** directly (`p-1`, `px-2.5`, `gap-8`, etc.). Common values observed in the codebase: `1`, `2`, `4`, `8`, `16`. Larger page paddings use `48` at `2xl`.
+A 4px base. Non-linear so jumps feel deliberate: **4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80** (tokens `--s1` through `--s20`). `section.band` separators use `--s8` (32px) top/bottom plus a 1px rule. Same-component gaps stay tight (`--s1`–`--s2`); cross-component breaks use `--s4` or larger.
 
-### Radius
+Prose widths cap the readable column in `ch` units (not px) so they survive user font-size overrides:
 
-Three custom radii are registered in `@theme` and used via `rounded`, `rounded-lg`, `rounded-full`:
-
-| Token | CSS variable | Value | Used on |
-|---|---|---|---|
-| default | `--radius` | `5px` | Buttons, chips, theme-selector menu items |
-| `lg` | `--radius-lg` | `10px` | Article cards, project cards, modal panel, theme-selector dropdown, avatar-adjacent focus rings |
-| `full` | `--radius-full` | `100%` | Avatar image on About, logo SVG fill reference |
-
-There are no intermediate radii (no `sm`, no `md` equivalent). Everything is either the small default, the larger `lg`, or fully round.
-
-### Shadows & elevation
-
-**None.** No `box-shadow` utility is applied anywhere in the codebase, and no shadow tokens are registered. Elevation is conveyed through:
-
-- **Surface swap** — the mobile menu, dropdown, and modal use `gray-950` (one step darker than the page background at `gray-900`), while the modal also adds a `border-auxiliary-500` hairline.
-- **Backdrop** — the modal uses a `bg-black/50` full-screen overlay.
-- **Border-as-outline** — featured project cards have `outline-1 outline-auxiliary-500`, which thickens/lightens on hover/active.
-
-### Grid templates
-
-One custom grid template is registered in `@theme`:
-
-```css
---grid-template-columns-job: 140px 1fr;
-```
-
-Available as `grid-cols-job`. Used on the Career page to render a fixed-width date gutter on the left and flexible job content on the right (only on `md+`; mobile stacks).
-
-### Breakpoints
-
-Tailwind 4 defaults, used as-is:
-
-| Name | Value | Notable usage |
+| Token | Value | Used for |
 |---|---|---|
-| `sm` | 640px | `main` gets `sm:px-6` horizontal padding |
-| `md` | 768px | **The dominant breakpoint.** Menu switches desktop↔mobile, career grid activates, home title upsizes, article meta switches to long-form labels |
-| `lg` | 1024px | About page switches from column to row, adds `lg:gap-16` |
-| `xl` | 1280px | Projects grid goes from 2 to 3 columns |
-| `2xl` | 1536px | Projects grid goes to 4 columns; `main` gets `2xl:px-48` |
+| `--prose-w-narrow` | 56ch | Hero pitch, education descriptions |
+| `--prose-w` | 68ch | Body prose — bio, role bullets, article descriptions |
+| `--prose-w-card` | 38ch | Project card descriptions (3 cards per row) |
 
-### Page layout
+### Motion
 
-Top-level shell in `src/app/layout.tsx`:
+Two easing curves, two durations. **Animate only `transform` and `opacity`** — every other property forces layout/paint.
 
-```
-<body h-full flex flex-col px-4 md:px-8>
-  <Header pt-4 md:pt-8 pb-8 md:pb-16 />
-  <main grow flex flex-col justify-center
-        px-0 sm:px-6 md:px-12 lg:px-24 2xl:px-48>
-    {children}
-  </main>
-  <Footer py-8 md:py-16 />
-</body>
-```
+| Token | Value | Role |
+|---|---|---|
+| `--ease-out` | `cubic-bezier(0, 0, 0.2, 1)` | Enter motion, hover transitions, press release |
+| `--ease-in` | `cubic-bezier(0.4, 0, 1, 1)` | Exits (reserved; mirrored for parity) |
+| `--d-fast` | 120ms | Default hover/press feedback |
+| `--d-mod` | 200ms | Compound transitions |
 
-Key properties:
+Press feedback is `transform: scale(0.97)`, gated by `prefers-reduced-motion: no-preference`. Hover effects are also gated by `@media (hover: hover)` to prevent sticky-hover on touch.
 
-- Full-viewport flex column — main grows, content is **vertically centered** via `justify-center`. This makes short pages (Home, About, 404) sit mid-screen.
-- Horizontal padding compounds as the viewport grows: body has `px-4 md:px-8`, main adds `sm:px-6 md:px-12 lg:px-24 2xl:px-48`.
-- No max-width container. Content breathes to the viewport minus padding.
+### Component sizing
 
----
+| Token | Value | Consumer |
+|---|---|---|
+| `--tag-pad-y` | 2px | Vertical padding on `.tag` chips |
+| `--badge-clearance` | 88px | `padding-right` on featured project titles so the FEATURED badge clears |
+| `--gutter-date` | 183px | Career left-column width — minimum that keeps any date string on one line |
 
-## 5. Motion & Animation
+### Photo filter
 
-### Conventions
-
-A single asymmetric pattern is used for **all** interactive color/transform transitions across the site:
-
-```
-transition-colors hover:transition-none duration-300
-```
-
-The effect: state changes **animate on exit** (duration-300) but snap **instantly on hover enter**. This is applied consistently on the primary button, link, chips inside cards, article/project cards, footer icons, and the nav link active state.
-
-### Duration tokens in use
-
-| Duration | Where |
-|---|---|
-| `duration-150` | Modal enter/leave, theme-selector dropdown enter/leave |
-| `duration-300` | All button/link color transitions, mobile-menu slide-in/out |
-
-### Easing
-
-- `ease-out` on enter, `ease-in` on leave (Headless UI `Transition` pattern).
-- No custom cubic-bezier curves.
-
-### Named animations
-
-- `animate-spin` (Tailwind default) — applied to the logo when the Easter egg is triggered.
-- `@keyframes background` — defined in `globals.css`, cycles `gray-900` ↔ `gray-950` at `1s linear infinite alternate`, applied to `body.animate` (activated by clicking the logo five times).
-
-### Micro-interactions
-
-- Article card: `group-hover:translate-x-1` on the "Read on dev.to" caret — it nudges right on card hover.
-- Project card: `group-hover:translate-x-0.5 group-hover:-translate-y-0.5` on the external-link arrow icon — nudges up-and-right on hover.
-- 404 icon: `hover:scale-110 hover:fill-secondary-500` with `transition-transform` — the scale animates over the default Tailwind duration; the fill change snaps instantly (no `transition-colors`).
-- Card surface hover: `bg-primary-300/0 → /5 → /10` — resting/hover/active stack up alpha on the same tint.
-
-### Accessibility note
-
-No `prefers-reduced-motion` handling is in place in the codebase.
+| Token | Value | Role |
+|---|---|---|
+| `--photo-filter` | `grayscale(1) sepia(1) hue-rotate(33deg) saturate(2.25) contrast(1) brightness(1)` | About portrait — duotones the photo into lime |
+| `--photo-filter-soft` | half-strength `sepia` and `saturate`, same `hue-rotate` | Touch-device fallback (hover unreachable) |
 
 ---
 
-## 6. Iconography
+## Tailwind v4 token mapping
 
-- **Library**: `@phosphor-icons/react` (imported from `@phosphor-icons/react/dist/ssr/index` for App Router compatibility).
-- **Style**: outline (default Phosphor weight) across most UI; `weight="bold"` is used on inline card icons (calendar, clock, chat, heart, external-link arrow, modal close) to match monospace headings; `weight="fill"` is used for the 404 face.
-- **Sizes** (as integer props):
-  - `14` — inline link icon, "read more" caret
-  - `16` — modal close, inline metadata icons (calendar, clock, etc.), check mark in theme selector
-  - `32` — header (menu, logo, palette), footer social icons
-  - `128` — 404 centerpiece icon
+The canon tokens above use terse semantic names (`--hi`, `--accent-hi`, `--rule-2`) tuned for hand-written CSS. Translating those names directly into a Tailwind v4 `@theme inline` block would produce awkward utilities — `bg-bg`, `text-hi`, `border-rule-2` — that read poorly in component code. This section pins the names the rebuild will register inside `@theme`, so utilities stay legible and a future engineer doesn't have to re-derive them.
 
-### Icons in active use
+The rule: Tailwind v4 generates utilities from the token suffix after the namespace, so `--color-base` yields `bg-base` / `text-base` / `border-base`. Names below were chosen to (a) avoid stutters, (b) read sensibly in component code, (c) keep canon tokens stable — the `@theme` names are a translation layer, not a rename of the source-of-truth `redesign/design-system.html` tokens.
 
-`ListIcon`, `XIcon`, `PaletteIcon`, `CheckIcon`, `LinkIcon`, `ArrowUpRightIcon`, `CaretDoubleRightIcon`, `CalendarBlankIcon`, `ClockIcon`, `ChatCircleDotsIcon`, `HeartIcon`, `SmileyXEyesIcon`, `GithubLogoIcon`, `LinkedinLogoIcon`, `XLogoIcon`, `DevToLogoIcon`, `EnvelopeIcon`, `InstagramLogoIcon`.
+### Colors — `--color-*` namespace
 
-### Logo
+| Canon token | `@theme` token | Example utility |
+|---|---|---|
+| `--bg` | `--color-base` | `bg-base` |
+| `--surface-2` | `--color-surface` | `bg-surface` |
+| `--hi` | `--color-fg` | `text-fg` |
+| `--mid` | `--color-fg-muted` | `text-fg-muted` |
+| `--lo` | `--color-fg-subtle` | `text-fg-subtle` |
+| `--accent` | `--color-accent` | `text-accent`, `bg-accent`, `border-accent` |
+| `--accent-hi` | `--color-accent-strong` | `text-accent-strong` |
+| `--accent-mute` | `--color-accent-muted` | `border-accent-muted` |
+| `--accent-tint` | `--color-accent-tint` | `bg-accent-tint` |
+| `--rule` | `--color-rule` | `border-rule` |
+| `--rule-2` | `--color-rule-strong` | `border-rule-strong` |
 
-The logo is an inline SVG (32×32) defined in `src/components/home-button.tsx`: a `primary-500`-filled rounded square containing a `gray-950`-filled stylized letter **A**. The rounded-square uses the registered default radius (`rx="5"`, matching `--radius: 5px`). Clicking it five times triggers the Easter egg (logo starts spinning and the body background animates).
+`--color-fg` follows the foreground/background convention rather than carrying the `hi`/`mid`/`lo` shorthand; `text-fg` reads cleanly, `text-hi` does not. The accent pair becomes `accent-strong` / `accent-muted` so the emphasis axis is explicit and symmetric — "strong" is the higher-contrast hover variant, "muted" is the low-contrast border tone. Same axis applied to rules: `rule` for 1px dividers, `rule-strong` for the decorative SVG stroke colour.
 
----
+### Typography — `--text-*` and `--font-*` namespaces
 
-## 7. Component Catalog
+| Canon token | `@theme` token | Example utility |
+|---|---|---|
+| `--t-micro` | `--text-micro` | `text-micro` |
+| `--t-meta` | `--text-meta` | `text-meta` |
+| `--t-body` | `--text-body` | `text-body` |
+| `--t-h3` | `--text-h3` | `text-h3` |
+| `--t-h2` | `--text-h2` | `text-h2` |
+| `--t-h1` | `--text-h1` | `text-h1` |
+| `--t-display` | `--text-display` | `text-display` |
+| `--ff-mono` | `--font-mono` | `font-mono` |
+| `--ff-display` | `--font-display` | `font-display` |
 
-Every reusable component lives in `src/components/`. They are described below as they exist.
+`--font-mono` deliberately overrides Tailwind's built-in stack — JetBrains Mono is the body face here, not a code-block exception. `--font-display` registers VT323. No `--font-sans` is defined; the design has no sans-serif track.
 
-### Text (`text.tsx`)
-- Nine variants defined in Section 3.
-- Props: `variant`, `element` (override the default tag), `asChild` (render into a child slot via `@radix-ui/react-slot`), `className` (merged via `clsx`).
-- `asChild` is the idiomatic way to apply variant styles to a non-default element — used by `Button` to style its `<button>` with `variant="button"`.
+### Motion — `--ease-*` and `--duration-*` namespaces
 
-### Button (`button.tsx`)
-- Built on top of `<Text variant="button" asChild>`, so every button inherits the uppercase mono typography.
-- Variants:
-  - `default` — filled pill. `text-gray-950 bg-primary-500`, hover → `bg-primary-400`, active → `bg-primary-300`, focus outline `primary-500`.
-  - `text` — bare text link. `text-auxiliary-500`, hover → `-400`, active → `-300`, focus outline `auxiliary-500`.
-  - `icon` — icon wrapper. Same color stack as `text`, but no padding and renders `[&>svg]:inline-block`.
-- Shared styles: `rounded` (5px), `cursor-pointer`, `transition-colors hover:transition-none duration-300`, focus ring via `focus:outline-2 focus:outline-offset-2`.
-- Padding: `px-2.5 py-1` on `default` and `text` only. `icon` has no padding.
-- Supports `asChild` for composing into an anchor (see `LinkButton`).
+| Canon token | `@theme` token | Example utility |
+|---|---|---|
+| `--ease-out` | `--ease-out` | `ease-out` (overrides Tailwind built-in) |
+| `--ease-in` | `--ease-in` | `ease-in` (overrides Tailwind built-in) |
+| `--d-fast` | `--duration-fast` | `duration-fast` |
+| `--d-mod` | — (use Tailwind built-in) | `duration-200` |
 
-### LinkButton (`link-button.tsx`)
-- Thin wrapper that renders `<Button asChild><Link /></Button>`, using Next.js's `next/link`.
-- Auto-detects external URLs (starts with `http`) and sets `target="_blank"`.
-- Inherits all `Button` variants.
+The 200ms compound-transition value matches Tailwind's default `duration-200` byte-for-byte, so no override is registered for it. The 120ms value has no built-in equivalent and needs the `--duration-fast` token.
 
-### Link (`link.tsx`)
-- Distinct from `LinkButton` — this is the small inline **resource link** used in job and project detail lists (e.g., "Website", "GitHub").
-- Renders `<a target="_blank">` with a leading 14px `LinkIcon` and `body-3` typography.
-- Colors: `auxiliary-500` → `-400` → `-300`, matching the `text` button variant.
-- Custom focus ring: `focus:outline-auxiliary-500 focus:outline-offset-4 focus:outline-1`.
+### Prose widths — `--max-width-*` namespace
 
-### Chip (`chip.tsx`)
-- Technology/tag pill.
-- `body-3` typography inside a `<span>`.
-- Style: `px-1.5 py-1 text-primary-500 border border-primary-500 rounded`.
-- Single variant — no filled/ghost toggle.
+| Canon token | `@theme` token | Example utility |
+|---|---|---|
+| `--prose-w-narrow` | `--max-width-prose-narrow` | `max-w-prose-narrow` |
+| `--prose-w` | `--max-width-prose-wide` | `max-w-prose-wide` |
+| `--prose-w-card` | `--max-width-prose-card` | `max-w-prose-card` |
 
-### Header (`header.tsx`)
-- `flex justify-between items-center`.
-- Layout: `MobileMenu` (visible below `md`), `HomeButton` (logo, always visible), `DesktopMenu` (visible `md+`), `ThemeSelector` (always visible).
-- Spacing controlled by `className` prop (layout gives it `pt-4 md:pt-8 pb-8 md:pb-16`).
+`--prose-w` becomes `prose-wide`, not `prose`, on purpose — Tailwind's built-in `max-w-prose` is `65ch` and the canon `--prose-w` is `68ch`. Naming ours `prose-wide` keeps both available without one shadowing the other.
 
-### HomeButton (`home-button.tsx`)
-- Icon-variant `LinkButton` pointing to `/` containing the 32×32 logo SVG.
-- Client component — tracks a click counter; fifth click flips `enableEasterEgg`, adds `animate-spin` to itself, and toggles `body.animate` (which starts the background keyframes).
+### Spacing — no overrides
 
-### DesktopMenu (`desktop-menu.tsx`)
-- `<nav>` with `<ul class="flex gap-16">`.
-- Each item is a `LinkButton`. Variant = `default` (filled primary) when the item's path matches the current route, else `text`.
-- Active-match logic: `item.activeRegex` (regex) takes precedence over `path === currentPath`.
-- Items flagged `hideOnDesktop` are filtered out (Home is desktop-hidden — the logo serves as home).
+The canon spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 px) is byte-aligned with Tailwind v4's default 4px-base scale: `p-1` through `p-20` cover every value the design uses. Defining a custom `--spacing-*` scale would force ugly utilities (`p-s1`, `gap-s4`) and gain nothing. Components consume Tailwind's default scale directly; the `--s1`..`--s20` tokens remain in `:root` for parity with the canon files but are not registered in `@theme`.
 
-### MobileMenu (`mobile-menu.tsx`)
-- Hamburger button (`ListIcon`, 32px) in icon variant.
-- Opens a full-screen `Dialog` (Headless UI) that slides in from the top (`enterFrom="-translate-y-full"`, `duration-300`).
-- Panel surface: `bg-gray-950 p-4`, with a `border-b border-b-auxiliary-500 pb-4 mb-4` divider above the nav list.
-- Items render as stacked `LinkButton`s (`flex flex-col gap-4`), using the same active-state logic as DesktopMenu.
-- Close button: icon-variant `XIcon` in the top bar.
-- Auto-closes when an item is clicked (passes `onClick` to each item).
+### Stay as raw CSS variables (do not tokenize)
 
-### ThemeSelector (`theme-selector.tsx`)
-- Icon-variant `Button` with a `PaletteIcon` (32px) anchoring a Headless UI `Menu`.
-- Dropdown surface: `absolute right-0 mt-2 w-36 rounded-lg bg-gray-900 border border-auxiliary-500 p-2`.
-- Enter/leave: `transform transition ease-out/in duration-150`, `scale-90` ↔ `scale-100` with opacity fade.
-- Menu items: `w-full px-3 py-2 text-sm rounded`, focused item gets `data-focus:bg-gray-950` (keyboard focus visualization). The currently active theme is rendered in `primary-500` semibold with a `CheckIcon` (16px, bold) on the right.
+These five tokens are consumed inside component-scoped CSS (in `globals.css` or alongside the component), not as Tailwind utilities. They are deliberately kept out of `@theme`:
 
-### Modal (`modal.tsx`)
-- Built on Headless UI `Dialog` + `Transition`.
-- Backdrop: `fixed inset-0 bg-black/50`, fades in over `duration-150`.
-- Panel: `bg-gray-900 p-4 rounded-lg border border-auxiliary-500 min-w-[300px]`, scales from `0.9 → 1.0` with opacity fade over `duration-150`.
-- Header row: `Text variant="h3"` title on the left, icon-variant close button (`XIcon`, 16px bold) on the right.
-- Children slot gets the passed `className` — typical use is `flex flex-col gap-4` to stack Link rows.
-
-### Job (`job.tsx`)
-- Career item. On `md+` renders in the 2-column `grid-cols-job` (`140px 1fr`) with the date in the left gutter (right-aligned) and the content on the right; on mobile, stacks.
-- Date: `caption` variant in `auxiliary-500`, formatted as `MMM yyyy — MMM yyyy` (or `— Present`).
-- Title: `h3` variant in `secondary-500`, formatted as `"{title} @ {company}"`.
-- Description: `body-2` in a `<div>`, with nested `<ul>` styled via `[&>ul]:list-dash [&>ul]:list-inside`.
-- Optional links row: inline `<Link>` components, `gap-4 mt-4`.
-- Technologies row: wrapping `Chip`s, `gap-2 mt-4`.
-
-### Project (`project.tsx`)
-- Project card. Has a `featured` prop that thickens the card (adds `h-full flex flex-col outline-1 outline-auxiliary-500` so featured cards fill their grid cell and wear a border).
-- Content order: `h3` title (with a small `ArrowUpRightIcon` that nudges on hover if links exist), `body-2` description, row of `Chip`s.
-- Link behaviour branches on `links.length`:
-  - `0` → renders a plain, non-interactive `<div>`.
-  - `1` → wraps the card in an external `<a target="_blank">`.
-  - `>1` → wraps the card in a `<button>` that opens a `Modal` listing the links via `<Link>` components.
-- Surface hover: `bg-primary-300/0 → /5 → /10`. Focus ring: `focus:rounded-lg focus:outline-hidden focus:outline-auxiliary-500` (+ `offset-4` for featured).
-
-### Article (`article.tsx`)
-- Article (blog post) card for the Articles page, rendered as a single `<a target="_blank">`.
-- Surface hover same as Project: `bg-primary-300/0 → /5 → /10`, `rounded-lg p-4`.
-- Title: `h3` in `secondary-500` with `secondary-400/300` hover states.
-- Metadata row (`body-2 flex flex-wrap gap-x-6 md:gap-x-8`): four icon+text pairs — published date (formatted as `MMM dd, yyyy`), reading time, comment count, reaction count. The labels collapse on mobile (hides "min read", "comment(s)", "reaction(s)" — keeps just the number).
-- Tag row: wrapping `Chip`s.
-- Trailing caption: `"Read on dev.to"` with a `CaretDoubleRightIcon` that nudges on hover.
-
-### RichText (`rich-text.tsx`)
-- Render-prop component that provides typed `{ strong, p, ul, li }` tag renderers to children — used to embed rich job descriptions with consistent styling while keeping data as a function.
-
-### Not a component — easter egg
-- `body.animate` triggers the background keyframe defined in `globals.css`. Triggered by 5× logo clicks in `HomeButton`.
+- `--tag-pad-y` — vertical padding on `.tag` chips (2px); too specific to be a utility.
+- `--badge-clearance` — `padding-right` for featured project titles so the FEATURED badge clears (88px); single consumer.
+- `--gutter-date` — Career left-column width (183px); a grid-template value, not a spacing utility.
+- `--photo-filter` and `--photo-filter-soft` — `filter` property values; Tailwind has no filter-token namespace and these only land on the About portrait.
 
 ---
 
-## 8. Accessibility
+## Component vocabulary
 
-### What's in place
+16 components, all rendered live in `redesign/design-system.html`. Each one is one line below; see the canon page for markup and behavior.
 
-- Focus rings are **always present** on interactive components (button/link): 2px outline with 2–4px offset, colored to match the element's role (`primary-500` on primary buttons, `auxiliary-500` on text/icon buttons and links).
-- Default-browser focus outlines are suppressed unless Headless UI sets `data-headlessui-focus-visible` on `html` (see `globals.css`), which scopes focus indicators to keyboard navigation.
-- All icon-only buttons carry an `aria-label` ("Open menu", "Close menu", "Select theme", "Close", "Logo").
-- Modal, mobile-menu, and theme-selector dropdowns are built on Headless UI components — they ship focus-trap, ESC-to-close, and backdrop-click-to-close out of the box.
-- Project card buttons carry `aria-label={title}` so screen readers don't announce a blank button.
-- External anchors use `target="_blank"` consistently (no `rel="noopener"` added in code — a known gap).
-
-### Known gaps
-
-- **No `prefers-reduced-motion` handling** — the Easter-egg background animation, mobile-menu slide, modal scale, and card transforms all run unconditionally.
-- **Contrast** — `auxiliary-500` on `gray-900` is intentionally muted; on Dracula (`#6272a4` on `#282A36`) it's near the 4.5:1 AA threshold for body text. Body text itself (`gray-200` on `gray-900`) is high-contrast across all themes.
-- **No explicit skip link** to `<main>`.
-- **`rel="noopener noreferrer"`** is not set on external links.
-
-These are observations of the current state, not prescriptions.
-
----
-
-## 9. Tailwind 4 integration notes
-
-- Tokens are registered in a single `@theme inline` block at the top of `src/styles/globals.css`. Each `--color-*` entry is set to `var(--color-*)`, which forwards the value of whatever `:root[data-theme]` block is active — that is the mechanism that makes every Tailwind color utility theme-reactive.
-- There is **no `tailwind.config.*`** file. PostCSS config is minimal: `postcss.config.js` loads `@tailwindcss/postcss`, and `globals.css` starts with `@import 'tailwindcss';`.
-- Custom tokens registered beyond colors and fonts: `--radius`, `--radius-lg`, `--radius-full`, `--list-style-type-dash`, `--grid-template-columns-job`.
-- Utility classes that depend on those tokens: `rounded`, `rounded-lg`, `rounded-full`, `list-dash`, `grid-cols-job`.
-- Plugin: `tailwind-scrollbar` is installed as a devDependency. It is not referenced by any current class in `src/`, so it has no visible effect on the live design today — treat it as latent.
+1. **Skip link** — first focusable element; jumps focus to `#main`. Visible only on focus.
+2. **Header bar** — wordmark left, primary nav right; stacks at ≤ 480px (no hamburger).
+3. **Wordmark** — pixel-SVG "A" glyph in `--accent` + `andresilva.cc` text in `--hi`; always links home.
+4. **Primary nav** — active page wears literal `[brackets]` AND `aria-current="page"` for `--accent` color.
+5. **Page-head** — `<X />` brace pattern: `<` and `/>` in `--lo`, noun in `--accent`, VT323 28px.
+6. **Section head** — eyebrow comment-tag + H2; `.sec-head--flush` zeros bottom border/margin to avoid doubled 2px seams.
+7. **Comment-tag eyebrow** — `// 02 / what i'm doing now` style label; 11px mono 600, accent, uppercase, tracked.
+8. **Tags & badges** — outlined chips (`.tag.tag--chip`), corner badges (`.pr__badge`), row badges (`.row__badge`). All use `--accent` text on `--accent-mute` border.
+9. **Status dot** — 6px lime square with pulsing aura, paired with current role.
+10. **Link arrow** — inline accent link + `→` SVG that nudges 2px right on hover.
+11. **Button CTA** — outlined accent button; hover fills with `--accent-tint`; active inverts to solid `--accent` on `--bg`.
+12. **Card patterns** — project card (`.pr`), career role (`.role`), article (`.art`), Latest row (`.row`); each is an `<li>` directly, no inner `<article>`.
+13. **Grid frame** — closed-corner grid where outer cells have no outside borders, only internal `1px` rules.
+14. **Photo wrap** — CRT scanline overlay + lime duotone filter; clears on focus/hover, soft fallback on touch.
+15. **Hero plasma** — Home only; ASCII plasma field rendered into a `<pre>`, accent chars stand out, static frame under reduced-motion.
+16. **Footer** — single row of lowercase social links separated by `·` dots; thin top border.
 
 ---
 
-## 10. Surface inventory
+## Standing rules
 
-A quick map of what visual surfaces exist on the site so new work can reuse them by name.
+Nine load-bearing rules. Removing any would compromise consistency, accessibility, or affordance hygiene.
 
-| Surface | Background | Border/Outline | Radius | Example |
-|---|---|---|---|---|
-| Page | `gray-900` | — | — | `<body>` |
-| Elevated panel | `gray-950` | — | — | Mobile-menu panel |
-| Dropdown | `gray-900` | `border-auxiliary-500` | `rounded-lg` (10px) | Theme selector menu |
-| Modal | `gray-900` | `border-auxiliary-500` | `rounded-lg` (10px) | Project links modal |
-| Modal backdrop | `black/50` | — | — | Modal overlay |
-| Hoverable card (unframed) | `primary-300/0 → /5 → /10` | — | `rounded-lg` (10px) | Article card, default project card |
-| Hoverable card (framed) | `primary-300/0 → /5 → /10` | `outline-1 outline-auxiliary-500 → -400 → -300` | `rounded-lg` (10px) | Featured project card |
-| Primary pill | `primary-500 → -400 → -300` | — | `rounded` (5px) | Primary button |
-| Chip | transparent | `border border-primary-500` | `rounded` (5px) | Tech tag |
+1. **Accent lands on the surface's primary noun.** One rule globally; only the referent changes per page.
+2. **Chip hover is texture, not affordance.** Border-color nudge only — no fill, no underline. Chips are labels, not buttons.
+3. **Card lists are `<ul>/<li>`; card titles are non-heading elements.** Outline is `page-h1 → list-of-items`. Card titles are `<p>`, not `<h3>`.
+4. **Card lists use `<li class="card-class">` directly.** No inner `<article>`. One landmark per visual card.
+5. **Tabular figures are unnecessary in monospace stacks.** JetBrains Mono and VT323 are fixed-width by construction. `tabular-nums` is a no-op here.
+6. **`:root` token blocks are canonical mirrors across all 5 pages.** No shared stylesheet. Tokens not consumed on a page are kept for parity, not pruned.
+7. **`.sec-head--flush` zeros both margin-bottom and border-bottom.** Prevents a doubled 2px line where the next element already provides a top rule.
+8. **`--photo-filter-soft` is mathematically derived from `--photo-filter`.** Same `hue-rotate`, halved `sepia` and `saturate`. Re-derive both together.
+9. **Prose uses curly quotes and apostrophes.** `U+2019` for apostrophes, `U+201C / U+201D` for double quotes. Straight `'` and `"` are reserved for HTML attributes, CSS strings, and code.
+
+---
+
+## Accessibility floor
+
+WCAG 2.2 AA throughout. Highlights from the contrast matrix (full table in the canon page):
+
+| Foreground | Background | Ratio | Verdict |
+|---|---|---|---|
+| `--hi` | `--bg` | 14.7 : 1 | AAA |
+| `--mid` | `--bg` | 7.92 : 1 | AAA |
+| `--lo` | `--bg` | 5.53 : 1 | AA (body) |
+| `--lo` | `--surface-2` | 5.33 : 1 | AA (body) |
+| `--accent` | `--bg` | 16.4 : 1 | AAA |
+| `--accent-hi` | `--bg` | 17.1 : 1 | AAA |
+| `--accent-mute` | `--bg` | 2.14 : 1 | Decorative borders only |
+
+Additional floor:
+
+- **Focus indicator** — 2px solid `--accent` outline with 2px offset, square corners. Default browser outlines suppressed only where replaced.
+- **Touch targets** — nav links and CTAs ≥ 32px min-height (clears WCAG 2.5.8 AA 24×24 minimum).
+- **Skip link** — first focusable on every page; jumps to `#main`.
+- **Reduced motion** — global rule zeros `animation-duration` and `transition-duration` to `0.01ms`; press-scale rules and the hero plasma are additionally gated with `@media (prefers-reduced-motion: no-preference)` (plasma renders one static frame instead of looping).
+- **`hover: hover` gating** — hover-only states (chip border, photo reveal) are gated to prevent sticky-hover on touch.
+- **Color is never the only signal** — accent is paired with brackets (`[home]`), badges (`Featured`), status dots, or `aria-current`.
+
+---
+
+## See also
+
+- `redesign/design-system.html` — visual canon. 16 components live-rendered, all tokens, every standing rule, contrast matrix, motion demos.
+- `redesign/notes.md` — decision log. Rationale and revision history for every token, principle, and component choice.
+- `redesign/home.html`, `about.html`, `career.html`, `projects.html`, `articles.html` — the five page mocks; real content, real markup.
+- `docs/ui-spec.md` — page-level structure, content sources, and responsive/accessibility annotations.
