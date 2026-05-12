@@ -1,5 +1,4 @@
 import { PageHead } from '@/components/page-head';
-import { SectionHead } from '@/components/section-head';
 import { RoleCard } from '@/components/role-card';
 import { getRepositories } from '@/repositories';
 import { formatDateRange } from '@/lib/format-date';
@@ -16,8 +15,7 @@ export default function Career() {
     <>
       <PageHead name="CAREER" />
 
-      <section aria-labelledby="career-h" className="py-12 md:py-16">
-        <SectionHead eyebrow="// 01 / nine years, end-to-end" title="Roles" id="career-h" />
+      <section aria-label="Career" className="py-8">
         <ul className="flex flex-col list-none p-0 m-0">
           { jobs.map((job) => (
             <RoleCard

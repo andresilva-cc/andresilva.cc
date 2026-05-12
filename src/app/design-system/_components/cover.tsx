@@ -3,7 +3,7 @@ import { Eyebrow } from '@/components/eyebrow';
 
 export function Cover() {
   return (
-    <section aria-labelledby="ds-cover-h" className="py-12 md:py-16">
+    <section aria-labelledby="ds-cover-h" className="py-8">
       <Eyebrow>&#47;&#47; 00 / how the site is built</Eyebrow>
       <Text variant="display" id="ds-cover-h" className="text-fg mt-3 leading-none">
         <span className="text-fg-subtle">&lt;</span>

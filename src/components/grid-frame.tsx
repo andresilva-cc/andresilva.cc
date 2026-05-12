@@ -25,7 +25,7 @@ export function GridFrame({ as, className, children }: GridFrameProps) {
     <Comp
       className={clsx(
         'grid border-t border-l border-rule list-none p-0 m-0',
-        '*:p-5 *:border-r *:border-b *:border-rule',
+        '*:border-r *:border-b *:border-rule',
         className,
       )}
     >

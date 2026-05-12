@@ -47,7 +47,7 @@ function Demo({ number, name, api, children }: DemoProps) {
 
 export function ComponentsBand() {
   return (
-    <section id="components" aria-labelledby="comp-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="components" aria-labelledby="comp-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 06 / the parts in the kit" title="Components" id="comp-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Every production component, rendered live — these are the actual components

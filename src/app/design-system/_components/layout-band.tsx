@@ -11,12 +11,13 @@ const breakpoints = [
 
 const grids = [
   { token: '--grid-template-columns-role', value: '183px 1fr', use: 'Career role: fixed date gutter + content' },
-  { token: '--grid-template-columns-article', value: '200px 1fr', use: 'Article illustration + body; reused for About bio (Portrait + prose)' },
+  { token: '--grid-template-columns-article', value: '200px 1fr', use: 'About bio (Portrait + prose)' },
+  { token: '--grid-template-columns-article-card', value: '240px 1fr', use: 'Article card: illustration + body' },
 ];
 
 export function LayoutBand() {
   return (
-    <section id="layout" aria-labelledby="layout-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="layout" aria-labelledby="layout-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 07 / how a page is framed" title="Layout" id="layout-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Every page sits inside the same shell: 1240px max-width, centered, 16/32px horizontal

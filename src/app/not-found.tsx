@@ -22,7 +22,7 @@ export default function NotFound() {
     <>
       <PageHead name="NOT_FOUND" />
 
-      <section aria-labelledby="status-h" className="py-12 md:py-16 flex flex-col gap-5 max-w-prose-wide">
+      <section aria-labelledby="status-h" className="py-8 flex flex-col gap-5 max-w-prose-wide">
         <SectionHead
           eyebrow="// 01 / status 404"
           title="Page not found."

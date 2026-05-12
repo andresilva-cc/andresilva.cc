@@ -1,5 +1,4 @@
 import { PageHead } from '@/components/page-head';
-import { SectionHead } from '@/components/section-head';
 import { GridFrame } from '@/components/grid-frame';
 import { ProjectCard } from '@/components/project-card';
 import { getRepositories } from '@/repositories';
@@ -16,8 +15,7 @@ export default function Projects() {
     <>
       <PageHead name="PROJECTS" />
 
-      <section aria-labelledby="projects-h" className="py-12 md:py-16">
-        <SectionHead eyebrow="// 01 / built and shipped" title="Projects" id="projects-h" flush />
+      <section aria-label="Projects" className="py-8">
         <GridFrame className="grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           { projects.map((project) => (
             <ProjectCard

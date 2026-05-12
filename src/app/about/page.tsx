@@ -36,15 +36,15 @@ export default function About() {
     <>
       <PageHead name="ABOUT" />
 
-      <section aria-labelledby="bio-h" className="py-12 md:py-16">
+      <section aria-labelledby="bio-h" className="py-8 border-b border-rule">
         <SectionHead eyebrow="// 01 / in my own words" title="Bio" id="bio-h" />
         <div className="grid grid-cols-1 md:grid-cols-article gap-6 md:gap-10 items-start">
           <Portrait
             src="/me.jpg"
             alt="Portrait of André Silva — focus or tap to reveal natural color"
             width={200}
-            height={200}
-            className="max-w-50"
+            height={260}
+            className="max-w-50 border border-rule"
           />
           <div className="flex flex-col gap-4 max-w-prose-wide">
             <Text variant="body" className="m-0 text-fg-muted">
@@ -95,11 +95,11 @@ export default function About() {
         </div>
       </section>
 
-      <section aria-labelledby="edu-h" className="py-12 md:py-16">
+      <section aria-labelledby="edu-h" className="py-8 border-b border-rule">
         <SectionHead eyebrow="// 02 / where i studied" title="Education" id="edu-h" flush />
         <GridFrame as="div" className="grid-cols-1 md:grid-cols-2">
           { educationItems.map((item) => (
-            <div key={item.title} className="flex flex-col gap-2">
+            <div key={item.title} className="py-5 px-6 flex flex-col gap-2">
               <Text variant="h3" as="p" className="m-0 text-fg">{ item.title }</Text>
               <Text variant="meta" as="span" className="text-fg-subtle">{ item.institution }</Text>
               <Text variant="body" className="m-0 text-fg-muted max-w-prose-narrow">{ item.description }</Text>
@@ -108,11 +108,11 @@ export default function About() {
         </GridFrame>
       </section>
 
-      <section aria-labelledby="facts-h" className="py-12 md:py-16">
+      <section aria-labelledby="facts-h" className="py-8 border-b border-rule">
         <SectionHead eyebrow="// 03 / at a glance" title="Facts" id="facts-h" flush />
         <GridFrame as="div" className="grid-cols-1 md:grid-cols-2">
           { factsItems.map((item) => (
-            <div key={item.key} className="flex flex-col gap-1">
+            <div key={item.key} className="py-4 px-5 flex flex-col gap-1">
               <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle">{ item.key }</Text>
               <Text variant="body" className="m-0 text-fg">{ item.value }</Text>
             </div>
@@ -120,10 +120,13 @@ export default function About() {
         </GridFrame>
       </section>
 
-      <section aria-labelledby="resume-h" className="py-12 md:py-16">
+      <section aria-labelledby="resume-h" className="py-8">
         <SectionHead eyebrow="// 04 / full work history" title="Resume" id="resume-h" />
         <Button asChild>
-          <Link href="/resume.pdf" target="_blank">Download résumé</Link>
+          <Link href="/resume.pdf" target="_blank">
+            Download résumé
+            <span aria-hidden="true">→</span>
+          </Link>
         </Button>
       </section>
     </>

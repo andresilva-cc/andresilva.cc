@@ -18,7 +18,7 @@ export interface PageHeadProps {
  */
 export function PageHead({ name, className }: PageHeadProps) {
   return (
-    <div className={clsx('pt-16 pb-5 border-b border-rule', className)}>
+    <div className={clsx('pt-12 pb-5 border-b border-rule', className)}>
       <Text variant="h1">
         <span className="text-fg-subtle" aria-hidden="true">&lt;</span>
         <span className="text-accent">{ name }</span>

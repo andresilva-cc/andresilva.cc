@@ -18,7 +18,7 @@ const typeScale = [
 
 export function TypographyBand() {
   return (
-    <section id="typography" aria-labelledby="type-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="typography" aria-labelledby="type-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 03 / how the words look" title="Typography" id="type-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Two faces, three weights, seven sizes. JetBrains Mono carries everything except

@@ -33,12 +33,12 @@ export function ProjectCard({
   title, description, technologies, links = [], featured = false, className,
 }: ProjectCardProps) {
   return (
-    <li className={clsx('flex flex-col gap-2 relative', className)}>
+    <li className={clsx('flex flex-col gap-2 relative p-4', className)}>
       <Text variant="h3" as="p" className={clsx('m-0 text-fg', featured && 'pr-22')}>
         { title }
       </Text>
       { featured && (
-        <Badge className="absolute top-4 right-4">Featured</Badge>
+        <Badge className="absolute top-4 right-4 bg-canvas">Featured</Badge>
       ) }
       <Text variant="meta" className="text-fg-muted max-w-prose-card m-0">
         { description }

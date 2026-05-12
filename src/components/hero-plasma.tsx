@@ -91,15 +91,16 @@ export function HeroPlasma({ className }: HeroPlasmaProps) {
   return (
     <aside aria-hidden="true" className={className ?? ''}>
       {/*
-        Inline font-size + line-height because the plasma is a one-off
-        rendering surface — these values exist nowhere else in the system
-        and don't belong as design tokens. Tailwind's escape hatch.
+        Inline font-size, line-height, and width because the plasma is a
+        one-off rendering surface — these values exist nowhere else in the
+        system and don't belong as design tokens. Tailwind's escape hatch.
+        Width 400px matches the mock's fixed plasma container.
       */}
       <pre
         ref={preRef}
         role="presentation"
-        style={{ fontSize: '8px', lineHeight: 1.15 }}
-        className="font-mono text-fg-muted m-0 p-0 select-none whitespace-pre tracking-normal"
+        style={{ fontSize: '8px', lineHeight: 1.15, width: '400px' }}
+        className="font-mono text-fg-muted m-0 p-0 select-none whitespace-pre tracking-normal overflow-hidden"
       />
     </aside>
   );

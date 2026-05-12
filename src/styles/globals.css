@@ -52,6 +52,9 @@
   /* Shell width — 1240px max-width container that wraps every page */
   --max-width-shell: 1240px;
 
+  /* Hero plasma — fixed 400px wide column (64-char × 8px font grid) */
+  --max-width-hero-plasma: 400px;
+
   /* Breakpoint additions — kept narrow on purpose; design only reflows
      at this width (narrow phones) and at Tailwind's default md (768px). */
   --breakpoint-xs: 30rem;
@@ -71,6 +74,7 @@
   /* Grid-template patterns — bespoke layouts with fixed left columns */
   --grid-template-columns-role: 183px 1fr;
   --grid-template-columns-article: 200px 1fr;
+  --grid-template-columns-article-card: 240px 1fr;
 }
 
 /* ============================================================
@@ -159,6 +163,20 @@ strong {
   }
 }
 
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Home hero name cursor — inline block that pulses with the blink keyframe.
+   Sized in em so it scales with the h1 at any viewport. */
+.name-cursor {
+  display: inline-block;
+  width: 0.25em;
+  height: 0.7em;
+  background: var(--color-accent);
+  transform: translateY(2px);
+  animation: blink 1.06s steps(2, end) infinite;
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

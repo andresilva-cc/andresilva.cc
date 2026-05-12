@@ -42,7 +42,7 @@ const principles = [
 
 export function PrinciplesBand() {
   return (
-    <section id="principles" aria-labelledby="principles-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="principles" aria-labelledby="principles-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 01 / what we won’t compromise on" title="Design principles" id="principles-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Nine rules. Each one is load-bearing — removing it would compromise either consistency,

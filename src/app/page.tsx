@@ -3,6 +3,7 @@ import { StatusDot } from '@/components/status-dot';
 import { HeroPlasma } from '@/components/hero-plasma';
 import { SectionHead } from '@/components/section-head';
 import { LatestRow } from '@/components/latest-row';
+import { ArrowLink } from '@/components/arrow-link';
 import { getRepositories } from '@/repositories';
 import { safeHref } from '@/lib/safe-href';
 
@@ -32,10 +33,17 @@ export default async function Home() {
 
   return (
     <>
-      <section aria-labelledby="page-title" className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center py-12 md:py-20 border-b border-rule">
-        <div className="min-w-0">
-          <Text variant="display" id="page-title" className="text-fg leading-none">André Silva</Text>
-          <p className="mt-3 flex flex-wrap items-baseline gap-2">
+      {/* Hero — accent name, status, pitch, plasma */}
+      <section
+        aria-labelledby="page-title"
+        className="flex flex-col gap-6 pt-16 pb-12 border-b border-rule lg:flex-row lg:items-center lg:gap-12"
+      >
+        <div className="min-w-0 flex-1">
+          <Text variant="display" id="page-title" className="text-accent flex items-center gap-2">
+            André Silva
+            <span className="name-cursor" aria-hidden="true" />
+          </Text>
+          <p className="mt-3 flex flex-wrap items-center gap-2">
             <StatusDot ariaLabel="current role" />
             <Text variant="h3" as="span" className="text-accent">{ currentJob.title }</Text>
             <Text variant="h3" as="span" className="text-fg-subtle font-normal mx-1">@</Text>
@@ -49,10 +57,43 @@ export default async function Home() {
             building web platforms, internal tools, and developer tooling.
           </Text>
         </div>
-        <HeroPlasma className="hidden lg:block justify-self-end" />
+        <HeroPlasma className="hidden lg:block shrink-0 max-w-hero-plasma" />
       </section>
 
-      <section aria-labelledby="latest-h" className="py-12 md:py-16">
+      {/* Bio — // 01 / who */}
+      <section aria-labelledby="bio-h" className="py-8 border-b border-rule">
+        <SectionHead
+          eyebrow="// 01 / who"
+          title="Bio"
+          id="bio-h"
+          cta={<ArrowLink href="/about">Full bio</ArrowLink>}
+        />
+        <Text variant="body" className="m-0 text-fg-muted max-w-prose-wide">
+          Works
+          {' '}
+          <strong>end-to-end</strong>
+          {' '}
+          — from architecture and infrastructure to product features and integrations. Primarily
+          {' '}
+          <strong>TypeScript</strong>
+          ,
+          {' '}
+          <strong>Vue.js</strong>
+          ,
+          {' '}
+          <strong>Nuxt</strong>
+          ,
+          {' '}
+          <strong>React</strong>
+          ,
+          {' '}
+          <strong>Node.js</strong>
+          . Takes ownership while collaborating effectively, adapting quickly to new tech and new problems.
+        </Text>
+      </section>
+
+      {/* Latest — // 02 / what i'm doing now */}
+      <section aria-labelledby="latest-h" className="py-8">
         <SectionHead eyebrow="// 02 / what i’m doing now" title="Latest" id="latest-h" />
         <ul className="flex flex-col list-none p-0 m-0">
           <LatestRow

@@ -27,7 +27,7 @@ const contrast = [
 
 export function ColorBand() {
   return (
-    <section id="color" aria-labelledby="color-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="color" aria-labelledby="color-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 02 / how the page is colored" title="Color tokens" id="color-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Eleven colors total. Near-black canvas, off-white text scale in three contrast steps,

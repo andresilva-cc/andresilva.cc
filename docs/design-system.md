@@ -151,12 +151,15 @@ The 200ms compound-transition value matches Tailwind's default `duration-200` by
 | `--prose-w-narrow` | `--max-width-prose-narrow` | `max-w-prose-narrow` |
 | `--prose-w` | `--max-width-prose-wide` | `max-w-prose-wide` |
 | `--prose-w-card` | `--max-width-prose-card` | `max-w-prose-card` |
+| (hero plasma) | `--max-width-hero-plasma` | `max-w-hero-plasma` |
 
 `--prose-w` becomes `prose-wide`, not `prose`, on purpose — Tailwind's built-in `max-w-prose` is `65ch` and the canon `--prose-w` is `68ch`. Naming ours `prose-wide` keeps both available without one shadowing the other.
 
 ### Spacing — no overrides
 
 The canon spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 px) is byte-aligned with Tailwind v4's default 4px-base scale: `p-1` through `p-20` cover every value the design uses. Defining a custom `--spacing-*` scale would force ugly utilities (`p-s1`, `gap-s4`) and gain nothing. Components consume Tailwind's default scale directly; the `--s1`..`--s20` tokens remain in `:root` for parity with the canon files but are not registered in `@theme`.
+
+### The `grid-cols-article-card` utility (`240px 1fr`) is used for article cards with illustrations; `grid-cols-article` (`200px 1fr`) is used for the About bio grid.
 
 ### Stay as raw CSS variables (do not tokenize)
 

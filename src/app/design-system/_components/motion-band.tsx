@@ -33,7 +33,7 @@ const rules = [
 
 export function MotionBand() {
   return (
-    <section id="motion" aria-labelledby="motion-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="motion" aria-labelledby="motion-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 05 / how things move" title="Motion" id="motion-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Two easing curves, two durations. Motion is a subtle layer here — confirming hover,

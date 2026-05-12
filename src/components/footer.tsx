@@ -29,14 +29,14 @@ export function Footer({ className }: FooterProps) {
           return (
             <Fragment key={item.url}>
               { index > 0 && (
-                <Text variant="meta" as="span" className="px-2 text-fg-subtle">·</Text>
+                <Text variant="micro" as="span" className="px-0.5 text-fg-subtle font-normal">·</Text>
               ) }
-              <Text asChild variant="meta">
+              <Text asChild variant="micro">
                 <a
                   href={item.url}
                   target={isMail ? undefined : '_blank'}
                   rel={isMail ? undefined : 'noopener noreferrer'}
-                  className="lowercase text-fg-muted no-underline transition-colors duration-fast ease-out motion-safe:hover:text-fg"
+                  className="lowercase font-normal text-fg-muted no-underline transition-colors duration-fast ease-out motion-safe:hover:text-accent-strong"
                 >
                   { item.title }
                 </a>

@@ -23,7 +23,7 @@ const proseWidths = [
 
 export function SpacingBand() {
   return (
-    <section id="spacing" aria-labelledby="spacing-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="spacing" aria-labelledby="spacing-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 04 / how things breathe" title="Spacing" id="spacing-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         A 4px base. Non-linear so jumps feel deliberate: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 /

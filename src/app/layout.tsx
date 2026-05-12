@@ -29,11 +29,11 @@ export default function RootLayout({
       >
         <SkipLink />
         <div className="max-w-shell mx-auto w-full px-4 md:px-8 flex flex-col flex-1">
-          <Header className="pt-6 md:pt-10 pb-6 md:pb-10" />
+          <Header className="py-4 border-b border-rule" />
           <main id="main" className="flex-1">
             { children }
           </main>
-          <Footer className="py-8 md:py-12" />
+          <Footer className="mt-12 pt-5 pb-8" />
         </div>
       </body>
       <GoogleAnalytics gaId="G-TLHZYGS1SJ" />

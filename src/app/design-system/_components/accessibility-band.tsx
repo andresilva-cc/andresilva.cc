@@ -30,7 +30,7 @@ const rules = [
 
 export function AccessibilityBand() {
   return (
-    <section id="a11y" aria-labelledby="a11y-h" className="py-12 md:py-16 border-t border-rule">
+    <section id="a11y" aria-labelledby="a11y-h" className="py-8 border-t border-rule">
       <SectionHead eyebrow="// 08 / so everyone can read it" title="Accessibility" id="a11y-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         WCAG 2.2 AA across the site. The contrast matrix in §02 covers the color floor;
