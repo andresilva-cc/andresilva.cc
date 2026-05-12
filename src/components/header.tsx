@@ -1,14 +1,20 @@
 import clsx from 'clsx';
 
-import { HomeButton } from '@/components/home-button';
-import { DesktopMenu } from '@/components/desktop-menu';
-import { MobileMenu } from '@/components/mobile-menu';
+import { Wordmark } from '@/components/wordmark';
+import { Nav } from '@/components/nav';
 import { useRepositories } from '@/hooks/use-repositories';
 
 export interface HeaderProps {
   className?: string;
 }
 
+/*
+ * Header — wordmark on the left, primary nav on the right.
+ *
+ * Stacks vertically at narrow viewports (< 480px) with no hamburger
+ * disclosure; the layout itself reflows. See design notes for the v4.3
+ * mobile pass and docs/architecture.md §"Mobile menu mechanism".
+ */
 export function Header({ className }: HeaderProps) {
   const { menuRepository } = useRepositories();
   const items = menuRepository.getAll();
@@ -16,21 +22,13 @@ export function Header({ className }: HeaderProps) {
   return (
     <header
       className={clsx(
-        'flex justify-between items-center',
+        'flex flex-col items-start gap-3',
+        'xs:flex-row xs:items-center xs:justify-between xs:gap-6',
         className,
       )}
     >
-      <MobileMenu
-        items={items}
-        className="md:hidden"
-      />
-
-      <HomeButton />
-
-      <DesktopMenu
-        items={items}
-        className="hidden md:block mt-0 w-auto"
-      />
+      <Wordmark />
+      <Nav items={items} className="-ml-3 flex-wrap" />
     </header>
   );
 }

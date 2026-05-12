@@ -1,4 +1,4 @@
-import { ReactNode, ElementType } from 'react';
+import { ReactNode, ElementType, HTMLAttributes } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 
@@ -9,6 +9,9 @@ import clsx from 'clsx';
  * presets from docs/design-system.md. Components either use Text directly
  * (for prose content) or compose it via `asChild` (when the consumer wants
  * Text's classes merged onto its own element without an extra wrapper).
+ *
+ * Standard HTML attributes (`id`, `aria-*`, `data-*`, `onClick`, etc.) are
+ * forwarded to the rendered element via rest spread.
  */
 
 const variants = {
@@ -23,13 +26,12 @@ const variants = {
 
 export type TextVariant = keyof typeof variants;
 
-export interface TextProps {
+export interface TextProps extends HTMLAttributes<HTMLElement> {
   variant?: TextVariant;
   /** Override the rendered element. Ignored when `asChild` is true (the child's element wins). */
   as?: ElementType;
   /** Merge Text's classes onto a single child element via Radix Slot (precedence: `asChild` > `as` > variant default). */
   asChild?: boolean;
-  className?: string;
   children: ReactNode;
 }
 
@@ -39,11 +41,12 @@ export function Text({
   asChild = false,
   className,
   children,
+  ...rest
 }: TextProps) {
   const Comp = asChild ? Slot : (as ?? variants[variant].element);
 
   return (
-    <Comp className={clsx(variants[variant].classes, className)}>
+    <Comp className={clsx(variants[variant].classes, className)} {...rest}>
       { children }
     </Comp>
   );

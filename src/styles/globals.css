@@ -49,6 +49,10 @@
   --max-width-prose-wide: 68ch;
   --max-width-prose-card: 38ch;
 
+  /* Breakpoint additions — kept narrow on purpose; design only reflows
+     at this width (narrow phones) and at Tailwind's default md (768px). */
+  --breakpoint-xs: 30rem;
+
   /* Tracking presets used across UI labels */
   --tracking-eyebrow: 0.16em;
   --tracking-badge: 0.12em;
