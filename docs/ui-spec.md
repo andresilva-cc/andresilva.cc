@@ -6,7 +6,7 @@
 
 ## Information architecture
 
-Five pages, flat hierarchy:
+Five pages, flat hierarchy, plus a 404 fallback:
 
 ```
 /             Home       — orienting page
@@ -14,6 +14,7 @@ Five pages, flat hierarchy:
 /career       Career     — full work history
 /projects     Projects   — featured + all projects
 /articles     Articles   — dev.to feed
+*             404        — fallback for any unmatched URL
 ```
 
 Primary nav lives in the header and is identical on every page. The wordmark in the header always links to `/`. Active page wears literal `[brackets]` in the label string AND `aria-current="page"` (which colors it `--accent`). Nav order: `[home] · about · career · projects · articles`.
@@ -251,6 +252,71 @@ A 2-column grid (`240px 1fr`):
 - Each title `<a>` exposes the full headline as link text (no "click here" buttons).
 - Reaction/comment counts use `♥` and the word `comment` — meaning is not conveyed by an icon alone.
 - Focus order: skip-link → wordmark → 5 nav links → each article's title link + tail link in DOM order → footer.
+
+---
+
+## Page: 404 (Not Found)
+
+**Purpose** — Fallback surface served by Next.js (`src/app/not-found.tsx`) for any URL that doesn’t match a defined route. Tells the visitor the URL didn’t match, and offers a single recovery affordance back to Home. The header nav stays on the page (it’s part of the shared shell) and carries the visitor to the other four sections in one click — no need to repeat those destinations inline.
+
+**Audience moment** — Someone who mistyped a URL, followed a stale link, or hit a moved-but-not-redirected route. They need to know in 2 seconds: this address isn’t a page, and where to go from here.
+
+### Sections (in order)
+
+1. **Page-head** — `<h1 class="title t-pixel"><NOT_FOUND /></h1>` in the brace pattern. Authored in caps (`NOT_FOUND`); the underscore preserves token-style readability. Same VT323 28px and `.brace` decoration as `<ABOUT />`, `<CAREER />`, etc., so the 404 reads as a first-class interior page rather than a generic error frame.
+2. **Status band** (`section.band`, `aria-labelledby="status-h"`)
+   - Eyebrow: `// 01 / status 404`. H2: `Page not found.`
+   - One short paragraph: `The URL didn’t match any page on this site. Try one of the surfaces below.`
+   - One `ArrowLink` to `/` labeled `home`. Placed below the paragraph (not in the SectionHead `cta` slot — this is the page’s primary action, not a section header right-rail link).
+   - This is the *only* section on the page. Numbering still uses `// 01` because eyebrow numbering restarts per page (per copy-guide §2).
+
+### Pseudo-JSX
+
+```tsx
+<PageHead name="NOT_FOUND" />
+
+<section aria-labelledby="status-h" className="band">
+  <SectionHead
+    eyebrow="// 01 / status 404"
+    title="Page not found."
+    id="status-h"
+  />
+  <Text variant="body" className="text-fg-muted max-w-prose">
+    The URL didn’t match any page on this site. Try one of the surfaces below.
+  </Text>
+  <ArrowLink href="/">home</ArrowLink>
+</section>
+```
+
+(Exact spacing, container classes, and prose-width tokens are implementation concerns — the engineer matches the banded-section rhythm used on Career and Articles. Body paragraph caps at `--prose-w` like every other prose block on the site.)
+
+### Why the brace head reads `<NOT_FOUND />`, not `<404 />`
+
+In JSX, tag names cannot lead with a digit — `<404 />` is invalid syntax. For a site whose typographic conceit *is* developer-flavored, a brace head that wouldn’t parse breaks the joke. `NOT_FOUND` (uppercase snake_case) reads like an HTTP/enum constant, parses as a valid identifier, and pairs with the eyebrow `// 01 / status 404` which carries the numeric code. Together they say "the HTTP status this page represents is 404 NOT FOUND", split across two lines of typographic register — code in the eyebrow, identifier in the brace head, status text in the H2. The number itself never gets a display-scale moment, by design: the 404 is *not* more important than the home hero or the page-head of any real page.
+
+### Key interactions
+
+- None beyond the shared header nav and the single ArrowLink. The page has no hover-revealed content, no decorative animation, no plasma — staying quiet is the point.
+- Reduced-motion: nothing to gate. The ArrowLink’s 2px nudge on hover is already motion-safe.
+
+### Mobile
+
+- ≤ 760px: identical to every other banded section — single column, body prose stays at `--prose-w`, ArrowLink stays inline below the paragraph. Nothing to collapse since there is no multi-column layout on this page.
+- ≤ 480px: header stacks (per the shared-shell rule), nav still reaches every other route in one tap. The 404 body is one short paragraph, so even at 320px viewport it’s a single fold.
+
+### Accessibility
+
+- Skip link target: `#main` (shared shell).
+- `<h1>` is the brace head; `<h2>` is `Page not found.`. The document outline is `page-h1 → one-section-h2`, matching the structure of `/articles` and `/projects`.
+- Body text contrast: `--mid` on `--bg` = 7.92:1 (AAA), well above floor.
+- ArrowLink to `/` is keyboard-focusable, carries a visible focus indicator from the shared focus-ring rule, and uses a real anchor (no `onClick` button shim).
+- No `aria-live` region — the 404 isn’t a dynamic state announcement, it’s a static page reached by navigation.
+- `<title>` is `André Silva · Not Found`. The browser tab and the back-button history label both communicate the error clearly.
+- Server response: route returns HTTP **404 Not Found** (Next.js `not-found.tsx` handles this automatically). The page must not return 200 — robots and link-checkers rely on the status code.
+
+### Sources
+
+- No data sources. The page is fully static; all strings live in `docs/copy-guide.md` §7 (the 404 microcopy block).
 
 ---
 

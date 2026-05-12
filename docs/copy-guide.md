@@ -205,9 +205,10 @@ André Silva · About
 André Silva · Career
 André Silva · Projects
 André Silva · Articles
+André Silva · Not Found
 ```
 
-Separator: middle dot (`·`, U+00B7), space on each side. Home includes `· Home` (departure from the prior `André Silva`-only convention — confirmed in the redesign).
+Separator: middle dot (`·`, U+00B7), space on each side. Home includes `· Home` (departure from the prior `André Silva`-only convention — confirmed in the redesign). The 404 surface uses `· Not Found` (title case, mirroring the H2 below).
 
 ### Skip link
 
@@ -295,14 +296,17 @@ github · linkedin · dev.to · email
 
 Lowercase, middle-dot separators (`·` colored `--lo`, padded), `email` resolves to `mailto:hello@andresilva.cc`.
 
-### 404 (carried over from production)
+### 404 (Not Found)
 
-```
-404
-Oops, this page doesn’t exist.
-```
+- Page H1 (brace head): `<NOT_FOUND />` — uppercase snake_case noun inside the brace pattern, mirroring the interior-page convention (`<ABOUT />`, `<CAREER />`). The HTTP status code lives in the eyebrow, not the H1, so the brace head reads as a real JSX-valid identifier (digits can’t lead a tag name) and the in-joke survives.
+- Section eyebrow: `// 01 / status 404`
+- Section H2: `Page not found.`
+- Section body: `The URL didn’t match any page on this site. Try one of the surfaces below.`
+- Recovery CTA: a single `ArrowLink` reading `home` pointing to `/`. The header nav already exposes the other four destinations one tab away — repeating them inline as five arrow-links would be busy and off-register.
 
-Short, contractioned, lowercase "oops", curly apostrophe, period. No CTA.
+Voice notes: the eyebrow names the *code* (`status 404`), the H2 names the *status text* spelled out (`Page not found.`). The two are semantically distinct, not synonymous — passes the eyebrow rule in §2. The body uses the system-voice word **surfaces** (per §5, "site" / "surfaces" is the site’s internal vocabulary). No "Oops", no exclamation, no "let’s build something together" energy. Period-terminated full sentences; the recovery link label is bare (no period).
+
+Replaces the legacy production copy (`404` headline + `Oops, this page doesn’t exist.`), which carried a casual register inconsistent with the redesign voice.
 
 ### ARIA / accessibility labels
 
