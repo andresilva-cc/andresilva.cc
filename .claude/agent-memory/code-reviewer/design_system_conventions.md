@@ -15,7 +15,9 @@ All tokens in `src/styles/globals.css`. Canon: `redesign/design-system.html`.
 - Prose widths: `--max-width-prose-narrow`, `--max-width-prose-wide`, `--max-width-prose-card`
 - Tracking: `--tracking-eyebrow` (0.16em), `--tracking-badge` (0.12em), `--tracking-button` (0.04em)
 
-Raw `:root` vars (NOT Tailwind utilities): `--tag-pad-y`, `--badge-clearance`, `--gutter-date`, `--photo-filter`, `--photo-filter-soft`
+Raw `:root` vars (NOT Tailwind utilities): `--photo-filter`, `--photo-filter-soft` (filter chains; no Tailwind namespace). `--tag-pad-y`, `--badge-clearance`, `--gutter-date` were removed — replaced by Tailwind default-scale utilities and new `@theme inline` tokens.
+
+New `@theme inline` tokens added: `--scale-press: 97` (drives `scale-press`), `--grid-template-columns-role: 183px 1fr` (drives `grid-cols-role`), `--grid-template-columns-article: 200px 1fr` (drives `grid-cols-article`).
 
 ## Font weights
 

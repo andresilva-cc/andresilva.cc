@@ -3,6 +3,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 
 import { Text } from '@/components/text';
+import { safeHref, isExternalHref } from '@/lib/safe-href';
 
 type AnchorBaseProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'children' | 'className'>;
 
@@ -22,16 +23,6 @@ export interface ArrowLinkProps extends AnchorBaseProps {
  * Use next/link for internal routes (relative paths). External hrefs route
  * through a plain <a> with `target="_blank"` + `rel="noopener noreferrer"`.
  */
-/*
- * Treat a href as safe if it's an http(s) URL, a relative path, or a fragment.
- * Everything else (javascript:, data:, blob:, vbscript:, etc.) is coerced to "#".
- */
-function safeHref(href: string): string {
-  if (/^https?:\/\//i.test(href)) return href;
-  if (/^[/#?]/.test(href)) return href;
-  return '#';
-}
-
 export function ArrowLink({
   href,
   className,
@@ -39,7 +30,7 @@ export function ArrowLink({
   ...rest
 }: ArrowLinkProps) {
   const safe = safeHref(href);
-  const isExternal = /^https?:\/\//i.test(safe);
+  const isExternal = isExternalHref(safe);
 
   const content = (
     <>

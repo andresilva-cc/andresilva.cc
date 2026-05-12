@@ -61,17 +61,21 @@
   /* Component-specific shadows & animations */
   --shadow-status-dot: 0 0 0 3px rgba(200, 255, 61, 0.18);
   --animate-status-dot-pulse: status-dot-pulse 2.4s ease-in-out infinite;
+
+  /* Press-feedback transform — used by .row__body, .button-cta, .link-arrow */
+  --scale-press: 97%;
+
+  /* Grid-template patterns — bespoke layouts with fixed left columns */
+  --grid-template-columns-role: 183px 1fr;
+  --grid-template-columns-article: 200px 1fr;
 }
 
 /* ============================================================
-   Raw CSS variables — consumed in component-scoped CSS, not as
-   Tailwind utilities. See docs/design-system.md §"Stay as raw
-   CSS variables".
+   Raw CSS variables — consumed in component-scoped CSS where
+   Tailwind has no namespace for the property (long filter chains).
+   See docs/design-system.md §"Stay as raw CSS variables".
    ============================================================ */
 :root {
-  --tag-pad-y: 2px;
-  --badge-clearance: 88px;
-  --gutter-date: 183px;
   --photo-filter: grayscale(1) sepia(1) hue-rotate(33deg) saturate(2.25) contrast(1) brightness(1);
   --photo-filter-soft: grayscale(1) sepia(0.5) hue-rotate(33deg) saturate(1.15) contrast(1) brightness(1);
 }
