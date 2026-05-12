@@ -1,7 +1,8 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Text } from '@/components/text';
-import { LinkButton } from '@/components/link-button';
+import { Button } from '@/components/button';
 
 export const metadata = {
   title: 'About | André Silva',
@@ -62,9 +63,9 @@ export default function About() {
             .
           </p>
         </Text>
-        <LinkButton href="/resume.pdf" target="_blank" className="mt-4">
-          Download Resume
-        </LinkButton>
+        <Button asChild className="mt-4">
+          <Link href="/resume.pdf" target="_blank">Download Resume</Link>
+        </Button>
       </div>
     </div>
   );

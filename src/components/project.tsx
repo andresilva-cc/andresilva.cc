@@ -1,20 +1,16 @@
-'use client';
-
-import { useState } from 'react';
 import clsx from 'clsx';
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/ssr/index';
 import { Chip } from '@/components/chip';
-import { Link } from '@/components/link';
-import { Modal } from '@/components/modal';
 import { Text } from '@/components/text';
 import type { Project as ProjectType } from '@/types/project';
 
 export interface ProjectProps extends ProjectType {}
 
+/* Legacy Project — kept building so projects/page.tsx still renders.
+   T54 replaces this with ProjectCard inside the rewritten page. */
 export function Project({
   title, description, links = [], featured = false, technologies,
 }: ProjectProps) {
-  const [isModalOpen, setModalVisibility] = useState(false);
   const focusClasses = clsx('focus:rounded-lg focus:outline-hidden focus:outline-auxiliary-500', {
     'focus:outline-offset-4': featured,
   });
@@ -56,39 +52,17 @@ export function Project({
     </div>
   );
 
-  if (links.length === 1) {
+  if (links.length >= 1) {
     return (
       <a
         href={links[0].url}
         target="_blank"
+        rel="noopener noreferrer"
         aria-label={title}
         className={clsx('block w-full', { 'h-full': featured }, focusClasses)}
       >
         { content }
       </a>
-    );
-  }
-
-  if (links.length > 1) {
-    return (
-      <>
-        <Modal
-          isOpen={isModalOpen}
-          className="flex flex-col gap-4"
-          title={title}
-          onClose={() => setModalVisibility(false)}
-        >
-          { links.map((link) => (<Link href={link.url} key={link.url}>{ link.name }</Link>))}
-        </Modal>
-        <button
-          type="button"
-          aria-label={title}
-          className={clsx('w-full', { 'h-full': featured }, focusClasses)}
-          onClick={() => setModalVisibility(true)}
-        >
-          { content }
-        </button>
-      </>
     );
   }
 
