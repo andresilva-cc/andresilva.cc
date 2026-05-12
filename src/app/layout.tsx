@@ -1,32 +1,28 @@
 import { ReactNode } from 'react';
-import { cookies } from 'next/headers';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import clsx from 'clsx';
 
 import '@/styles/globals.css';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { firaCode, firaSans } from '@/app/fonts';
+import { jetbrainsMono, vt323 } from '@/app/fonts';
 
 export const metadata = {
   title: 'André Silva',
   description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const theme = cookieStore.get('theme')?.value;
-
   return (
-    <html lang="en" className="h-full" data-theme={theme}>
+    <html lang="en" className="h-full">
       <body
         className={clsx(
-          firaSans.variable,
-          firaCode.variable,
+          jetbrainsMono.variable,
+          vt323.variable,
           'h-full flex flex-col px-4 md:px-8',
         )}
       >

@@ -1,60 +1,104 @@
 @import 'tailwindcss';
-@import './themes/default.css';
-@import './themes/dracula.css';
-@import './themes/monokai.css';
-@import './themes/terminal.css';
 
+/* ============================================================
+   Design tokens — Tailwind v4 @theme block
+   Maps the canonical design tokens (see docs/design-system.md)
+   to Tailwind utility namespaces.
+   ============================================================ */
 @theme inline {
-  --color-black: var(--color-black);
+  /* Colors */
+  --color-base: #0B0F0A;
+  --color-surface: #0F1410;
+  --color-fg: #D7E5D0;
+  --color-fg-muted: #9DAA95;
+  --color-fg-subtle: #7E8E76;
+  --color-accent: #C8FF3D;
+  --color-accent-strong: #DEFF6B;
+  --color-accent-muted: #3D4F18;
+  --color-accent-tint: rgba(200, 255, 61, 0.08);
+  --color-rule: #1F2A1F;
+  --color-rule-strong: #2C3A2C;
 
-  --color-gray-200: var(--color-gray-200);
-  --color-gray-900: var(--color-gray-900);
-  --color-gray-950: var(--color-gray-950);
+  /* Fonts */
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: var(--font-vt323), var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --color-primary-300: var(--color-primary-300);
-  --color-primary-400: var(--color-primary-400);
-  --color-primary-500: var(--color-primary-500);
+  /* Type scale — size + line-height bundled per Tailwind v4 syntax */
+  --text-micro: 11px;
+  --text-micro--line-height: 1.50;
+  --text-meta: 12px;
+  --text-meta--line-height: 1.55;
+  --text-body: 14px;
+  --text-body--line-height: 1.65;
+  --text-h3: 16px;
+  --text-h3--line-height: 1.30;
+  --text-h2: 18px;
+  --text-h2--line-height: 1.30;
+  --text-h1: 28px;
+  --text-h1--line-height: 1.10;
+  --text-display: 56px;
+  --text-display--line-height: 1.10;
 
-  --color-secondary-300: var(--color-secondary-300);
-  --color-secondary-400: var(--color-secondary-400);
-  --color-secondary-500: var(--color-secondary-500);
+  /* Motion */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --duration-fast: 120ms;
 
-  --color-auxiliary-300: var(--color-auxiliary-300);
-  --color-auxiliary-400: var(--color-auxiliary-400);
-  --color-auxiliary-500: var(--color-auxiliary-500);
+  /* Prose widths */
+  --max-width-prose-narrow: 56ch;
+  --max-width-prose-wide: 68ch;
+  --max-width-prose-card: 38ch;
 
-  --font-sans: var(--font-fira-sans);
-  --font-mono: var(--font-fira-code);
-
-  --radius: 5px;
-  --radius-lg: 10px;
-  --radius-full: 100%;
-
-  --list-style-type-dash: '- ';
-
-  --grid-template-columns-job: 140px 1fr;
+  /* Tracking presets used across UI labels */
+  --tracking-eyebrow: 0.16em;
+  --tracking-badge: 0.12em;
+  --tracking-button: 0.04em;
 }
 
+/* ============================================================
+   Raw CSS variables — consumed in component-scoped CSS, not as
+   Tailwind utilities. See docs/design-system.md §"Stay as raw
+   CSS variables".
+   ============================================================ */
+:root {
+  --tag-pad-y: 2px;
+  --badge-clearance: 88px;
+  --gutter-date: 183px;
+  --photo-filter: grayscale(1) sepia(1) hue-rotate(33deg) saturate(2.25) contrast(1) brightness(1);
+  --photo-filter-soft: grayscale(1) sepia(0.5) hue-rotate(33deg) saturate(1.15) contrast(1) brightness(1);
+}
+
+/* ============================================================
+   Base styles
+   ============================================================ */
 body {
-  background-color: var(--color-gray-900);
-  color: var(--color-gray-200);
-  font-family: var(--font-sans);
-}
-
-body.animate {
-  animation: 1s linear infinite alternate background;
+  background-color: var(--color-base);
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
 }
 
 strong {
-  color: var(--color-secondary-500);
-  font-weight: var(--font-weight-normal);
+  color: var(--color-fg);
+  font-weight: 600;
 }
 
-@keyframes background {
-  from { background-color: var(--color-gray-900) }
-  to { background-color: var(--color-gray-950) }
+/* ============================================================
+   Animations — defined here because Tailwind utilities can't
+   express the keyframe sequence inline.
+   ============================================================ */
+@keyframes status-dot-pulse {
+  50% {
+    box-shadow: 0 0 0 5px rgba(200, 255, 61, 0.05);
+  }
 }
 
-html:not([data-headlessui-focus-visible]) *:focus {
-  outline: none !important;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

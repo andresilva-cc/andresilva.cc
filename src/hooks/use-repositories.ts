@@ -3,7 +3,6 @@ import { StaticFooterRepository } from '@/repositories/implementations/static-fo
 import { StaticJobsRepository } from '@/repositories/implementations/static-jobs-repository';
 import { StaticMenuRepository } from '@/repositories/implementations/static-menu-repository';
 import { StaticProjectsRepository } from '@/repositories/implementations/static-projects-repository';
-import { StaticThemeRepository } from '@/repositories/implementations/static-theme-repository';
 
 export function useRepositories() {
   return {
@@ -12,6 +11,5 @@ export function useRepositories() {
     jobsRepository: new StaticJobsRepository(),
     menuRepository: new StaticMenuRepository(),
     projectsRepository: new StaticProjectsRepository(),
-    themeRepository: new StaticThemeRepository(),
   };
 }
