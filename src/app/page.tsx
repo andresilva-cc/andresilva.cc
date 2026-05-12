@@ -7,7 +7,7 @@ export default function Home() {
         André Silva
       </Text>
 
-      <Text variant="h2-sans" className="text-primary-500 mt-8 text-xl md:text-2xl">
+      <Text variant="h2" className="text-primary-500 mt-8 text-xl md:text-2xl">
         Senior Engineer @ MPA
       </Text>
 

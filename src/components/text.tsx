@@ -1,62 +1,50 @@
-import { ReactNode, type JSX } from 'react';
+import { ReactNode, ElementType } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 
+/*
+ * Text — typography primitive for the andresilva.cc design system.
+ *
+ * Variants apply the canonical size + line-height + font-family + weight
+ * presets from docs/design-system.md. Components either use Text directly
+ * (for prose content) or compose it via `asChild` (when the consumer wants
+ * Text's classes merged onto its own element without an extra wrapper).
+ */
+
 const variants = {
-  'h1': {
-    element: 'h1',
-    classes: 'font-mono font-bold text-6xl',
-  },
-  'h2-sans': {
-    element: 'h2',
-    classes: 'font-sans font-medium text-2xl',
-  },
-  'h2-mono': {
-    element: 'h2',
-    classes: 'font-mono font-semibold text-2xl uppercase',
-  },
-  'h3': {
-    element: 'h3',
-    classes: 'font-sans font-medium text-base',
-  },
-  'button': {
-    element: 'span',
-    classes: 'font-mono font-bold text-base uppercase',
-  },
-  'body-1': {
-    element: 'p',
-    classes: 'font-sans font-normal text-base',
-  },
-  'body-2': {
-    element: 'p',
-    classes: 'font-sans font-normal text-sm',
-  },
-  'body-3': {
-    element: 'p',
-    classes: 'font-sans font-normal text-xs',
-  },
-  'caption': {
-    element: 'span',
-    classes: 'font-mono font-normal text-xs uppercase',
-  },
-};
+  display: { element: 'h1', classes: 'text-display font-display' },
+  h1: { element: 'h1', classes: 'text-h1 font-display' },
+  h2: { element: 'h2', classes: 'text-h2 font-mono font-semibold' },
+  h3: { element: 'h3', classes: 'text-h3 font-mono font-semibold' },
+  body: { element: 'p', classes: 'text-body font-mono' },
+  meta: { element: 'span', classes: 'text-meta font-mono font-medium' },
+  micro: { element: 'span', classes: 'text-micro font-mono font-semibold' },
+} as const;
+
+export type TextVariant = keyof typeof variants;
 
 export interface TextProps {
-  variant?: keyof typeof variants;
-  element?: keyof JSX.IntrinsicElements;
-  children: ReactNode;
+  variant?: TextVariant;
+  /** Override the rendered element. Ignored when `asChild` is true (the child's element wins). */
+  as?: ElementType;
+  /** Merge Text's classes onto a single child element via Radix Slot (precedence: `asChild` > `as` > variant default). */
   asChild?: boolean;
   className?: string;
+  children: ReactNode;
 }
 
 export function Text({
-  variant = 'body-1', element, children, asChild = false, className,
+  variant = 'body',
+  as,
+  asChild = false,
+  className,
+  children,
 }: TextProps) {
-  const Tag = asChild ? Slot : element || variants[variant].element;
+  const Comp = asChild ? Slot : (as ?? variants[variant].element);
 
   return (
-    <Tag className={clsx(variants[variant].classes, className)}>
+    <Comp className={clsx(variants[variant].classes, className)}>
       { children }
-    </Tag>
+    </Comp>
   );
 }

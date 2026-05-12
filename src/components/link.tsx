@@ -9,7 +9,7 @@ export interface LinkProps extends React.HTMLProps<HTMLAnchorElement> {
 
 export function Link({ href, children, ...props }: LinkProps) {
   return (
-    <Text variant="body-3" asChild>
+    <Text variant="micro" asChild>
       <a
         href={href}
         target="_blank"

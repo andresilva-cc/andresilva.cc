@@ -14,7 +14,7 @@ export default async function Articles() {
   return (
     <>
       <div className="pl-4">
-        <Text variant="h2-mono" element="h1">
+        <Text variant="h1" as="h1">
           Articles
         </Text>
       </div>

@@ -37,8 +37,8 @@ export function Article({
       </Text>
 
       <Text
-        variant="body-2"
-        element="div"
+        variant="meta"
+        as="div"
         className="flex flex-wrap leading-[13px] gap-x-6 md:gap-x-8"
       >
         <div className="flex gap-2 items-center">
@@ -86,7 +86,7 @@ export function Article({
       </div>
 
       <Text
-        variant="caption"
+        variant="micro"
         className="flex gap-2 items-center mt-4 text-auxiliary-500 group-hover:translate-x-1 transition-transform"
       >
         Read on dev.to

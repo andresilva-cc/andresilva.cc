@@ -13,7 +13,7 @@ export default function Career() {
   return (
     <>
       <div className="md:grid md:grid-cols-job md:gap-8">
-        <Text variant="h2-mono" element="h1" className="col-start-2">
+        <Text variant="h1" as="h1" className="col-start-2">
           Career
         </Text>
       </div>

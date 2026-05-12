@@ -12,10 +12,10 @@ export default function About() {
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
       <Image src="/me.jpg" width={192} height={192} alt="Picture of myself" priority className="rounded-full" />
       <div>
-        <Text variant="h2-mono" element="h1">
+        <Text variant="h1" as="h1">
           About
         </Text>
-        <Text element="div" className="mt-4 [&>p]:mb-2">
+        <Text as="div" className="mt-4 [&>p]:mb-2">
           <p>
             Software engineer with
             {' '}

@@ -19,10 +19,10 @@ export default function Projects() {
 
   return (
     <>
-      <Text variant="h2-mono" element="h1">
+      <Text variant="h1" as="h1">
         Projects
       </Text>
-      <Text variant="h3" element="h2" className="mt-8">
+      <Text variant="h3" as="h2" className="mt-8">
         Featured Projects
       </Text>
       <ul
@@ -43,7 +43,7 @@ export default function Projects() {
           </li>
         )) }
       </ul>
-      <Text variant="h3" element="h2" className="mt-8">
+      <Text variant="h3" as="h2" className="mt-8">
         All Projects
       </Text>
       <ul

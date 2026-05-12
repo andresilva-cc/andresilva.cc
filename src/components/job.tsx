@@ -30,7 +30,7 @@ export function Job({
   return (
     <div className="md:grid md:grid-cols-job md:gap-8">
       <div className="md:text-right mb-2 md:mb-0">
-        <Text variant="caption" className="text-auxiliary-500">
+        <Text variant="micro" className="text-auxiliary-500">
           { `${formattedStartDate} — ${formattedEndDate}` }
         </Text>
       </div>
@@ -39,7 +39,7 @@ export function Job({
         <Text variant="h3" className="text-secondary-500">
           { `${title} @ ${company}` }
         </Text>
-        <Text variant="body-2" element="div" className="mt-2 [&>ul]:list-dash [&>ul]:list-inside">
+        <Text variant="meta" as="div" className="mt-2 [&>ul]:list-dash [&>ul]:list-inside">
           { children }
         </Text>
 

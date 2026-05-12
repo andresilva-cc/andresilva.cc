@@ -42,7 +42,7 @@ export function Project({
       </Text>
 
       <Text
-        variant="body-2"
+        variant="meta"
         className={clsx('mt-2', { 'flex-1': featured })}
       >
         { description }

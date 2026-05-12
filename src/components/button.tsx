@@ -24,7 +24,7 @@ export function Button({
   const Tag = asChild ? Slot : 'button';
 
   return (
-    <Text variant="button" asChild>
+    <Text variant="meta" asChild>
       <Tag
         className={clsx(
           'inline-block rounded cursor-pointer transition-colors hover:transition-none duration-300 focus:outline-2 focus:outline-offset-2',

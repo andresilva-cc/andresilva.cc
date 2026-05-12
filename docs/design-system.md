@@ -97,13 +97,13 @@ Press feedback is `transform: scale(0.97)`, gated by `prefers-reduced-motion: no
 
 The canon tokens above use terse semantic names (`--hi`, `--accent-hi`, `--rule-2`) tuned for hand-written CSS. Translating those names directly into a Tailwind v4 `@theme inline` block would produce awkward utilities — `bg-bg`, `text-hi`, `border-rule-2` — that read poorly in component code. This section pins the names the rebuild will register inside `@theme`, so utilities stay legible and a future engineer doesn't have to re-derive them.
 
-The rule: Tailwind v4 generates utilities from the token suffix after the namespace, so `--color-base` yields `bg-base` / `text-base` / `border-base`. Names below were chosen to (a) avoid stutters, (b) read sensibly in component code, (c) keep canon tokens stable — the `@theme` names are a translation layer, not a rename of the source-of-truth `redesign/design-system.html` tokens.
+The rule: Tailwind v4 generates utilities from the token suffix after the namespace, so `--color-canvas` yields `bg-canvas` / `text-canvas` / `border-canvas`. Names below were chosen to (a) avoid stutters, (b) read sensibly in component code, (c) avoid collisions with Tailwind built-in utilities (notably `text-base`, which is a built-in font-size, not a color), (d) keep canon tokens stable — the `@theme` names are a translation layer, not a rename of the source-of-truth `redesign/design-system.html` tokens.
 
 ### Colors — `--color-*` namespace
 
 | Canon token | `@theme` token | Example utility |
 |---|---|---|
-| `--bg` | `--color-base` | `bg-base` |
+| `--bg` | `--color-canvas` | `bg-canvas` |
 | `--surface-2` | `--color-surface` | `bg-surface` |
 | `--hi` | `--color-fg` | `text-fg` |
 | `--mid` | `--color-fg-muted` | `text-fg-muted` |
