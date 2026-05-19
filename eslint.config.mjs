@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    // Velite-generated output:
+    '.velite/**',
   ]),
   stylistic.configs.customize({
     arrowParens: true,

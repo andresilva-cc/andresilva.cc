@@ -35,9 +35,10 @@ export interface ArticleCardProps {
  * the primary click surface; a "read on dev.to" ArrowLink provides an
  * explicit navigation affordance at the bottom.
  *
- * Article tags ship lowercase by source convention (forem API). No
- * client-side case transformation; the Tag component renders them
- * verbatim.
+ * Article tags are brand-cased (e.g. "LLMs", "Rust", "Next.js") in
+ * frontmatter and rendered verbatim. See docs/articles-decision-log.md
+ * §4 for the schema, and src/components/tag.tsx for the casing
+ * convention across the site.
  */
 export function ArticleCard({
   date, readingTime, reactions, comments, title, description, url, tags, illustration, className,

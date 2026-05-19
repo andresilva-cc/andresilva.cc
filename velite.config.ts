@@ -1,0 +1,73 @@
+import rehypePrettyCode from 'rehype-pretty-code';
+import { defineCollection, defineConfig, s } from 'velite';
+import { countWords, readingTime } from './src/lib/reading-time';
+
+const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
+const article = defineCollection({
+  name: 'Article',
+  pattern: 'articles/**/index.mdx',
+  schema: s
+    .object({
+      title: s.string(),
+      summary: s.string().max(200),
+      publishedAt: s.isodate(),
+      updatedAt: s.isodate().optional(),
+      tags: s.array(s.string()),
+      devtoUrl: s.string().url().optional(),
+      coverArt: s
+        .object({
+          preset: s.enum(['flow', 'donut']),
+          params: s.string(),
+        })
+        .optional(),
+      // derived from the file path — folder name becomes the slug
+      slug: s.path(),
+      // raw markdown source for reading-time computation
+      raw: s.raw(),
+      // compiled MDX function-body string
+      // GFM (tables, task lists, strikethrough, autolinks) is enabled by
+      // Velite's built-in default (gfm: true). No separate remarkGfm import
+      // needed — Velite registers it internally before any custom plugins.
+      body: s.mdx({
+        rehypePlugins: [
+          [
+            rehypePrettyCode,
+            {
+              theme: 'github-dark-dimmed',
+              keepBackground: false,
+            },
+          ],
+        ],
+      }),
+    })
+    .transform((data) => {
+      // s.path() returns 'articles/<folder-name>' — extract only the leaf segment
+      const slug = data.slug.split('/').pop() ?? data.slug;
+      if (!SLUG_RE.test(slug)) {
+        throw new Error(`Invalid article slug "${slug}" — must be lowercase kebab-case`);
+      }
+      // Destructure raw out so it does not appear in the emitted Article type
+      const { raw, ...rest } = data;
+      const wc = countWords(raw);
+      return {
+        ...rest,
+        slug,
+        wordCount: wc,
+        readingTime: readingTime(raw),
+        ogImage: `/og/articles/${slug}.png`,
+      };
+    }),
+});
+
+export default defineConfig({
+  root: 'src/content',
+  output: {
+    data: '.velite',
+    assets: 'public/static',
+    base: '/static/',
+    name: '[name]-[hash:6][ext]',
+    clean: true,
+  },
+  collections: { article },
+});
