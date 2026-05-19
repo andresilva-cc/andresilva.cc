@@ -243,32 +243,3 @@ pre {
     transition-duration: 0.01ms !important;
   }
 }
-
-/* ============================================================
-   Footer dot separators — only in the >= sm single-line regime.
-   The dot is a ::before pseudo-element on the <li> (NOT the <a>), so it
-   sits between links without being part of either link's clickable or
-   hover area. It lives in the inter-item gap with EQUAL margin-inline on
-   both sides, so it is optically centered between neighbouring links
-   regardless of glyph metrics. letter-spacing is reset to `normal` so the
-   footer's tracking-button does not skew the dot's slot. Below sm the row
-   wraps and NO dot is rendered, so no separator can land on a line edge.
-   ============================================================ */
-@media (width >= 40rem) {
-  .footer-links li::before {
-    content: "·";
-    /* The · is a mid-height glyph — it renders above baseline-aligned
-       lowercase text. inline-block + translateY nudges it down onto the
-       lowercase x-height centre. */
-    display: inline-block;
-    transform: translateY(0.09em);
-    margin-inline: 0.5rem;
-    color: var(--color-fg-subtle);
-    font-weight: 400;
-    letter-spacing: normal;
-  }
-
-  .footer-links li:first-child::before {
-    content: none;
-  }
-}
