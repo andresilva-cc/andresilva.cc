@@ -194,11 +194,18 @@ pre {
    cross-display drift. (fg-muted, not fg: fg is near-white and tints
    almost imperceptibly; fg-muted carries a visible green-grey cast.)
    Fades out on the focus/hover reveal so the photo returns to natural
-   colour. */
+   colour.
+
+   z-index is REQUIRED: the <img> has `filter`, which makes it form a
+   stacking context — that promotes it into the positioned paint layer,
+   where tree order would otherwise paint it ON TOP of this ::before.
+   z-index:1 lifts the tint above the photo; ::after (scanlines) gets
+   z-index:2 to stay outermost. */
 .portrait::before {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: var(--color-fg-muted);
   mix-blend-mode: multiply;
   pointer-events: none;
@@ -208,6 +215,7 @@ pre {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: repeating-linear-gradient(
     0deg,
     transparent 0,
