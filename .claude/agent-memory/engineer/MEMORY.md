@@ -4,7 +4,6 @@
 - Build: `pnpm build` — verify TypeScript + generates static pages
 - Lint: `pnpm lint` — ESLint must stay clean
 - Dev server: `http://localhost:3000` (started externally, not by engineer)
-- Worktree: `/Users/andresilva/Projects/andresilva.cc/.claude/worktrees/impl/`
 
 ## Key patterns
 
