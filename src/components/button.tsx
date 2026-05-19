@@ -39,12 +39,12 @@ export function Button({
         className={clsx(
           // font-semibold intentionally overrides meta's default 500 weight
           // — Button is canonically 12px / 600 per docs/design-system.md.
-          'inline-flex items-center gap-2 border border-accent-muted px-5 py-3 font-semibold uppercase tracking-button text-accent no-underline cursor-pointer select-none',
+          'group/button inline-flex items-center gap-2 border border-accent-muted px-5 py-3 font-semibold uppercase tracking-button text-accent no-underline cursor-pointer select-none',
           // `transition` (not `transition-colors`) so the press-scale on
           // .active also animates — transition-colors + transition-transform
           // would clobber each other since both set the shorthand.
           'transition duration-fast ease-out',
-          'motion-safe:hover:bg-accent-tint motion-safe:hover:border-accent motion-safe:hover:text-accent-strong',
+          'hover:bg-accent-tint hover:border-accent hover:text-accent-strong',
           'active:bg-accent active:text-canvas active:border-accent',
           'motion-safe:active:scale-press',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',

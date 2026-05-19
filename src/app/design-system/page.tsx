@@ -10,8 +10,9 @@ import { LayoutBand } from './_components/layout-band';
 import { AccessibilityBand } from './_components/accessibility-band';
 
 export const metadata = {
-  title: 'Design System — andresilva.cc',
+  title: 'André Silva · Design System',
   description: 'Tokens, components, and standing rules for the andresilva.cc design system.',
+  robots: { index: false },
 };
 
 /*
@@ -20,8 +21,9 @@ export const metadata = {
  * system: if a token, utility, or component breaks, this surface
  * shows it first.
  *
- * Source spec: redesign/design-system.html (visual canon) and
- * docs/design-system.md (engineer-facing token mapping).
+ * Source spec: docs/design-system.md (tokens, components, standing
+ * rules). This route is itself the site's live visual reference — the
+ * redesign/ HTML mocks it was first built from have been retired.
  */
 export default function DesignSystemPage() {
   return (

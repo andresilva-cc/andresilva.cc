@@ -34,7 +34,7 @@ export function Nav({ items, className }: NavProps) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary" className={clsx('flex', className)}>
+    <nav aria-label="Primary" className={clsx('flex -mr-3', className)}>
       { items.map((item) => {
         const isActive = isActivePath(item.path, pathname);
         const label = isActive ? `[${item.name}]` : item.name;
@@ -47,7 +47,7 @@ export function Nav({ items, className }: NavProps) {
                 'inline-flex items-center px-3 py-2 min-h-8 no-underline transition-colors duration-fast ease-out',
                 isActive
                   ? 'text-accent'
-                  : 'text-fg-muted motion-safe:hover:text-fg',
+                  : 'text-fg-muted hover:text-fg',
               )}
             >
               { label }

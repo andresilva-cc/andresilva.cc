@@ -1,6 +1,6 @@
 # Architecture
 
-A snapshot of how andresilva.cc is built today, after the redesign. The site is a mature, one-developer marketing/portfolio site deployed to Vercel. It is mostly static, with a single async data source (dev.to via the Forem API) and a small client-side surface for the mobile menu and a few interactive affordances.
+A snapshot of how andresilva.cc is built today, after the redesign. The site is a mature, one-developer marketing/portfolio site deployed to Vercel. It is mostly static, with a single async data source (dev.to via the Forem API) and a small client-side surface for route-aware navigation and a hero animation.
 
 This document describes **what is**, not what should be. Treat the code as the source of truth; update this doc when a task materially changes the architecture.
 
@@ -10,8 +10,8 @@ This document describes **what is**, not what should be. Treat the code as the s
 
 - **Domain**: https://andresilva.cc
 - **Purpose**: Personal site — home, about, career, projects, and articles (mirrored from dev.to).
-- **Shape**: Next.js App Router app, Server Components by default, with a handful of `'use client'` islands for genuinely interactive chrome (mobile menu, hover-gated affordances).
-- **Visual canon**: `redesign/design-system.html` is the canonical visual spec (token block, component vocabulary, contrast matrix). `redesign/*.html` are page mocks. `redesign/notes.md` is the decision log.
+- **Shape**: Next.js App Router app, Server Components by default, with two `'use client'` islands: `nav.tsx` (route-aware active highlighting) and `stipple-art.tsx` (loads the external ASCII-art Web Component).
+- **Visual reference**: the shipped code is the source of truth — the token block in `src/styles/globals.css` and the components in `src/components/`, live-rendered at the `/design-system` route. `docs/redesign-log.md` is the decision log.
 - **Data**: Content is either hard-coded in "static" repositories or fetched from the Forem (dev.to) API at request time. There is no database, no auth, no backend of our own, and no user-generated content.
 - **Deployment**: Vercel, auto-deploy from `main`.
 
@@ -21,12 +21,12 @@ This document describes **what is**, not what should be. Treat the code as the s
 
 | Area                    | Choice                                                                                     |
 | ----------------------- | ------------------------------------------------------------------------------------------ |
-| Framework               | Next.js **16.1.1** (App Router, Turbopack dev server)                                      |
-| UI library              | React **19.2.3** + React DOM 19.2.3                                                        |
+| Framework               | Next.js **16.2.6** (App Router, Turbopack dev server)                                      |
+| UI library              | React **19.2.6** + React DOM 19.2.6                                                        |
 | Language                | TypeScript **5.9.3** (`strict: true`, `moduleResolution: bundler`, `@/*` → `src/*`)        |
-| Styling                 | Tailwind CSS **4.1.18** via `@tailwindcss/postcss` (CSS-first config, no `tailwind.config`)|
-| Headless UI primitives  | `@headlessui/react` (mobile menu disclosure), `@radix-ui/react-slot` (for `asChild`)       |
-| Icons                   | `@phosphor-icons/react` (SSR-safe imports from `/dist/ssr/index`)                          |
+| Styling                 | Tailwind CSS **4.3.0** via `@tailwindcss/postcss` (CSS-first config, no `tailwind.config`) |
+| Headless UI primitives  | `@radix-ui/react-slot` (for the `asChild` polymorphism in `Text`)                          |
+| Icons                   | Hand-rolled inline SVG components (`icon-arrow.tsx`, `icon-heart.tsx`) — no icon-library dependency |
 | HTTP client             | `axios` (used only to call Forem)                                                          |
 | Class utilities         | `clsx`                                                                                     |
 | Analytics               | Google Analytics via `@next/third-parties/google` (gaId `G-TLHZYGS1SJ`)                    |
@@ -35,7 +35,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Lint                    | ESLint **9** flat config: `eslint-config-next/core-web-vitals` + `@stylistic/eslint-plugin`, airbnb base |
 | Hosting                 | Vercel (auto-deploy from `main`)                                                           |
 
-There is **no** `next.config` customization (the file exists but is empty), **no** `tailwind.config.*` (Tailwind 4 CSS-first via `@theme inline`), **no** Prettier, and **no** test framework configured in the repo.
+The `next.config.mjs` carries a single option — `turbopack.root` (pins the workspace root; see §5). There is **no** `tailwind.config.*` (Tailwind 4 CSS-first via `@theme inline`), **no** Prettier, and **no** test framework configured in the repo.
 
 ---
 
@@ -46,16 +46,9 @@ andresilva.cc/
 ├── docs/
 │   ├── status.md              # project snapshot + conventions
 │   ├── workflow.md            # agent pipeline workflow
-│   ├── design-system.md       # token reference (created on demand)
+│   ├── design-system.md       # token + component reference
+│   ├── redesign-log.md        # redesign decision log
 │   └── architecture.md        # this file
-├── redesign/
-│   ├── design-system.html     # canonical visual spec (token block + every component)
-│   ├── notes.md               # decision log
-│   ├── home.html              # page mock
-│   ├── about.html             # page mock
-│   ├── career.html            # page mock
-│   ├── projects.html          # page mock
-│   └── articles.html          # page mock
 ├── public/
 │   ├── me.jpg                 # about-page portrait
 │   ├── resume.pdf             # /resume.pdf link target
@@ -66,19 +59,29 @@ andresilva.cc/
 │   ├── api/
 │   │   └── forem.ts           # axios client for dev.to's Forem API
 │   ├── app/                   # Next.js App Router
-│   │   ├── layout.tsx         # root layout, mounts GA, applies fonts
-│   │   ├── page.tsx           # / (home)
-│   │   ├── not-found.tsx      # 404
+│   │   ├── layout.tsx         # bare root layout: <html>/<body> + fonts + GA
+│   │   ├── not-found.tsx      # 404 — at root; replicates the shell itself
 │   │   ├── fonts.ts           # next/font loaders
+│   │   ├── sitemap.ts         # static sitemap for the five content routes
 │   │   ├── favicon.ico
-│   │   ├── about/page.tsx
-│   │   ├── articles/page.tsx  # async — fetches from Forem
-│   │   ├── career/page.tsx
-│   │   └── projects/page.tsx
+│   │   ├── (site)/            # route group — shared shell layout
+│   │   │   ├── layout.tsx     # the shell: SkipLink + Header + main + Footer
+│   │   │   ├── page.tsx       # / (home)
+│   │   │   ├── about/page.tsx
+│   │   │   ├── articles/page.tsx  # async — fetches from Forem
+│   │   │   ├── career/page.tsx
+│   │   │   └── projects/page.tsx
+│   │   └── design-system/     # separate route — outside the (site) group
+│   │       ├── layout.tsx     # bare shell: max-w-shell container + <main> only
+│   │       ├── page.tsx       # /design-system — living reference page
+│   │       └── _components/   # band sections, private to this route
 │   ├── components/            # presentational + client components (the redesign vocabulary)
-│   ├── hooks/
-│   │   └── use-repositories.ts  # factory returning all repositories
+│   ├── lib/
+│   │   ├── safe-href.ts         # URL allowlist guard (http/https/relative/fragment/mailto/tel)
+│   │   ├── format-date.ts       # formatMonthYear / formatDateRange date formatters
+│   │   └── get-slug.ts          # extracts the last path segment from a URL
 │   ├── repositories/
+│   │   ├── index.ts             # getRepositories() — factory for all repositories
 │   │   ├── *.ts                 # interfaces (ArticlesRepository, ...)
 │   │   └── implementations/
 │   │       ├── forem-articles-repository.ts    # hits dev.to
@@ -92,7 +95,7 @@ andresilva.cc/
 │       ├── article.ts
 │       └── project.ts
 ├── eslint.config.mjs
-├── next.config.mjs            # empty config
+├── next.config.mjs            # turbopack.root pin
 ├── postcss.config.js          # @tailwindcss/postcss
 ├── tsconfig.json
 ├── package.json
@@ -103,10 +106,10 @@ Path alias: `@/*` resolves to `src/*`.
 
 ### Role of each top-level `src/` directory
 
-- **`src/app/`** — App Router routes. Each subdirectory is a route; each `page.tsx` is a Server Component unless explicitly marked `'use client'`. `layout.tsx` is the single root layout.
-- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-entry). Names mirror the vocabulary in `redesign/design-system.html`.
-- **`src/repositories/`** — Data-access seam. Interfaces at the top level; concrete implementations under `implementations/`. See §6.
-- **`src/hooks/`** — Currently holds the repository factory only. The `use-*` prefix is a naming convention, not a React hook in the strict sense — `articles/page.tsx` calls it from an async Server Component.
+- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the five content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
+- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card). Names mirror the component vocabulary documented in `docs/design-system.md`.
+- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency. Three modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` date formatters), and `get-slug.ts` (extracts the last path segment from a URL).
+- **`src/repositories/`** — Data-access seam. `index.ts` exports the `getRepositories()` factory; interfaces at the top level; concrete implementations under `implementations/`. See §6.
 - **`src/styles/`** — Single `globals.css` with the Tailwind import and the `@theme inline` token block. There are no other CSS files in `src/` after the redesign — the multi-theme `themes/*.css` system has been removed.
 - **`src/types/`** — Shared TypeScript types for entities returned by repositories.
 - **`src/api/`** — Low-level HTTP clients. Only `forem.ts` lives here today.
@@ -115,23 +118,30 @@ Path alias: `@/*` resolves to `src/*`.
 
 ## 4. Routing & Rendering
 
-App Router, flat set of top-level routes. No dynamic segments, no route groups, no parallel/intercepting routes, no middleware.
+App Router. No dynamic segments, no parallel/intercepting routes, no middleware. One route group (`(site)`) carries the five content routes under a shared shell layout; `design-system` is a separate route outside that group with its own bare layout.
 
-| Path        | File                            | Rendering                         |
-| ----------- | ------------------------------- | --------------------------------- |
-| `/`         | `src/app/page.tsx`              | Server (static)                   |
-| `/about`    | `src/app/about/page.tsx`        | Server (static)                   |
-| `/articles` | `src/app/articles/page.tsx`     | Server, `async` — fetches Forem   |
-| `/career`   | `src/app/career/page.tsx`       | Server (static)                   |
-| `/projects` | `src/app/projects/page.tsx`     | Server (static)                   |
-| `*` (404)   | `src/app/not-found.tsx`         | Server (static)                   |
+| Path             | File                                 | Rendering                       |
+| ---------------- | ------------------------------------ | ------------------------------- |
+| `/`              | `src/app/(site)/page.tsx`            | Server (static)                 |
+| `/about`         | `src/app/(site)/about/page.tsx`      | Server (static)                 |
+| `/articles`      | `src/app/(site)/articles/page.tsx`   | Server, `async` — fetches Forem |
+| `/career`        | `src/app/(site)/career/page.tsx`     | Server (static)                 |
+| `/projects`      | `src/app/(site)/projects/page.tsx`   | Server (static)                 |
+| `/design-system` | `src/app/design-system/page.tsx`     | Server (static)                 |
+| `*` (404)        | `src/app/not-found.tsx`              | Server (static)                 |
+
+`/design-system` is a live public route but is an internal living-reference page (it renders every production component to validate the system). It is excluded from `sitemap.ts` and sets `robots: { index: false }` in its `metadata`, so it stays out of search indexes.
+
+### Layout arrangement
+
+The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `GoogleAnalytics`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the five content routes. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
 
 ### Server-first, client where needed
 
-Pages and structural components stay server-rendered. The only files that carry `'use client'` are the ones that genuinely need DOM access or interactivity:
+Pages and structural components stay server-rendered. Exactly two files carry `'use client'`, and only because they genuinely need a client hook or DOM access:
 
-- The **mobile menu** (disclosure state, route-aware active highlighting).
-- **Hover-gated affordances** that need to read pointer state or run on the client (e.g., a component that conditionally renders interaction cues only on devices with a fine pointer).
+- **`nav.tsx`** — reads `usePathname()` to mark the active item with `aria-current="page"` and route-aware accent highlighting. The header itself stays a Server Component; it reflows responsively via CSS flex-wrap at the `xs` breakpoint, with no JS disclosure/hamburger.
+- **`stipple-art.tsx`** — loads the external `<stipple-art>` Web Component (home hero + article-thumbnail ASCII art) via a `useEffect` script injection.
 
 Everything else — header, footer, page heads, section heads, project cards, role cards, article entries, tags, status dots, link arrows — is a Server Component.
 
@@ -147,12 +157,12 @@ Each route page declares its own `metadata.title` (e.g. `"About | André Silva"`
 
 There is no `tailwind.config.js`. The entire token contract lives in `src/styles/globals.css` inside a single Tailwind 4 `@theme inline` block, which maps Tailwind class names onto CSS custom properties.
 
-The token block mirrors the canonical `:root` from `redesign/design-system.html` and covers:
+The token block is the canonical token contract and covers:
 
 - **Semantic colors** — `base` (background), `surface-2` (raised surface), `fg` family (`hi`, `mid`, `lo` for high/mid/low-emphasis text), `accent` family (`accent`, `accent-hi`, `accent-mute`, `accent-tint`), `rule` family (`rule`, `rule-2` for dividers).
 - **Type scale** — display, h1, h2, h3, body, meta, micro.
-- **Spacing scale** — `s1` (4px) through `s20` (80px), plus a few component-specific tokens (`tag-pad-y`, `badge-clearance`, `gutter-date`).
-- **Prose widths** — `prose-w-narrow` (56ch), `prose-w` (68ch), `prose-w-card` (38ch).
+- **Spacing scale** — Tailwind's default 4px-based scale (`p-1` through `p-20`) covers every spacing value the design uses, so no custom `--spacing-*` tokens are registered. Component-specific layout values that don't fit the global spacing scale live as bespoke `@theme` tokens — the fixed-column grid templates (`--grid-template-columns-role` at `183px 1fr` for career role date columns, plus `--grid-template-columns-article` and `--grid-template-columns-article-card`). The hero-art box dimensions are raw CSS variables in `:root` (`--hero-art-w` etc.), consumed via `var()` — the embed needs explicit sizing Tailwind has no clean namespace for. One-off per-component values (e.g. the 2px vertical padding on chips, the 88px right-padding clearance on featured project cards) are expressed inline with Tailwind utilities (`py-0.5`, `pr-22`) rather than promoted to tokens.
+- **Prose widths** — `--max-width-prose-narrow` (56ch), `--max-width-prose-bio` (60ch), `--max-width-prose-wide` (68ch), `--max-width-prose-card` (38ch).
 - **Photo filters** — `photo-filter` (primary) + `photo-filter-soft` (touch-device fallback for the about portrait).
 - **Motion** — `ease-out`, `ease-in`, `d-fast` (120ms), `d-mod` (200ms).
 - **Font families** — `ff-mono` (JetBrains Mono) and `ff-display` (VT323), wired into Tailwind's font family classes via the CSS variables exposed by `next/font`.
@@ -167,7 +177,7 @@ The styling rule is unambiguous:
 
 - **No CSS classes are defined outside `globals.css`.** Component styles compose Tailwind utility classes; ad-hoc CSS goes into `globals.css` only when a utility composition genuinely can't express it.
 - **No arbitrary values anywhere in the codebase.** No `bg-[#0B0F0A]`, no `text-[14px]`, no `mt-[7px]`. Every size, color, and spacing reference resolves to a token in the `@theme` block. If a value isn't expressible with the existing tokens, the answer is to add a token, not to inline a literal.
-- **Token names match `redesign/design-system.html`.** When in doubt about which token to use for a given visual treatment, the design-system HTML is the source of truth.
+- **Tokens are the only styling vocabulary.** When in doubt about which token to use for a given visual treatment, `docs/design-system.md` documents each one's intended use.
 
 Tokens are documented (with names, intended use, and contrast notes) in `docs/design-system.md`.
 
@@ -175,21 +185,21 @@ Tokens are documented (with names, intended use, and contrast notes) in `docs/de
 
 ## 6. Component Vocabulary
 
-After the redesign, the component layer is a direct translation of the vocabulary in `redesign/design-system.html` — roughly sixteen components, each a single visual concept:
+The component layer is a vocabulary of roughly seventeen components, each a single visual concept:
 
-- **Layout chrome**: `header`, `footer`, `wordmark`, `nav` (with the mobile-menu variant), `skip-link`.
+- **Layout chrome**: `header`, `footer`, `wordmark`, `nav` (route-aware client component), `skip-link`.
 - **Page structure**: `page-head`, `section-head`, `eyebrow`, `grid-frame`.
 - **Inline primitives**: `tag` / `badge`, `status-dot`, `link-arrow`, `button-cta`.
 - **Cards & rows**: `row` (home Latest), `project-card`, `role-card`, `article-entry`.
-- **Media**: `photo-wrap` (about portrait with the filter token), `hero-plasma` (home hero right column).
+- **Media**: `photo-wrap` (about portrait with the filter token), `hero-art` / `stipple-art` (the ASCII-art embed — home hero + article thumbnails).
 
-The component file listing in `src/components/` is the authoritative inventory; `redesign/design-system.html` is the visual contract each file implements.
+The component file listing in `src/components/` is the authoritative inventory; the `/design-system` route renders each one live as its visual contract.
 
 ### Composition conventions
 
 - **Primitives accept an `asChild` prop** (via `@radix-ui/react-slot`) so wrappers like `Link` or `Button` can inherit a primitive's styling without nesting elements.
 - **External links** are auto-detected in link primitives (`href.startsWith('http')` → `target="_blank"` + `rel="noopener noreferrer"`).
-- **Card lists use `<li class="card-class">` directly** (no inner `<article>`). The `<li>` is the card. This matches the v4.1 standing rule in `redesign/notes.md` and applies to projects, career roles, and articles.
+- **Card lists use `<li class="card-class">` directly** (no inner `<article>`). The `<li>` is the card. This matches the standing rule recorded in `docs/redesign-log.md` and applies to projects, career roles, and articles.
 
 ---
 
@@ -197,7 +207,7 @@ The component file listing in `src/components/` is the authoritative inventory; 
 
 ```mermaid
 flowchart LR
-    Page["App Router Page<br/>(Server Component)"] -->|useRepositories()| Factory["use-repositories.ts"]
+    Page["App Router Page<br/>(Server Component)"] -->|getRepositories()| Factory["repositories/index.ts"]
     Factory --> Static["Static*Repository<br/>(hard-coded data)"]
     Factory --> Forem["ForemArticlesRepository"]
     Forem -->|axios| DevTo[("dev.to<br/>Forem API")]
@@ -208,7 +218,7 @@ flowchart LR
 
 ### Repository pattern
 
-`src/hooks/use-repositories.ts` is a plain factory function (the `use*` prefix is a naming convention, not a React hook). Each page asks the factory for the repositories it needs and calls `.getAll()` (or similar) on them.
+`src/repositories/index.ts` exports `getRepositories()`, a plain factory function that returns fresh instances of every repository. Each page imports it (`from '@/repositories'`), destructures the repositories it needs, and calls `.getAll()` (or similar) on them.
 
 There are two kinds of implementations:
 
@@ -237,7 +247,7 @@ This decision has been re-evaluated and ratified after the redesign — do not p
 
 `src/app/fonts.ts` loads two Google fonts via `next/font/google` (which self-hosts them through Next's build pipeline — no runtime requests to fonts.googleapis.com):
 
-- **JetBrains Mono** — body and UI text. Weights 400, 500, 600, 700. Exposed as `--ff-mono` (matching the canonical token name).
+- **JetBrains Mono** — body and UI text. Weights 400, 500, 600. Exposed as `--ff-mono` (matching the canonical token name).
 - **VT323** — pixel-display headings. Single weight. Exposed as `--ff-display`.
 
 Both CSS variables are forwarded to the Tailwind `@theme` block so any `font-mono` / `font-display` utility class resolves to the loaded face. The previous Fira Sans / Fira Code pair has been removed.
@@ -246,11 +256,11 @@ Both CSS variables are forwarded to the Tailwind `@theme` block so any `font-mon
 
 ## 9. Accessibility
 
-- **WCAG AA contrast at body size.** The token palette is sized so every text-on-background combination clears AA. The contrast matrix is documented in `redesign/design-system.html` (§2.2) and reflects the v4.1 `--lo` bump (`#7E8E76`, 5.49:1 on `--base`, 5.30:1 on `--surface-2`).
+- **WCAG AA contrast at body size.** The token palette is sized so every text-on-background combination clears AA. The contrast notes are documented per token in `docs/design-system.md` and reflect the `--lo` bump (`#7E8E76`, 5.49:1 on `--base`, 5.30:1 on `--surface-2`).
 - **Skip link.** Every page renders a visually-hidden "Skip to content" link that becomes visible on focus and jumps to `<main>`.
 - **Focus-visible rings.** Two-pixel `--accent` outline with a two-pixel offset on every interactive element (`a`, `button`, `[tabindex]`). The default browser ring is disabled; the design-system ring replaces it.
 - **`prefers-reduced-motion`.** Decorative motion (row press scale, hero cursor blink, any hover transitions on cards) is gated by `prefers-reduced-motion: no-preference` and falls back to static states otherwise.
-- **Semantic structure.** Card lists are `<ul>`/`<li>`, card titles are `<p>` (not `<h3>`), and single-band pages label their lone `<section>` with `aria-label` rather than `aria-labelledby` (per the v4 standing rule in `redesign/notes.md`).
+- **Semantic structure.** Card lists are `<ul>`/`<li>`, card titles are `<p>` (not `<h3>`), and single-band pages label their lone `<section>` with `aria-label` rather than `aria-labelledby` (per the standing rule recorded in `docs/redesign-log.md`).
 - **Prose punctuation.** User-facing copy uses U+2019 (curly apostrophe) and U+201C / U+201D (curly double quotes). Straight quotes are reserved for HTML attributes, CSS strings, and code.
 
 ---
@@ -304,7 +314,7 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 ## 12. Deployment
 
 - **Platform**: Vercel, connected to the GitHub repo `andresilva-cc/andresilva.cc`. Auto-deploy from `main`; preview deploys per PR.
-- **Build**: `next build` (standard). No custom `next.config.mjs` options — default output, default image optimization, default runtime.
+- **Build**: `next build` (standard). The `next.config.mjs` pins `turbopack.root`; otherwise default output, image optimization, and runtime.
 - **Environment variables**: `FOREM_API_URL` and `FOREM_API_KEY` must be set in Vercel for `/articles` to work. GA ID is hardcoded.
 - **Domain / DNS**: `andresilva.cc`, managed via Vercel.
 - **CI**: deployment status is visible via the deployments badge in `README.md`; there is no `.github/workflows/` directory — CI is whatever Vercel runs on push/PR.
@@ -315,12 +325,12 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 
 - **Server by default, client only where needed.** Pages and structural components stay server-rendered; only genuinely interactive islands carry `'use client'`.
 - **Tokens-only styling.** Every visual value resolves to a token in `globals.css`. No arbitrary values, no inline literals.
-- **Design-system HTML is the visual contract.** When implementing a component, the markup and CSS in `redesign/design-system.html` are authoritative; the React translation should match the visual behavior 1:1.
+- **The `/design-system` route is the visual contract.** When implementing or changing a component, it must render correctly on that route; it is the live reference each component implements.
 - **Repository pattern is the data seam.** Pages depend on interfaces, never on concrete implementations.
 - **Card lists are `<ul>`/`<li>`.** Card titles are non-heading elements; sections are labeled with `aria-label` on single-band pages.
 - **Curly punctuation in prose.** U+2019 for apostrophes, U+201C/U+201D for double quotes.
 - **External links auto-detected** in link primitives (`href.startsWith('http')` → `target="_blank"`).
-- **Active menu highlighting** uses `usePathname()` plus an optional `activeRegex` on the menu item (e.g., Articles matches `^/article` so future article sub-routes stay highlighted).
+- **Active menu highlighting** uses `usePathname()` plus an `isActivePath(itemPath, currentPath)` check in `nav.tsx`: an item is active when `currentPath === itemPath` or `currentPath.startsWith(itemPath + '/')`, with `/` special-cased to require an exact match. Sub-routes therefore keep their parent nav item highlighted without any per-item config.
 - **Commits** follow Conventional Commits (`feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`).
 - **Branch strategy**: feature branch per task → PR → merge to `main` → Vercel auto-deploys.
 

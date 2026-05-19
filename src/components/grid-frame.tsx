@@ -26,6 +26,7 @@ export function GridFrame({ as, className, children }: GridFrameProps) {
       className={clsx(
         'grid border-t border-l border-rule list-none p-0 m-0',
         '*:border-r *:border-b *:border-rule',
+        '*:py-4 *:px-5',
         className,
       )}
     >

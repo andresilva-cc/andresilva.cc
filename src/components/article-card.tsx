@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { Text } from '@/components/text';
 import { Tag } from '@/components/tag';
 import { ArrowLink } from '@/components/arrow-link';
+import { IconHeart } from '@/components/icon-heart';
+import { InlineLink } from '@/components/inline-link';
 import { safeHref } from '@/lib/safe-href';
 
 export interface ArticleCardProps {
@@ -11,6 +13,10 @@ export interface ArticleCardProps {
   date: string;
   /** Reading time in minutes (e.g. 6). */
   readingTime: number;
+  /** Number of public reactions (hearts). */
+  reactions: number;
+  /** Number of comments. */
+  comments: number;
   title: string;
   description: string;
   url: string;
@@ -34,49 +40,47 @@ export interface ArticleCardProps {
  * verbatim.
  */
 export function ArticleCard({
-  date, readingTime, title, description, url, tags, illustration, className,
+  date, readingTime, reactions, comments, title, description, url, tags, illustration, className,
 }: ArticleCardProps) {
   const hasIllustration = Boolean(illustration);
   const safe = safeHref(url);
   return (
     <li
       className={clsx(
-        'grid grid-cols-1 gap-6 border-b border-rule py-6 first:pt-0 last:border-b-0',
+        'grid grid-cols-1 gap-4 border-b border-rule py-6 last:border-b-0',
         hasIllustration && 'md:grid-cols-article-card md:gap-6 md:items-stretch',
         className,
       )}
     >
       { hasIllustration && (
-        <div
-          className="w-full max-w-80 md:max-w-none min-h-36 flex items-center justify-center border border-rule bg-surface overflow-hidden shrink-0"
-          aria-hidden="true"
-        >
+        <div className="relative w-full max-w-80 md:max-w-none min-h-36 border border-rule bg-canvas overflow-hidden shrink-0">
           { illustration }
         </div>
       ) }
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         <Text variant="meta" as="span" className="inline-flex flex-wrap items-baseline gap-2 text-fg-subtle">
-          <span>{ date }</span>
+          <span className="text-fg-muted">{ date }</span>
           <span aria-hidden="true">·</span>
-          <span>{`${readingTime} min read`}</span>
+          <span>{`${readingTime} min`}</span>
+          <span aria-hidden="true">·</span>
+          <span className="inline-flex items-center gap-1">
+            {reactions}
+            {' '}
+            <IconHeart className="size-3" />
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>{`${comments} comment${comments === 1 ? '' : 's'}`}</span>
         </Text>
-        <Text variant="h3" as="p" className="m-0">
-          <a
-            href={safe}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-fg no-underline transition-colors duration-fast ease-out motion-safe:hover:text-accent"
-          >
-            { title }
-          </a>
+        <Text variant="h3" as="p" className="mt-3 mb-0">
+          <InlineLink href={safe}>{ title }</InlineLink>
         </Text>
-        <Text variant="body" className="text-fg-muted max-w-prose-wide m-0">{ description }</Text>
-        <div className="flex flex-wrap gap-1">
+        <Text variant="body" className="text-fg-muted max-w-prose-wide mt-2 mb-0">{ description }</Text>
+        <div className="flex flex-wrap gap-1.5 mt-4">
           { tags.map((tag) => (
             <Tag key={tag}>{ tag }</Tag>
           )) }
         </div>
-        <ArrowLink href={safe}>read on dev.to</ArrowLink>
+        <ArrowLink href={safe} className="mt-4">read on dev.to</ArrowLink>
       </div>
     </li>
   );

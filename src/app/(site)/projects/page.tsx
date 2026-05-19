@@ -9,14 +9,16 @@ export const metadata = {
 
 export default function Projects() {
   const { projectsRepository } = getRepositories();
-  const projects = projectsRepository.getAll();
+  const projects = [...projectsRepository.getAll()].sort(
+    (a, b) => Number(b.featured ?? false) - Number(a.featured ?? false),
+  );
 
   return (
     <>
       <PageHead name="PROJECTS" />
 
       <section aria-label="Projects" className="py-8">
-        <GridFrame className="grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <GridFrame className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           { projects.map((project) => (
             <ProjectCard
               key={project.title}

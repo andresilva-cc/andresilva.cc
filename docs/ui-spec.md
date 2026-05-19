@@ -1,6 +1,6 @@
 # UI Spec — andresilva.cc
 
-> Page-level structure for the five pages of the site. Pulls from the HTML mocks in `redesign/` (the source of truth for markup). Token names, components, and standing rules referenced here are defined in `docs/design-system.md` and live-rendered in `redesign/design-system.html`.
+> Page-level structure for the five pages of the site. The shipped components in `src/` are the source of truth for markup. Token names, components, and standing rules referenced here are defined in `docs/design-system.md` and live-rendered at the `/design-system` route.
 
 ---
 
@@ -36,7 +36,7 @@ Every page follows the same outer structure:
 </div>
 ```
 
-Footer is verbatim across all pages: `github · linkedin · dev.to · email` as lowercase text links separated by `·` (U+00B7) dots. All four external links carry `target="_blank" rel="noopener noreferrer"`. Email link is `mailto:hello@andresilva.cc`.
+Footer is verbatim across all pages: `github · linkedin · dev.to · x · instagram · email` as lowercase text links separated by `·` (U+00B7) dots. The five external links carry `target="_blank" rel="noopener noreferrer"`. Email link is `mailto:hello@andresilva.cc`.
 
 ---
 
@@ -48,23 +48,23 @@ Footer is verbatim across all pages: `github · linkedin · dev.to · email` as 
 
 ### Sections (in order)
 
-1. **Hero** (`section.hero`, `aria-labelledby="page-title"`)
-   - Left column: name (`<h1 class="name t-pixel">André Silva</h1>` in VT323 56px `--accent`, plus a blinking cursor span), role line (status dot + `Senior Engineer @ MPA`), one-line pitch (`Software engineer with 9+ years of experience…`).
-   - Right column: hero plasma (ASCII field rendered in a `<pre>`, `role="presentation"`, accent characters stand out from `--mid` characters). Static frame under `prefers-reduced-motion: reduce`.
-   - Source: `src/app/page.tsx` for hero copy; current role from `src/repositories/implementations/static-jobs-repository.tsx` (first entry).
-2. **Bio band** (`section.band`, `aria-labelledby="bio-h"`)
-   - Eyebrow: `// 01 / who`. H2: `Bio`. Right-aligned link-arrow → `about.html` labeled `Full bio`.
-   - One paragraph summary with technology nouns in `<strong>` (`TypeScript`, `Vue.js`, `Nuxt`, `React`, `Node.js`).
-3. **Latest band** (`section.band`, `aria-labelledby="latest-h"`)
-   - Eyebrow: `// 02 / what i'm doing now`. H2: `Latest`.
-   - `<ul class="rows">` of exactly three `<li>` items, one per category: a Career row (current role), a Project row (most recent featured), an Article row (most recent dev.to post).
-   - Each row is `<a class="row">` with a badge (`Career` / `Project` / `Article`), the noun in `<strong>`, and a trailing link-arrow icon (no visible "Read more" text — the badge names the category, the arrow carries the affordance, the whole row is the link surface).
-   - Sources: jobs repo → first entry; projects repo → first featured entry; articles → first item from `https://dev.to/andresilva-cc` feed.
+1. **Hero** (`section`, `aria-labelledby="page-title"`)
+   - Left column: name (`André Silva` in VT323 display scale `--accent`, plus a blinking cursor span), role line (status dot + `Senior Engineer @ MPA` — title in `--accent`, `@` in `--fg-subtle`, company in `--fg`), one-line pitch (`Software engineer with 9+ years of experience…` with `9+ years of experience` in `<strong>`).
+   - Right column: hero plasma (`HeroPlasma`, lg+ only — `hidden lg:block`). Static frame under `prefers-reduced-motion: reduce`.
+   - Source: `src/app/(site)/page.tsx` for hero copy; current role from `src/repositories/implementations/static-jobs-repository.tsx` (first entry).
+2. **Now band** (`section`, `aria-labelledby="now-h"`)
+   - Eyebrow: `// 01 / current focus`. H2: `Now`. No right-rail link.
+   - One paragraph about André's current parallel builds — three projects in flight (`Calcloak`, `Infinity`, and the redesign of this site) plus a day-job framing (`MPA`, shipping features end-to-end with Claude Code). Two inline links (`InlineLink`) to `https://calcloak.com/` and `https://meet.agentairforce.com`; the project nouns inside those links are in `<strong>`, and `MPA` is in `<strong>` as a plain (non-link) noun.
+3. **Latest band** (`section`, `aria-labelledby="latest-h"`)
+   - Eyebrow: `// 02 / recent activity`. H2: `Latest`.
+   - `<ul>` of up to three `<li>` items, one per category: a Career row (current role), a Project row (most recent featured project), an Article row (most recent dev.to post). The Article row is omitted entirely if the dev.to feed is unavailable at build time.
+   - Each row is a `LatestRow` (`<a>`) with a badge (`Career` / `Project` / `Article`), the noun, and a trailing link-arrow icon (no visible "Read more" text — the badge names the category, the arrow carries the affordance, the whole row is the link surface). Career/Project/Article rows link to `/career`, `/projects`, `/articles` respectively.
+   - Sources: jobs repo → first entry; projects repo → first `featured` entry; articles → first item from `https://dev.to/andresilva-cc` feed.
 
 ### Key interactions
 
 - **Hero**: plasma animates while `prefers-reduced-motion: no-preference`; renders a single frame otherwise.
-- **Bio "Full bio" link**: hover lifts color to `--accent-hi`, underline appears with 3px offset; arrow icon nudges 2px right.
+- **Now band inline links**: `InlineLink` hover treatment (color lift + underline) on the two external project links.
 - **Latest rows**: entire row is the click target. Hover swaps a `::before` overlay opacity (`--surface-2` wash, transform/opacity only); arrow nudges; on press, only `.row__body` scales to 0.97 — the trailing `.row__cta` stays anchored so the hover overlay doesn't jitter.
 
 ### Mobile
@@ -79,7 +79,7 @@ Footer is verbatim across all pages: `github · linkedin · dev.to · email` as 
 - Hero plasma carries `aria-hidden="true"` on the `<aside>` and `role="presentation"` on the `<pre>` (belt-and-braces against screen readers that ignore parent `aria-hidden`).
 - Status dot has `aria-label="current role"`.
 - Each Latest row's `<a>` has an `aria-label` matching the noun (e.g., `Senior Engineer at MPA`).
-- Focus order: skip-link → wordmark → 5 nav links → bio "Full bio" link → 3 latest rows → 4 footer links.
+- Focus order: skip-link → wordmark → 5 nav links → 2 Now-band inline links → up to 3 latest rows → 6 footer links.
 
 ---
 
@@ -98,7 +98,7 @@ Footer is verbatim across all pages: `github · linkedin · dev.to · email` as 
    - Source: `src/app/about/page.tsx`. Portrait image: `public/me.jpg`.
 3. **Education band** (`aria-labelledby="edu-h"`, `.sec-head--flush`)
    - Eyebrow: `// 02 / where i studied`. H2: `Education`.
-   - `.grid-frame.grid-frame--2col` of 2 `.education-cell` items: BS in Computer Science (UNIVALI · 2015 — 2019) and Technical Leadership (Full Cycle · 2022 — 2023).
+   - `.grid-frame.grid-frame--2col` of 2 `.education-cell` items: BS in Computer Science (UNIVALI · 2015 — 2019) and Technical Leadership (Full Cycle · 2024 — 2025).
 4. **Facts band** (`aria-labelledby="facts-h"`, `.sec-head--flush`)
    - Eyebrow: `// 03 / at a glance`. H2: `Facts`.
    - `.grid-frame.grid-frame--2col` of 4 `.facts-cell` items: location (Florianópolis, BR), timezone (UTC-03), languages, interests.
@@ -133,7 +133,7 @@ Footer is verbatim across all pages: `github · linkedin · dev.to · email` as 
 ### Sections (in order)
 
 1. **Page-head** — `<CAREER />` (same brace pattern as About).
-2. **Career list** (`section.band`, `aria-label="Career"`) — `<ul class="career-list">` of 6 `<li class="role">` items, reverse-chronological:
+2. **Career list** (`<section aria-label="Career" className="py-8">` — the page's only content section, so no `SectionHead`) — `<ul class="career-list">` of 6 `<li class="role">` items, reverse-chronological:
    - Senior Engineer @ **MPA** (apr 2025 — now, current; carries `// formerly Healthy Labs` line)
    - Senior Front-end Engineer @ Atlas Technologies (jan 2024 — apr 2025)
    - Front-end Engineering Consultant @ Atlas Technologies (mar 2022 — jan 2024)
@@ -144,7 +144,7 @@ Footer is verbatim across all pages: `github · linkedin · dev.to · email` as 
 
 ### Role anatomy
 
-Each `.role` is a 2-column grid: date gutter (left, `--gutter-date` 183px) and content (right).
+Each `.role` is a 2-column grid: date gutter (left, 183px via Tailwind utility `grid-cols-role` — driven by `--grid-template-columns-role: 183px 1fr` in the `@theme inline` block) and content (right).
 
 - **Date gutter**: `.role__dates` text in 12px mono 500 `--mid`, lowercase month abbreviations (e.g., `apr 2025 — now`). Current role additionally carries the pulsing `.status-dot` inline before the dates.
 - **Content**:
@@ -182,13 +182,13 @@ Each `.role` is a 2-column grid: date gutter (left, `--gutter-date` 183px) and c
 ### Sections (in order)
 
 1. **Page-head** — `<PROJECTS />`.
-2. **Projects band** (`section.band`, `aria-label="Projects"`) — `<ul class="grid grid-frame grid-frame--3col">` of 18 `<li class="pr">` items, featured first.
+2. **Projects list** (`<section aria-label="Projects" className="py-8">` — the page's only content section, so no `SectionHead`) — `<ul class="grid grid-frame grid-frame--3col">` of 19 `<li class="pr">` items, featured first.
    - Featured items carry `.pr--is-featured` plus a `.pr__badge` reading `Featured` in the top-right corner.
-   - Source: `src/repositories/implementations/static-projects-repository.ts` (18 real projects; first 3 are featured: Grafex, Calcloak, Injektion).
+   - Source: `src/repositories/implementations/static-projects-repository.ts` (19 real projects; the 3 featured are Grafex, Infinity, and Calcloak, in that order).
 
 ### Project card anatomy (`.pr`)
 
-- `.pr__title` — non-heading `<p>` in `--hi` 16px mono 600. Featured cards reserve `--badge-clearance` (88px) of right padding so the corner badge clears.
+- `.pr__title` — non-heading `<p>` in `--hi` 16px mono 600. Featured cards apply Tailwind `pr-22` (88px right padding on the title row) so the corner badge clears.
 - `.pr__desc` — one-line description in `--mid`, capped at `--prose-w-card` (38ch).
 - `.pr__chips` — wrapping tech chips.
 - `.pr__links` — `link-arrow` links to `site` and/or `github`.
@@ -213,21 +213,21 @@ Each `.role` is a 2-column grid: date gutter (left, `--gutter-date` 183px) and c
 
 ## Page: Articles (`/articles`)
 
-**Purpose** — Reader feed of dev.to posts. Each entry is a self-contained card with date, reading time, reactions, comments, a hand-drawn SVG illustration, description, tags, and a "read on dev.to" link.
+**Purpose** — Reader feed of dev.to posts. Each entry is a self-contained card with date, reading time, reactions, comments, a stipple-art thumbnail, description, tags, and a "read on dev.to" link.
 
 **Audience moment** — Someone deciding whether to invest time reading. They scan the title, glance at the illustration, check tags and length, then either click through or move on.
 
 ### Sections (in order)
 
 1. **Page-head** — `<ARTICLES />`.
-2. **Articles list** (`section.band`, `aria-label="Articles"`) — `<ul class="list">` of `<li class="art">` items.
+2. **Articles list** (`<section aria-label="Articles" className="py-8">` — the page's only content section, so no `SectionHead`) — `<ul class="list">` of `<li class="art">` items.
    - Source: fetched from `https://dev.to/andresilva-cc`. Titles, dates, reading time, reactions, comments are **never invented** — if fetching fails at build time, fall back to a visible empty/error state, do not synthesize.
 
 ### Article card anatomy (`.art`)
 
 A 2-column grid (`240px 1fr`):
 
-- **Left (`.art__illo`)** — SVG illustration that **evokes the article's specific subject** (e.g., performance gauge for "74% Performance Increase", rendering-modes diagram for an SSR/SSG/CSR explainer). Decorative, generative-pattern illustrations are off-brief (project memory: meaningful per-project imagery).
+- **Left (`.art__illo`)** — a `<stipple-art>` Web Component embed: generative ASCII art from André's [Stipple](https://github.com/andresilva-cc/stipple) project, configured per article via a stipple permalink hash (`config="..."`) so no two thumbnails repeat. Container is `border border-rule bg-canvas` — **canvas-coloured, never `bg-surface`**: stipple art is transparent ASCII glyphs, so the container fill *is* the art's perceived background and must match the page void for the dot field to read. The border stays — it is the system's structural-rule vocabulary and reserves the layout slot while the embed loads. The embed animates on a fixed loop and respects `prefers-reduced-motion`.
 - **Right (`.art__body`)**:
   - `.art__meta` — date, reading time, reactions, comments separated by `·` dots. Mono 500 12px `--lo`, date elevated to `--mid`.
   - `.art__title` — non-heading `<p>` containing the external `<a>` to dev.to (`target="_blank" rel="noopener noreferrer"`).
@@ -323,7 +323,7 @@ In JSX, tag names cannot lead with a digit — `<404 />` is invalid syntax. For 
 ## Cross-page conventions
 
 - **Section bands**: 32px top/bottom padding (`--s8`), 1px `--rule` bottom border; the last `.band` in `<main>` drops its bottom border.
-- **Eyebrow + H2 pattern**: every section opens with a `.comment-tag` eyebrow (`// 01 / …`) above the H2. Numbering restarts per page.
+- **Section head pattern**: a `SectionHead` (a `.comment-tag` eyebrow `// 01 / …` above an H2) delimits subdivisions *within* a page — it appears only on a page with two or more content sections (About, with Bio / Education / Facts / Resume). A single-section page (Career, Projects, Articles) omits the `SectionHead` entirely: it goes straight from the `PageHead` h1 into its content, and the lone `<section>` is named with `aria-label`, never a visible h2 that would duplicate the page h1. The 404 page is the deliberate exception — it has one section but keeps a `SectionHead` because its h2 (`Page not found.`) carries real, non-duplicating information. Where present, eyebrow numbering restarts per page.
 - **Brace H1 pattern**: every inner page uses `<X />` (e.g., `<ABOUT />`); Home uses the name itself as the identity moment instead.
 - **Curly quotes everywhere in prose** (standing rule 09). Straight quotes only inside attributes, code, and CSS strings.
 - **Reduced motion** is honored globally; press-scale and looping animations are additionally gated with `@media (prefers-reduced-motion: no-preference)`.

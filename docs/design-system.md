@@ -1,6 +1,6 @@
 # Design System — andresilva.cc
 
-> Concise primer for orientation. The **visual canon** is `redesign/design-system.html` — a 3000-line, live-rendered reference page that documents every token and component verbatim from the five page mocks. Decision rationale lives in `redesign/notes.md`. Page-level usage is documented in `docs/ui-spec.md`.
+> Concise primer for orientation. The **source of truth** is the shipped code in `src/` — tokens in `src/styles/globals.css`, components in `src/components/` — live-rendered at the `/design-system` route. Decision rationale lives in `docs/redesign-log.md`. Page-level usage is documented in `docs/ui-spec.md`.
 
 ---
 
@@ -12,7 +12,7 @@ A **brutalist mono** design system in service of a quiet personal site. The regi
 
 ## Token families
 
-All tokens live in a single `:root` block mirrored byte-identical across the five page files (standing rule 06). 43 tokens total.
+All tokens live in `src/styles/globals.css` — 40 in the `@theme inline` block (registered as Tailwind utilities) plus 2 raw `:root` CSS variables that stay un-tokenized (see "Stay as raw CSS variables" below). **42 primary tokens total.** Count convention: each named CSS variable counts once; the seven `--text-*--line-height` sub-tokens are bundled with their size tokens per Tailwind v4 syntax and are not counted separately.
 
 ### Colors
 
@@ -59,9 +59,10 @@ Prose widths cap the readable column in `ch` units (not px) so they survive user
 
 | Token | Value | Used for |
 |---|---|---|
-| `--prose-w-narrow` | 56ch | Hero pitch, education descriptions |
-| `--prose-w` | 68ch | Body prose — bio, role bullets, article descriptions |
-| `--prose-w-card` | 38ch | Project card descriptions (3 cards per row) |
+| `--prose-w-narrow` | 56ch | Statements — short single-unit lines (home hero pitch, education descriptions) |
+| `--prose-w-bio` | 60ch | The About-page biography |
+| `--prose-w` | 68ch | Flowing prose — multi-sentence narrative the reader scans paragraph-by-paragraph (home Now paragraph, career role bullets, article descriptions) |
+| `--prose-w-card` | 38ch | Card descriptions — the card column caps the measure, not the text's role (project cards, 3 per row) |
 
 ### Motion
 
@@ -76,14 +77,6 @@ Two easing curves, two durations. **Animate only `transform` and `opacity`** —
 
 Press feedback is `transform: scale(0.97)`, gated by `prefers-reduced-motion: no-preference`. Hover effects are also gated by `@media (hover: hover)` to prevent sticky-hover on touch.
 
-### Component sizing
-
-| Token | Value | Consumer |
-|---|---|---|
-| `--tag-pad-y` | 2px | Vertical padding on `.tag` chips |
-| `--badge-clearance` | 88px | `padding-right` on featured project titles so the FEATURED badge clears |
-| `--gutter-date` | 183px | Career left-column width — minimum that keeps any date string on one line |
-
 ### Photo filter
 
 | Token | Value | Role |
@@ -97,7 +90,7 @@ Press feedback is `transform: scale(0.97)`, gated by `prefers-reduced-motion: no
 
 The canon tokens above use terse semantic names (`--hi`, `--accent-hi`, `--rule-2`) tuned for hand-written CSS. Translating those names directly into a Tailwind v4 `@theme inline` block would produce awkward utilities — `bg-bg`, `text-hi`, `border-rule-2` — that read poorly in component code. This section pins the names the rebuild will register inside `@theme`, so utilities stay legible and a future engineer doesn't have to re-derive them.
 
-The rule: Tailwind v4 generates utilities from the token suffix after the namespace, so `--color-canvas` yields `bg-canvas` / `text-canvas` / `border-canvas`. Names below were chosen to (a) avoid stutters, (b) read sensibly in component code, (c) avoid collisions with Tailwind built-in utilities (notably `text-base`, which is a built-in font-size, not a color), (d) keep canon tokens stable — the `@theme` names are a translation layer, not a rename of the source-of-truth `redesign/design-system.html` tokens.
+The rule: Tailwind v4 generates utilities from the token suffix after the namespace, so `--color-canvas` yields `bg-canvas` / `text-canvas` / `border-canvas`. Names below were chosen to (a) avoid stutters, (b) read sensibly in component code, (c) avoid collisions with Tailwind built-in utilities (notably `text-base`, which is a built-in font-size, not a color), (d) keep the original canon token names traceable — the `@theme` names are a translation layer over the source palette, recorded in `docs/redesign-log.md`.
 
 ### Colors — `--color-*` namespace
 
@@ -149,6 +142,7 @@ The 200ms compound-transition value matches Tailwind's default `duration-200` by
 | Canon token | `@theme` token | Example utility |
 |---|---|---|
 | `--prose-w-narrow` | `--max-width-prose-narrow` | `max-w-prose-narrow` |
+| `--prose-w-bio` | `--max-width-prose-bio` | `max-w-prose-bio` |
 | `--prose-w` | `--max-width-prose-wide` | `max-w-prose-wide` |
 | `--prose-w-card` | `--max-width-prose-card` | `max-w-prose-card` |
 | (hero plasma) | `--max-width-hero-plasma` | `max-w-hero-plasma` |
@@ -163,18 +157,15 @@ The canon spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 px) is byte-al
 
 ### Stay as raw CSS variables (do not tokenize)
 
-These five tokens are consumed inside component-scoped CSS (in `globals.css` or alongside the component), not as Tailwind utilities. They are deliberately kept out of `@theme`:
+Two tokens are consumed inside component-scoped CSS (in `globals.css`, alongside the `.portrait` rules), not as Tailwind utilities. They are deliberately kept out of `@theme`:
 
-- `--tag-pad-y` — vertical padding on `.tag` chips (2px); too specific to be a utility.
-- `--badge-clearance` — `padding-right` for featured project titles so the FEATURED badge clears (88px); single consumer.
-- `--gutter-date` — Career left-column width (183px); a grid-template value, not a spacing utility.
-- `--photo-filter` and `--photo-filter-soft` — `filter` property values; Tailwind has no filter-token namespace and these only land on the About portrait.
+- `--photo-filter` and `--photo-filter-soft` — long, multi-function `filter` chains (`grayscale → sepia → hue-rotate → saturate → contrast → brightness`) that Tailwind v4 has no namespace for. Composing them out of utilities would mean six classes per element with no way to ensure they stay in the canonical order, and the soft variant must remain mathematically derived from the primary per standing rule 8. They only land on the About portrait, so keeping them as raw `:root` variables is both the cleanest expression and the safest place to enforce that pairing.
 
 ---
 
 ## Component vocabulary
 
-16 components, all rendered live in `redesign/design-system.html`. Each one is one line below; see the canon page for markup and behavior.
+17 components, all rendered live at the `/design-system` route. Each one is one line below; see that route for markup and behavior.
 
 1. **Skip link** — first focusable element; jumps focus to `#main`. Visible only on focus.
 2. **Header bar** — wordmark left, primary nav right; stacks at ≤ 480px (no hamburger).
@@ -183,21 +174,22 @@ These five tokens are consumed inside component-scoped CSS (in `globals.css` or 
 5. **Page-head** — `<X />` brace pattern: `<` and `/>` in `--lo`, noun in `--accent`, VT323 28px.
 6. **Section head** — eyebrow comment-tag + H2; `.sec-head--flush` zeros bottom border/margin to avoid doubled 2px seams.
 7. **Comment-tag eyebrow** — `// 02 / what i'm doing now` style label; 11px mono 600, accent, uppercase, tracked.
-8. **Tags & badges** — outlined chips (`.tag.tag--chip`), corner badges (`.pr__badge`), row badges (`.row__badge`). All use `--accent` text on `--accent-mute` border.
-9. **Status dot** — 6px lime square with pulsing aura, paired with current role.
+8. **Tags & badges** — outlined chips (`.tag.tag--chip`), corner badges (`.pr__badge`), row badges (`.row__badge`). All use `--accent` text on `--accent-mute` border. Chip strips wrap with a **symmetric 6px gap** on both axes (`gap-1.5`) — the border on each chip already supplies edge definition, so equal negative space lands cleaner than an asymmetric row/column rule.
+9. **Status dot** — 6px static lime square with a static `--shadow-status-dot` glow ring (no animation). Appears only on `/career`, marking the current role in the work-history list against the past roles.
 10. **Link arrow** — inline accent link + `→` SVG that nudges 2px right on hover.
-11. **Button CTA** — outlined accent button; hover fills with `--accent-tint`; active inverts to solid `--accent` on `--bg`.
-12. **Card patterns** — project card (`.pr`), career role (`.role`), article (`.art`), Latest row (`.row`); each is an `<li>` directly, no inner `<article>`.
-13. **Grid frame** — closed-corner grid where outer cells have no outside borders, only internal `1px` rules.
-14. **Photo wrap** — CRT scanline overlay + lime duotone filter; clears on focus/hover, soft fallback on touch.
-15. **Hero plasma** — Home only; ASCII plasma field rendered into a `<pre>`, accent chars stand out, static frame under reduced-motion.
-16. **Footer** — single row of lowercase social links separated by `·` dots; thin top border.
+11. **Inline link** — prose hyperlink; body color at rest, lifts to accent with 1px underline on hover/focus. See standing rule 14.
+12. **Button CTA** — outlined accent button; hover fills with `--accent-tint`; active inverts to solid `--accent` on `--bg`.
+13. **Card patterns** — project card (`.pr`), career role (`.role`), article (`.art`), Latest row (`.row`); each is an `<li>` directly, no inner `<article>`.
+14. **Grid frame** — closed-corner grid where outer cells have no outside borders, only internal `1px` rules.
+15. **Photo wrap** — CRT scanline overlay + lime duotone filter; clears on focus/hover, soft fallback on touch.
+16. **Hero plasma** — Home only; ASCII plasma field rendered into a `<pre>`, accent chars stand out, static frame under reduced-motion.
+17. **Footer** — single row of lowercase social links separated by `·` dots; thin top border.
 
 ---
 
 ## Standing rules
 
-Nine load-bearing rules. Removing any would compromise consistency, accessibility, or affordance hygiene.
+Sixteen load-bearing rules. Removing any would compromise consistency, accessibility, or affordance hygiene.
 
 1. **Accent lands on the surface's primary noun.** One rule globally; only the referent changes per page.
 2. **Chip hover is texture, not affordance.** Border-color nudge only — no fill, no underline. Chips are labels, not buttons.
@@ -208,6 +200,13 @@ Nine load-bearing rules. Removing any would compromise consistency, accessibilit
 7. **`.sec-head--flush` zeros both margin-bottom and border-bottom.** Prevents a doubled 2px line where the next element already provides a top rule.
 8. **`--photo-filter-soft` is mathematically derived from `--photo-filter`.** Same `hue-rotate`, halved `sepia` and `saturate`. Re-derive both together.
 9. **Prose uses curly quotes and apostrophes.** `U+2019` for apostrophes, `U+201C / U+201D` for double quotes. Straight `'` and `"` are reserved for HTML attributes, CSS strings, and code.
+10. **Grid for identifier rows, list for content rows.** A row earns a grid when its value is being one of many comparable items at a glance — career, projects, education cells, facts cells. A row earns a list when its value is its own internal content — articles, where shrinking an item to fit a peer damages the read. The article surface stays flush-to-shell intentionally; wrapping it to match career exposes asymmetric internal whitespace instead of aligning the two.
+11. **Inline connector glyphs in a heading — `@`, `·`, `—`, `/`, `×` — inherit the parent's size and line-height; differentiate them by color and weight only.** Reserve size shifts for content that lives on its own line or in its own slot (metadata rows, eyebrows, captions), not for glyphs sharing a baseline with display text. This is why home and career both render the `@` at h3 scale despite the career mock originally specifying meta-sized.
+12. **Brand mark — single source.** The pixel-SVG "A" in `<Wordmark />` is the site's singular identity mark. It appears in three places only: the header wordmark, the favicon (and platform icon variants), and OG/social cards. Everywhere else — including PageHead titles like `<ARTICLES />` — uses VT323 typeset text, which is *type*, not the mark. If a new surface needs identity (e.g. an email signature, a print artifact), it inherits the Wordmark A; it does not redraw an A in another font.
+13. **System chrome (scrollbars, selection highlight, focus rings, caret, autofill backgrounds) inherits canvas tokens and is never left to OS defaults.** Each surface must be explicitly themed to the dark canvas palette. A pale-grey native scrollbar or a Chrome-blue selection band on `--bg` reads as a leak from the host OS and breaks the brutalist mono register; treat every UA-painted surface as in-scope for tokenisation.
+14. **Inline prose links default to body color (`text-fg`) and lift to `text-accent` with a 1px underline on hover/focus.** Accent-at-rest is reserved for identity affordances (`<ArrowLink>`, `<Wordmark>`, page-title accents) — links embedded in running prose are not identity moments and must not compete with them. Use `<InlineLink>` for any hyperlink that sits inside a sentence or paragraph; never apply `text-accent` directly to prose anchors at rest.
+15. **Prose measure follows the text's role, not its font size.** A short terminal identity line meant to land as a single unit (the home hero pitch) takes `--max-width-prose-narrow` (56ch); multi-sentence narrative the reader scans paragraph-by-paragraph (the home Now paragraph, career role bullets) takes `--max-width-prose-wide` (68ch); the About-page biography takes `--max-width-prose-bio` (60ch); a card description takes `--max-width-prose-card` (38ch) because the card's column — not the text's role — caps it. Two body-text blocks set at different widths is a considered signal that the blocks have different jobs, not drift. The hero pitch's narrow measure is contingent on it staying a single statement — if it grows to multiple sentences it changes role and moves to 68ch (the one-sentence constraint itself is a copy rule the copywriter owns).
+16. **Section heads delimit subdivisions, not pages.** A `SectionHead` (eyebrow + h2) is used only on pages with two or more content sections (About). A single-section page (Career, Projects, Articles) goes straight from the `PageHead` h1 into its content; the lone `<section>` is named with `aria-label`, never a visible h2 that would duplicate the h1 (a WCAG 2.4.6 regression). The 404 page is the deliberate exception — it has one section but keeps a `SectionHead` because its h2 carries real, non-duplicating information.
 
 ---
 
@@ -238,7 +237,6 @@ Additional floor:
 
 ## See also
 
-- `redesign/design-system.html` — visual canon. 16 components live-rendered, all tokens, every standing rule, contrast matrix, motion demos.
-- `redesign/notes.md` — decision log. Rationale and revision history for every token, principle, and component choice.
-- `redesign/home.html`, `about.html`, `career.html`, `projects.html`, `articles.html` — the five page mocks; real content, real markup.
+- `/design-system` route — the live visual reference. 17 components rendered from production code, all tokens, every standing rule.
+- `docs/redesign-log.md` — the redesign decision log. Rationale and revision history for every token, principle, and component choice.
 - `docs/ui-spec.md` — page-level structure, content sources, and responsive/accessibility annotations.

@@ -1,6 +1,6 @@
 # Copy Style Guide: andresilva.cc
 
-A personal site, not a product. The voice belongs to André; this guide exists to keep new copy aligned with the copy already shipped across the five page mocks (`redesign/{home,about,career,projects,articles}.html`).
+A personal site, not a product. The voice belongs to André; this guide exists to keep new copy aligned with the copy already shipped across the site's five pages.
 
 The guide is **descriptive** — it captures what is. When a surface comes up that the guide doesn’t cover, default to the plainest construction consistent with what is already there, then extend the guide.
 
@@ -14,6 +14,7 @@ The guide is **descriptive** — it captures what is. When a surface comes up th
 - **Technical-honest.** Achievements are stated, not sold. "Software engineer with 9+ years of experience..." — not "Welcome! I’m passionate about...". Numbers are real or they’re not used ("74% increase", "20 million monthly visits").
 - **First-person omitted.** On personal surfaces the subject ("André" / "I") is dropped; sentences start with the verb ("Works end-to-end…", "Holds a BS in Computer Science…"). Exceptions: about-page eyebrow `// 01 / in my own words` and `// 02 / where i studied` use the first person diegetically inside the eyebrow phrase (rendered lowercase per §2 casing).
 - **Past tense for completed work; present tense for ongoing facts.** Career bullets are past tense ("Developed", "Migrated", "Achieved"). The About bio is present ("Works", "Takes", "Holds").
+- **State the fact and stop.** Once the fact is stated, end the sentence — no significance-closer clause, no "so-what" editorializing, no metaphor explaining why it matters. The bio says "Holds a BS in Computer Science" and trusts the reader to weigh it; copy that adds "— a foundation that shapes everything I build" has drifted into promotion. If a clause only exists to tell the reader the preceding fact is important, cut it.
 - **Three adjectives**: understated, concrete, technical-peer.
 
 ### Sound like / don’t sound like
@@ -22,7 +23,7 @@ The guide is **descriptive** — it captures what is. When a surface comes up th
 |---|---|
 | "Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling." | "Passionate engineer crafting world-class digital experiences." |
 | "Achieved a 74% increase in the performance of a key page" | "Dramatically accelerated page performance" |
-| "Download résumé" | "Get the PDF" / "Grab my CV" |
+| "Download resume" | "Get the PDF" / "Grab my CV" |
 | "hello@andresilva.cc" | "Connect with me" / "Let’s build something great together" |
 | "// formerly Healthy Labs" | "Healthy Labs (now MPA)" / "ex-Healthy Labs" |
 | "The personal website that you are seeing right now" | "A sleek, modern portfolio experience" |
@@ -55,8 +56,8 @@ Every section band on a page carries a small uppercase accent-colored eyebrow ab
 
 | Page | Eyebrow | H2 it precedes |
 |---|---|---|
-| home | `// 01 / who` | Bio |
-| home | `// 02 / what i’m doing now` | Latest |
+| home | `// 01 / current focus` | Now |
+| home | `// 02 / recent activity` | Latest |
 | about | `// 01 / in my own words` | Bio |
 | about | `// 02 / where i studied` | Education |
 | about | `// 03 / at a glance` | Facts |
@@ -94,8 +95,13 @@ Always. `André’s`, `i’m`, `won’t`, `you’re`. In HTML source, use the en
 ### Accented characters
 
 - `André` — capital A, lowercase ndré, acute accent on the `e`. Never `Andre`, never `André L. Silva`.
-- `résumé` — two acute accents, lowercase. The download button reads `Download résumé`. Never `resume` (English noun "resume" reads as the verb).
 - `Florianópolis` — acute on the `o`.
+
+### "resume" — no accents
+
+The download artifact is spelled **`resume`** — plain ASCII, no acute accents. The About download button reads `Download resume`. Never `résumé`.
+
+Rationale: the accented form was dropped deliberately in the redesign. The plain spelling matches the artifact filename (`resume.pdf`), avoids diacritic inconsistency across the site, and fits the terse system register — the simpler form is the more honest one. The noun/verb collision the accented form once guarded against is a non-issue in context: the word always rides a `Download` verb, so it can only read as the noun.
 
 ### Sentence case
 
@@ -135,15 +141,15 @@ When adding new copy, ask: what is this surface’s primary noun? Tint that, not
 | Nav links | lowercase (`home`, `about`) | lowercase, active wrapped `[home]` |
 | Page H1 | UPPERCASE inside braces (`<ABOUT />`) | uppercase pixel |
 | Section H2 | Sentence/title case (`Bio`, `Featured Projects`) | as written |
-| Eyebrow | lowercase (`// 01 / who`) | uppercase mono |
+| Eyebrow | lowercase (`// 01 / current focus`) | uppercase mono |
 | Row badge (home Latest) | Title case (`Career`) | UPPERCASE |
 | Featured badge (projects) | Title case (`Featured`) | UPPERCASE |
 | Tech-stack chips | **canonical brand case** (`TypeScript`, `Vue.js`, `Node.js`, `Tailwind CSS`, `Next.js`) | as written |
 | Article tags | **lowercase from dev.to** (`vue`, `nuxt`, `webperf`, `frontend`, `javascript`) | as written |
 | Career dates | lowercase mono (`apr 2025 — now`) | as written |
 | Career role title | Title case (`Senior Front-end Engineer`) | as written |
-| Footer links | lowercase (`github`, `linkedin`, `dev.to`, `email`) | as written |
-| Button CTAs | Sentence case (`Download résumé`) | UPPERCASE via CSS |
+| Footer links | lowercase (`github`, `linkedin`, `dev.to`, `x`, `instagram`, `email`) | as written |
+| Button CTAs | Sentence case (`Download resume`) | UPPERCASE via CSS |
 | Project link labels | lowercase generics (`site`, `github`) or canonical repo names (`eyesup-web`, `oac-api`, `NativeScript Spotify`, `CONFEA`) | as written |
 
 ### Tech-stack chips — canonical brand case
@@ -208,7 +214,7 @@ André Silva · Articles
 André Silva · Not Found
 ```
 
-Separator: middle dot (`·`, U+00B7), space on each side. Home includes `· Home` (departure from the prior `André Silva`-only convention — confirmed in the redesign). The 404 surface uses `· Not Found` (title case, mirroring the H2 below).
+Separator: middle dot (`·`, U+00B7), space on each side. **Home is just `André Silva`** — the brand alone, no page suffix (standard home-page convention; agrees with §3). Interior pages append `· {Page}` with the page word in title case. The 404 surface uses `· Not Found` (title case, mirroring the H2 below).
 
 ### Skip link
 
@@ -236,18 +242,36 @@ Software engineer with 9+ years of experience building web platforms, internal t
 
 Pitch has a terminal period; the role line has the literal `@` with `--lo` color and spacing.
 
+The pitch is **canonical** — it is reused verbatim in the meta description and OG description (see §6). When it changes, it changes everywhere; don't paraphrase it per surface.
+
+### Home — Now
+
+- Section eyebrow: `// 01 / current focus`
+- Section H2: `Now`
+- Section body: a single `<Text variant="body">` prose paragraph — a **temporal snapshot of current parallel work**. Currently shipped:
+
+  > These days, three builds in parallel: **Calcloak**, a side project overdue for a finish line; **Infinity**, a collaboration; and the redesign of this site. Day job is at **MPA** — shipping features end-to-end with Claude Code, which has rearranged how the work gets done more than any framework has.
+
+Voice constraints, same as the bio surfaces (§1): subject-less verbs, present tense, a soft temporal anchor (`These days`) rather than a dated one. Named projects are specific and real — no vague "various projects". The anchor stays cadence-flexible: no month, week, or "currently" that pins the paragraph to a calendar date. A 3-month-old paragraph should still read as honest.
+
+Inline links: named projects link directly to their product sites via `<InlineLink>` wrapped in `<strong>` — `Calcloak` → calcloak.com, `Infinity` → meet.agentairforce.com. Link the project name itself, not a separate "see it here" label (cross-reference §8, "Click here").
+
+No `Full bio →` CTA. The old Bio section carried one; Now does not — the section is self-contained.
+
+**Maintenance note.** This is the one section on the site whose copy goes stale by design. The body paragraph is **not canonical** — unlike the hero pitch (verbatim across meta/OG), the Now paragraph is meant to be rewritten as the current work changes. Refresh it when the parallel builds shift — roughly every 3–6 months. Because the eyebrow says `current focus` and the prose carries no calendar reference, a paragraph a few months out of date still reads true; a hard-dated one would not.
+
 ### Home Latest
 
-- Section eyebrow: `// 02 / what i’m doing now`
+- Section eyebrow: `// 02 / recent activity`
 - Row badges (source → render): `Career` → `CAREER`, `Project` → `PROJECT`, `Article` → `ARTICLE`
 - Each row is the full click target; the arrow icon carries the affordance. No visible "Read more" text.
 
-### About — résumé section
+### About — resume section
 
 - Eyebrow: `// 04 / full work history`
-- Button label: `Download résumé`
+- Button label: `Download resume` (plain spelling, no accents — see §3)
 - Button arrow: `→`
-- The button source is title case; CSS uppercases it.
+- The button source is sentence case; CSS uppercases it.
 
 ### About — education
 
@@ -261,7 +285,7 @@ Key/value pairs, key uppercased by CSS, value sentence-cased.
 location   → Florianópolis, BR
 timezone   → UTC-03
 languages  → Portuguese (native) · English (fluent)
-interests  → DX tooling · web performance · type systems
+interests  → agentic workflows · user-facing AI · developer tooling
 ```
 
 The middle dot `·` separates items in a single value.
@@ -291,10 +315,10 @@ The middle dot `·` separates items in a single value.
 ### Footer
 
 ```
-github · linkedin · dev.to · email
+github · linkedin · dev.to · x · instagram · email
 ```
 
-Lowercase, middle-dot separators (`·` colored `--lo`, padded), `email` resolves to `mailto:hello@andresilva.cc`.
+Six links, in that order. Lowercase, middle-dot separators (`·` colored `--lo`, padded), `email` resolves to `mailto:hello@andresilva.cc`.
 
 ### 404 (Not Found)
 
@@ -332,23 +356,24 @@ Quick pattern matches for the most common slips:
 
 | Don’t | Do | Why |
 |---|---|---|
-| `Get the PDF` | `Download résumé` | Verb + object, canonical artifact name, accent on the diacritic. |
+| `Get the PDF` | `Download resume` | Verb + object, canonical artifact name matching `resume.pdf`. |
 | `Connect with me` | `hello@andresilva.cc` | No funnel; the email address is the surface. |
 | `My personal website` | (data) `The personal website that you are seeing right now` | Protected verbatim copy from the static repo. |
 | `andresilva.cc — your future favorite portfolio` | `André Silva` (home) / `André Silva · About` (others) | Brand alone on home; brand + dot + page on interior surfaces. |
-| `// 02 / latest` | `// 02 / what i’m doing now` | Eyebrow must differ from the H2 it labels. |
+| `// 02 / latest` | `// 02 / recent activity` | Eyebrow must differ from the H2 it labels. |
 | `// 01 / About me` | `// 01 / in my own words` | Lowercase, evocative gloss, no terminal punctuation. |
 | `Read full bio →` | `Full bio →` | Page-section link arrow uses bare noun. |
 | `Healthy Labs (now MPA)` | `MPA` on identity surfaces + `// formerly Healthy Labs` on the career record | Rebrand convention; identity is current, record carries the trace. |
 | `Andre Silva` / `André L. Silva` | `André Silva` | Canonical full name; one accent; no middle initial on the site. |
 | `Apr 2025 - Present` | `apr 2025 — now` | Lowercase month, em-dash with spaces, lowercase "now". |
-| `Resume` (button) | `Download résumé` | Diacritics avoid the noun/verb collision; verb-first label. |
+| `Résumé` / `Get the PDF` (button) | `Download resume` | Plain spelling matches `resume.pdf`; verb-first label removes any noun/verb ambiguity. |
 | `Tailwind` (chip) | `Tailwind CSS` | Brand name. |
 | `Vue` (chip) | `Vue.js` | Brand name. |
 | `Webperf` (article tag) | `webperf` | Article tags are lowercase from the data source. |
 | `Game-changing performance work` | `Achieved a 74% increase in the performance of a key page` | Numbers over adjectives. |
 | `Passionate about building great software` | `Works end-to-end — from architecture and infrastructure to product features and integrations.` | Subject-less, concrete, em-dash aside. |
 | `Click here →` | `site →` / `github →` / `Full bio →` | Link label names the destination, not the action. |
+| `Five-year bachelor's in CS — the foundation everything since has been built on.` | `Five-year bachelor's in Computer Science covering the algorithms, math, and systems core.` | State the fact and stop — no significance-closer clause editorializing why it matters (§1). |
 
 ---
 

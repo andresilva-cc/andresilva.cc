@@ -10,11 +10,14 @@ export interface WordmarkProps {
 /*
  * Wordmark — pixel-SVG "A" glyph + andresilva.cc text.
  *
- * Always links to home. The "A" is rendered as 21 inline rects in
+ * Always links to home. The "A" is rendered as inline rects in
  * `currentColor` so it inherits the accent color from the parent's text
  * color; the wordmark text composes Text variant="meta" for the right
- * size + weight. Hover lifts the text from --fg to a brighter --fg via
- * the design's wordmark hover rule.
+ * size + weight.
+ *
+ * No hover affordance by design — logo-links-home is universal
+ * convention, and a hover here would compete with the primary nav on
+ * every page. Focus-visible ring only.
  */
 export function Wordmark({ className }: WordmarkProps) {
   return (

@@ -8,16 +8,16 @@ type: project
 
 All tokens in `src/styles/globals.css`. Canon: `redesign/design-system.html`.
 
-- Colors: `--color-base`, `--color-surface`, `--color-fg`, `--color-fg-muted`, `--color-fg-subtle`, `--color-accent`, `--color-accent-strong`, `--color-accent-muted`, `--color-accent-tint`, `--color-rule`, `--color-rule-strong`
+- Colors: `--color-canvas`, `--color-surface`, `--color-fg`, `--color-fg-muted`, `--color-fg-subtle`, `--color-accent`, `--color-accent-strong`, `--color-accent-muted`, `--color-accent-tint`, `--color-rule`, `--color-rule-strong`
 - Fonts: `--font-mono` (JetBrains Mono), `--font-display` (VT323)
 - Type scale: `--text-micro` through `--text-display` with paired `--line-height` vars
 - Motion: `--ease-out`, `--ease-in`, `--duration-fast` (120ms); 200ms uses Tailwind built-in `duration-200`
-- Prose widths: `--max-width-prose-narrow`, `--max-width-prose-wide`, `--max-width-prose-card`
+- Prose widths: `--max-width-prose-narrow` (56ch), `--max-width-prose-bio` (60ch, about page), `--max-width-prose-wide` (68ch), `--max-width-prose-card` (38ch)
 - Tracking: `--tracking-eyebrow` (0.16em), `--tracking-badge` (0.12em), `--tracking-button` (0.04em)
 
-Raw `:root` vars (NOT Tailwind utilities): `--photo-filter`, `--photo-filter-soft` (filter chains; no Tailwind namespace). `--tag-pad-y`, `--badge-clearance`, `--gutter-date` were removed — replaced by Tailwind default-scale utilities and new `@theme inline` tokens.
+Raw `:root` vars (NOT Tailwind utilities): `--photo-filter`, `--photo-filter-soft` (filter chains; no Tailwind namespace).
 
-New `@theme inline` tokens added: `--scale-press: 97` (drives `scale-press`), `--grid-template-columns-role: 183px 1fr` (drives `grid-cols-role`), `--grid-template-columns-article: 200px 1fr` (drives `grid-cols-article`).
+Key `@theme inline` tokens: `--scale-press: 97%` (drives `scale-press`), `--grid-template-columns-role: 183px 1fr` (drives `grid-cols-role`), `--grid-template-columns-article: 200px 1fr` (drives `grid-cols-article`), `--grid-template-columns-article-card: 240px 1fr` (drives `grid-cols-article-card`), `--max-width-shell: 1240px`, `--max-width-hero-plasma: 400px`, `--breakpoint-xs: 30rem`.
 
 ## Font weights
 

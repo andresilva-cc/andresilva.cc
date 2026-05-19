@@ -28,7 +28,7 @@ export function Badge({ className, children }: BadgeProps) {
     <Text asChild variant="micro">
       <span
         className={clsx(
-          'inline-flex items-center border border-accent-muted text-accent px-2 py-0.5 uppercase tracking-badge',
+          'inline-flex items-center border border-accent-muted text-accent px-2 py-0.5 uppercase tracking-badge select-none',
           className,
         )}
       >

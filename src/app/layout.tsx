@@ -3,14 +3,39 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import clsx from 'clsx';
 
 import '@/styles/globals.css';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { SkipLink } from '@/components/skip-link';
 import { jetbrainsMono, vt323 } from '@/app/fonts';
 
 export const metadata = {
+  metadataBase: new URL('https://andresilva.cc'),
   title: 'André Silva',
   description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling.',
+  openGraph: {
+    title: 'André Silva',
+    description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling.',
+    url: 'https://andresilva.cc',
+    siteName: 'andresilva.cc',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'André Silva — Software Engineer — andresilva.cc' }],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'André Silva',
+    description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling.',
+    images: ['/og.png'],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180' },
+  },
+  manifest: '/site.webmanifest',
+  appleWebApp: {
+    title: 'andresilva.cc',
+  },
 };
 
 export default function RootLayout({
@@ -19,22 +44,22 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={clsx(jetbrainsMono.variable, vt323.variable)}>
+      {/* Warm the connection and prefetch the stipple embed engine so the
+          hero and article-card animations paint with minimal delay. React
+          hoists these <link>s into <head>. */}
+      <link rel="preconnect" href="https://art.andresilva.cc" crossOrigin="anonymous" />
+      <link
+        rel="modulepreload"
+        href="https://art.andresilva.cc/embed/stipple.js"
+        crossOrigin="anonymous"
+      />
+      {/* suppressHydrationWarning: browser extensions (Grammarly etc.) inject attributes onto <body> after SSR, causing harmless hydration mismatch warnings. */}
       <body
-        className={clsx(
-          jetbrainsMono.variable,
-          vt323.variable,
-          'min-h-screen flex flex-col',
-        )}
+        className="min-h-screen flex flex-col"
+        suppressHydrationWarning
       >
-        <SkipLink />
-        <div className="max-w-shell mx-auto w-full px-4 md:px-8 flex flex-col flex-1">
-          <Header className="py-4 border-b border-rule" />
-          <main id="main" className="flex-1">
-            { children }
-          </main>
-          <Footer className="mt-12 pt-5 pb-8" />
-        </div>
+        {children}
       </body>
       <GoogleAnalytics gaId="G-TLHZYGS1SJ" />
     </html>

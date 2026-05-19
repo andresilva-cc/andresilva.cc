@@ -3,6 +3,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 
 import { Text } from '@/components/text';
+import { IconArrow } from '@/components/icon-arrow';
 import { safeHref, isExternalHref } from '@/lib/safe-href';
 
 type AnchorBaseProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'children' | 'className'>;
@@ -35,26 +36,13 @@ export function ArrowLink({
   const content = (
     <>
       <span>{ children }</span>
-      <svg
-        viewBox="0 0 10 10"
-        fill="none"
-        aria-hidden="true"
-        className="size-2.5 transition-transform duration-fast ease-out motion-safe:group-hover/arrow-link:translate-x-0.5"
-      >
-        <path
-          d="M2 5h6M5 2l3 3-3 3"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
-        />
-      </svg>
+      <IconArrow className="size-2.5 transition-transform duration-fast ease-out motion-safe:group-hover/arrow-link:translate-x-0.5" />
     </>
   );
 
   const linkClassName = clsx(
     'group/arrow-link inline-flex items-center gap-1.5 text-accent transition-colors duration-fast ease-out',
-    'motion-safe:hover:text-accent-strong',
+    'hover:text-accent-strong hover:underline hover:underline-offset-3 hover:decoration-1',
     className,
   );
 

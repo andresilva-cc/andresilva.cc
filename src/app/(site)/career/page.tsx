@@ -16,7 +16,7 @@ export default function Career() {
       <PageHead name="CAREER" />
 
       <section aria-label="Career" className="py-8">
-        <ul className="flex flex-col list-none p-0 m-0">
+        <ul className="flex flex-col list-none p-0 m-0 border border-rule">
           { jobs.map((job) => (
             <RoleCard
               key={job.startDate.getTime()}
@@ -27,6 +27,7 @@ export default function Career() {
               formerly={job.formerly}
               description={job.description}
               technologies={job.technologies}
+              links={job.links}
             />
           )) }
         </ul>

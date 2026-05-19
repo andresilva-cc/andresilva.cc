@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 import { Text } from '@/components/text';
 import { Badge } from '@/components/badge';
+import { IconArrow } from '@/components/icon-arrow';
 
 export interface LatestRowProps {
   /** Category label shown in the badge (e.g. "Career", "Project", "Article"). Source title case; CSS uppercases. */
@@ -39,33 +40,27 @@ export function LatestRow({
         href={href}
         aria-label={label}
         className={clsx(
-          'group/row relative isolate flex items-center justify-between gap-4 px-3 py-4 -mx-3 no-underline text-fg border-t border-rule',
+          'group/row relative isolate flex items-center justify-between gap-4 py-4 no-underline text-fg border-t border-rule',
           'before:absolute before:inset-0 before:-z-10 before:bg-surface before:opacity-0 before:transition-opacity before:duration-fast before:ease-out',
-          'motion-safe:hover:before:opacity-100 focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent -outline-offset-2',
+          'hover:before:opacity-100 focus-visible:outline-2 focus-visible:outline focus-visible:outline-accent -outline-offset-3',
           className,
         )}
       >
-        <div className="motion-safe:group-active/row:scale-press motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-out flex flex-wrap items-baseline gap-2 min-w-0 overflow-hidden">
-          <Badge className="min-w-20 justify-center flex-shrink-0">{ category }</Badge>
+        <div className="motion-safe:group-active/row:scale-press motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-out flex flex-nowrap items-baseline gap-2 min-w-0 overflow-hidden">
+          <Badge className="min-w-20 justify-center flex-shrink-0 mr-1">{ category }</Badge>
           <Text variant="body" as="strong" className="font-semibold truncate min-w-0">{ title }</Text>
           { company && (
             <>
-              <Text variant="body" as="span" className="text-fg-subtle font-normal mx-1">@</Text>
+              <Text variant="body" as="span" className="text-fg-subtle font-normal">@</Text>
               <Text variant="body" as="span" className="font-semibold">{ company }</Text>
             </>
           ) }
         </div>
         <span
           aria-hidden="true"
-          className="inline-flex items-center text-accent transition-colors duration-fast ease-out motion-safe:group-hover/row:text-accent-strong"
+          className="inline-flex items-center text-accent transition-colors duration-fast ease-out group-hover/row:text-accent-strong"
         >
-          <svg
-            viewBox="0 0 10 10"
-            fill="none"
-            className="size-2.5 transition-transform duration-fast ease-out motion-safe:group-hover/row:translate-x-0.5"
-          >
-            <path d="M2 5h6M5 2l3 3-3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="miter" />
-          </svg>
+          <IconArrow className="size-2.5 transition-transform duration-fast ease-out motion-safe:group-hover/row:translate-x-0.5" />
         </span>
       </Link>
     </li>

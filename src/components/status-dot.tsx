@@ -7,12 +7,9 @@ export interface StatusDotProps {
 }
 
 /*
- * StatusDot — small lime square with a pulsing aura.
+ * StatusDot — small lime square with a static glow ring.
  *
- * Used as a "live" marker paired with the current role on the home hero
- * and the current job on the career page. The pulse runs forever; the
- * global reduced-motion override in globals.css zeroes the duration for
- * users who prefer no motion.
+ * Used as a "current role" marker on the career page.
  */
 export function StatusDot({ ariaLabel, className }: StatusDotProps) {
   return (
@@ -20,7 +17,7 @@ export function StatusDot({ ariaLabel, className }: StatusDotProps) {
       role="img"
       aria-label={ariaLabel}
       className={clsx(
-        'inline-block size-1.5 align-middle shrink-0 bg-accent shadow-status-dot animate-status-dot-pulse',
+        'inline-block size-1.5 align-middle shrink-0 bg-accent shadow-status-dot',
         className,
       )}
     />
