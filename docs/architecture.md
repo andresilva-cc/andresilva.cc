@@ -29,7 +29,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Icons                   | Hand-rolled inline SVG components (`icon-arrow.tsx`, `icon-heart.tsx`) — no icon-library dependency |
 | HTTP client             | `axios` (used only to call Forem)                                                          |
 | Class utilities         | `clsx`                                                                                     |
-| Analytics               | Google Analytics via `@next/third-parties/google` (gaId `G-TLHZYGS1SJ`)                    |
+| Analytics               | Vercel Analytics via `@vercel/analytics/next` — `<Analytics />` in root layout             |
 | Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`     |
 | Package manager         | pnpm **10.27.0**                                                                           |
 | Lint                    | ESLint **9** flat config: `eslint-config-next/core-web-vitals` + `@stylistic/eslint-plugin`, airbnb base |
@@ -134,7 +134,7 @@ App Router. No dynamic segments, no parallel/intercepting routes, no middleware.
 
 ### Layout arrangement
 
-The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `GoogleAnalytics`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the five content routes. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
+The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `<Analytics />`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the five content routes. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
 
 ### Server-first, client where needed
 
@@ -270,7 +270,7 @@ Both CSS variables are forwarded to the Tailwind `@theme` block so any `font-mon
 | Service              | How it's used                                                        | Configuration                                  |
 | -------------------- | -------------------------------------------------------------------- | ---------------------------------------------- |
 | **Forem / dev.to**   | Fetches the author's articles for `/articles`                        | `FOREM_API_URL`, `FOREM_API_KEY` (env)         |
-| **Google Analytics** | Page-view tracking via `@next/third-parties/google` in root layout   | Hardcoded gaId `G-TLHZYGS1SJ`                  |
+| **Vercel Analytics** | Page-view and Web Vitals tracking via `@vercel/analytics/next`       | No configuration — Vercel project auto-detects  |
 | **Google Fonts**     | JetBrains Mono + VT323, self-hosted by Next through `next/font`      | `src/app/fonts.ts`                             |
 
 No other external services (no CMS, no database, no auth provider, no email, no payments).
