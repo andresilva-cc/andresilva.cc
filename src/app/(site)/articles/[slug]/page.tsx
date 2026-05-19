@@ -15,8 +15,7 @@ import { ImageMdx } from '@/components/mdx/image-mdx';
 import { PreShiki } from '@/components/mdx/pre-shiki';
 import { getRepositories } from '@/repositories';
 import { formatArticleDate } from '@/lib/format-date';
-
-const SITE_URL = 'https://andresilva.cc';
+import { SITE_ORIGIN } from '@/lib/config';
 
 const mdxComponents = {
   YouTube,
@@ -51,7 +50,7 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt ?? article.publishedAt,
-      url: `${SITE_URL}/articles/${article.slug}`,
+      url: `${SITE_ORIGIN}/articles/${article.slug}`,
       images: [{ url: article.ogImage, width: 1200, height: 630 }],
     },
     twitter: {
@@ -94,9 +93,9 @@ export default async function ArticlePage({
     'description': article.summary,
     'datePublished': article.publishedAt,
     'dateModified': article.updatedAt ?? article.publishedAt,
-    'author': { '@type': 'Person', 'name': 'André Silva', 'url': `${SITE_URL}/about` },
-    'url': `${SITE_URL}/articles/${article.slug}`,
-    'image': `${SITE_URL}${article.ogImage}`,
+    'author': { '@type': 'Person', 'name': 'André Silva', 'url': `${SITE_ORIGIN}/about` },
+    'url': `${SITE_ORIGIN}/articles/${article.slug}`,
+    'image': `${SITE_ORIGIN}${article.ogImage}`,
     'keywords': article.tags.join(', '),
     'wordCount': article.wordCount,
     'timeRequired': `PT${article.readingTime}M`,

@@ -36,6 +36,11 @@ export const metadata = {
   appleWebApp: {
     title: 'andresilva.cc',
   },
+  alternates: {
+    types: {
+      'application/rss+xml': '/articles/rss.xml',
+    },
+  },
 };
 
 export default function RootLayout({
