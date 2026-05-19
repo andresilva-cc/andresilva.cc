@@ -1,14 +1,25 @@
-// T3 will rewrite this page properly. This is a temporary minimal fix to keep
-// the build green after switching from ForemArticlesRepository (async) to
-// LocalArticlesRepository (sync). The Forem-specific articleArt map and
-// getSlug() indirection are removed here; coverArt comes from frontmatter in T3.
 import { PageHead } from '@/components/page-head';
 import { Text } from '@/components/text';
+import { ArticleCard } from '@/components/article-card';
+import { ArticleIllustration } from '@/components/article-illustration';
 import { getRepositories } from '@/repositories';
+import { formatArticleDate } from '@/lib/format-date';
+import type { Article } from '@/.velite';
 
 export const metadata = {
   title: 'André Silva · Articles',
 };
+
+function illustrationFor(article: Article) {
+  if (!article.coverArt) return undefined;
+  return (
+    <ArticleIllustration
+      url={`/articles/${article.slug}`}
+      config={article.coverArt.params}
+      title={article.title}
+    />
+  );
+}
 
 export default function Articles() {
   const { articlesRepository } = getRepositories();
@@ -27,9 +38,16 @@ export default function Articles() {
         { articles.length > 0 && (
           <ul className="flex flex-col list-none p-0 m-0">
             { articles.map((article) => (
-              <li key={article.slug}>
-                <Text variant="body">{article.title}</Text>
-              </li>
+              <ArticleCard
+                key={article.slug}
+                date={formatArticleDate(article.publishedAt)}
+                readingTime={article.readingTime}
+                title={article.title}
+                description={article.summary}
+                url={`/articles/${article.slug}`}
+                tags={article.tags}
+                illustration={illustrationFor(article)}
+              />
             )) }
           </ul>
         ) }

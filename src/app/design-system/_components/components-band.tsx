@@ -241,12 +241,10 @@ export function ComponentsBand() {
                 <ArticleCard
                   date="2025.02.13"
                   readingTime={4}
-                  reactions={11}
-                  comments={0}
                   title="How I Achieved a 74% Performance Increase on a Page"
                   description="A walkthrough of the techniques used to substantially improve page performance on a high-traffic Vue/Nuxt platform — where the wins came from and how the render path was rewritten to hit a 74% increase on the key metric."
-                  url="https://dev.to/andresilva/how-i-achieved-a-74-performance-increase-on-a-page-2gjm"
-                  tags={['vue', 'nuxt', 'webperf']}
+                  url="/articles/74-percent-performance-increase"
+                  tags={['Vue', 'Nuxt', 'webperf']}
                 />
               </ul>
             </div>

@@ -1,6 +1,7 @@
 import rehypePrettyCode from 'rehype-pretty-code';
 import { defineCollection, defineConfig, s } from 'velite';
 import { countWords, readingTime } from './src/lib/reading-time';
+import brutalistMono from './src/styles/shiki/brutalist-mono.json';
 
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
@@ -34,7 +35,7 @@ const article = defineCollection({
           [
             rehypePrettyCode,
             {
-              theme: 'github-dark-dimmed',
+              theme: brutalistMono,
               keepBackground: false,
             },
           ],
