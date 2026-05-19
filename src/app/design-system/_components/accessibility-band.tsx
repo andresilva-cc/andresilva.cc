@@ -144,7 +144,7 @@ export function AccessibilityBand() {
                 .
               </td>
               <td className="py-3 px-4 text-meta text-fg-muted">
-                Every arrow, illustration, plasma, and wordmark glyph. The wrapping
+                Every arrow, illustration, and wordmark glyph. The wrapping
                 {' '}
                 <code className="text-accent">&lt;a&gt;</code>
                 {' '}
@@ -158,7 +158,7 @@ export function AccessibilityBand() {
             <tr className="border-b border-rule last:border-b-0">
               <td className="py-3 px-4 text-meta text-fg font-semibold align-top">Reduced-motion handling.</td>
               <td className="py-3 px-4 text-meta text-fg-muted">
-                Global override zeroes animation- and transition-duration. Plasma renders one frame.
+                Global override zeroes animation- and transition-duration. The hero&#x2019;s stipple art renders one static frame.
                 Press-scale rules are individually gated with
                 {' '}
                 <code className="text-accent">@media (prefers-reduced-motion: no-preference)</code>

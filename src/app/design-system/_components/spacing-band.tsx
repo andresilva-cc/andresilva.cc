@@ -22,9 +22,14 @@ const proseWidths = [
     label: 'Hero pitch, education descriptions — tight column for short bursts.',
   },
   {
+    token: 'max-w-prose-bio',
+    value: '60ch',
+    label: 'The About page bio paragraph — a mid-width column for the longest sustained prose on the site.',
+  },
+  {
     token: 'max-w-prose-wide',
     value: '68ch',
-    label: 'Body prose — bio, role bullets, article descriptions, chip strips.',
+    label: 'Body prose — role bullets, article descriptions, section intros, chip strips.',
   },
   {
     token: 'max-w-prose-card',
@@ -40,7 +45,7 @@ const componentSizing = [
     consumer: 'Vertical padding on <Tag> chips',
   },
   {
-    token: 'min-w-22 (badge clearance)',
+    token: 'pr-22 (badge clearance)',
     value: '~88px',
     consumer: 'padding-right on featured <ProjectCard> title so the FEATURED badge in the top-right corner clears the title text.',
   },
@@ -107,6 +112,7 @@ export function SpacingBand() {
                 {' '}
                 (8px) because they are the closer-related pair;
                 meta → title uses
+                {' '}
                 <code className="text-accent">mt-3</code>
                 {' '}
                 (12px). The rhythm is
@@ -121,6 +127,7 @@ export function SpacingBand() {
                 <code className="text-accent">&lt;section&gt;</code>
                 {' '}
                 uses
+                {' '}
                 <code className="text-accent">py-8</code>
                 {' '}
                 (32px) plus a 1px rule; inside the band, content groups use
@@ -158,7 +165,7 @@ export function SpacingBand() {
 
       <Text variant="h3" as="h3" className="mt-8 mb-3 text-fg">Prose widths</Text>
       <Text variant="body" className="text-fg-muted max-w-prose-wide mt-2">
-        Three character-based widths cap the readable column without imposing a pixel measurement
+        Four character-based widths cap the readable column without imposing a pixel measurement
         that breaks under user font-size overrides.
       </Text>
       <div className="mt-4 border border-rule p-4 flex flex-col gap-3">
