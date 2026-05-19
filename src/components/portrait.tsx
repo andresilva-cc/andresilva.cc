@@ -10,9 +10,10 @@ export interface PortraitProps {
 }
 
 /*
- * Portrait — André's photo with the lime-duotone filter + CRT-scanline
- * overlay. Focus or hover reveals the natural color; touch devices get
- * a softer fallback filter (and zero scanlines) since they can't hover.
+ * Portrait — André's photo as a foreground-coloured duotone (a
+ * `mix-blend-mode: multiply` tint over the grayscale photo) + a
+ * CRT-scanline overlay. Focus or hover reveals the natural color;
+ * touch devices get a softer fallback filter since they can't hover.
  *
  * The state-driven filter + overlay + reduced-motion / pointer:coarse
  * fallbacks live in `.portrait` in globals.css — Tailwind utilities
