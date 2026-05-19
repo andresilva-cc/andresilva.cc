@@ -159,19 +159,17 @@ export function PrinciplesBand() {
             is mathematically derived from --photo-filter.
           </Text>
           <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
-            Same
+            The base portrait grade is
             {' '}
-            <code className="text-accent">hue-rotate</code>
+            <code className="text-accent">grayscale(1) contrast(0.95) brightness(1.02)</code>
+            ; the soft variant eases contrast to
             {' '}
-            as the base, halved
+            <code className="text-accent">0.9</code>
             {' '}
-            <code className="text-accent">sepia</code>
-            , halved
+            and lifts brightness to
             {' '}
-            <code className="text-accent">saturate</code>
-            . When the base filter is re-tuned, the soft variant must be re-derived in parallel.
-            About is the only consumer (touch devices, where the hover reveal is unreachable); the token is
-            mirrored across all 5
+            <code className="text-accent">1.04</code>
+            . Touch devices are its only consumer &mdash; the hover/focus reveal that returns the photo to natural color is unreachable there, and the duotone tint plus scanline overlay never lift, so the photo needs a gentler grade to stay legible underneath them. When the base filter is re-tuned, the soft variant must be re-derived in parallel. The token is mirrored across all 5
             {' '}
             <code className="text-accent">:root</code>
             {' '}

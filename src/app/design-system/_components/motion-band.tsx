@@ -44,7 +44,7 @@ const standingRules = [
   },
   {
     rule: 'Respect prefers-reduced-motion.',
-    why: 'Global override zeros animation- and transition-duration to 0.01ms; press-scale rules are additionally gated with motion-safe:. The hero plasma renders one static frame instead of looping.',
+    why: 'Global override zeros animation- and transition-duration to 0.01ms; press-scale rules are additionally gated with motion-safe:. The hero\'s stipple art renders one static frame instead of looping.',
   },
   {
     rule: 'Hover effects are gated by hover: hover.',

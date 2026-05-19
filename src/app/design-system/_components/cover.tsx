@@ -44,7 +44,7 @@ export function Cover() {
         {[
           { label: 'tokens', value: '43' },
           { label: 'components', value: '17' },
-          { label: 'standing rules', value: '16' },
+          { label: 'standing rules', value: '14' },
         ].map((stat, i, arr) => (
           <div
             key={stat.label}

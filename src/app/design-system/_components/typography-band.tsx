@@ -55,7 +55,7 @@ const typeScale = [
     token: 'text-micro',
     size: '11px · mono 600 · lh 1.50',
     sampleClass: 'text-micro font-mono font-semibold text-accent uppercase tracking-eyebrow',
-    sample: '// 02 / what i’m doing now',
+    sample: '// 01 / current focus',
   },
 ];
 

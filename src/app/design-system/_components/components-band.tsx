@@ -270,9 +270,9 @@ export function ComponentsBand() {
           <Portrait
             src="/me.jpg"
             alt="Portrait of André Silva — focus or tap to reveal natural color"
-            width={160}
-            height={160}
-            className="max-w-40"
+            width={200}
+            height={260}
+            className="w-50 aspect-[200/260] border border-rule"
           />
         </Demo>
 
