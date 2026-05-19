@@ -6,7 +6,7 @@ type: project
 
 ## Token system (Tailwind v4 @theme inline)
 
-All tokens in `src/styles/globals.css`. Canon: `redesign/design-system.html`.
+All tokens in `src/styles/globals.css`. Canon: `docs/design-system.md` (authoritative prose) + the live `/design-system` route (rendered components). The `redesign/` HTML mocks were decommissioned.
 
 - Colors: `--color-canvas`, `--color-surface`, `--color-fg`, `--color-fg-muted`, `--color-fg-subtle`, `--color-accent`, `--color-accent-strong`, `--color-accent-muted`, `--color-accent-tint`, `--color-rule`, `--color-rule-strong`
 - Fonts: `--font-mono` (JetBrains Mono), `--font-display` (VT323)
@@ -17,7 +17,9 @@ All tokens in `src/styles/globals.css`. Canon: `redesign/design-system.html`.
 
 Raw `:root` vars (NOT Tailwind utilities): `--photo-filter`, `--photo-filter-soft` (filter chains; no Tailwind namespace).
 
-Key `@theme inline` tokens: `--scale-press: 97%` (drives `scale-press`), `--grid-template-columns-role: 183px 1fr` (drives `grid-cols-role`), `--grid-template-columns-article: 200px 1fr` (drives `grid-cols-article`), `--grid-template-columns-article-card: 240px 1fr` (drives `grid-cols-article-card`), `--max-width-shell: 1240px`, `--max-width-hero-plasma: 400px`, `--breakpoint-xs: 30rem`.
+Key `@theme inline` tokens: `--scale-press: 97%` (drives `scale-press`), `--grid-template-columns-role: 183px 1fr` (drives `grid-cols-role`), `--grid-template-columns-article: 200px 1fr` (drives `grid-cols-article`), `--grid-template-columns-article-card: 240px 1fr` (drives `grid-cols-article-card`), `--max-width-shell: 1240px`, `--breakpoint-xs: 30rem`, `--tracking-display: -0.01em`, `--shadow-status-dot`.
+
+Raw `:root` vars for home hero art (NOT in `@theme`; consumed via `var()` in `hero-art.tsx`): `--hero-art-w: 296px`, `--hero-art-h: 200px`, `--hero-art-h-mobile: 180px`. The old `--max-width-hero-plasma` token was removed when the plasma component was replaced by the stipple art — do not use it.
 
 ## Font weights
 
