@@ -159,7 +159,7 @@ The canon spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 px) is byte-al
 
 Two tokens are consumed inside component-scoped CSS (in `globals.css`, alongside the `.portrait` rules), not as Tailwind utilities. They are deliberately kept out of `@theme`:
 
-- `--photo-filter` and `--photo-filter-soft` — long, multi-function `filter` chains (`grayscale → sepia → hue-rotate → saturate → contrast → brightness`) that Tailwind v4 has no namespace for. Composing them out of utilities would mean six classes per element with no way to ensure they stay in the canonical order, and the soft variant must remain mathematically derived from the primary per standing rule 8. They only land on the About portrait, so keeping them as raw `:root` variables is both the cleanest expression and the safest place to enforce that pairing.
+- `--photo-filter` and `--photo-filter-soft` — multi-function `filter` chains (`grayscale → contrast → brightness`) that Tailwind v4 has no namespace for. Composing them out of utilities would mean a class per function with no way to ensure they stay in the canonical order, and the soft variant is kept in step with the primary per standing rule 8. They only land on the About portrait, so keeping them as raw `:root` variables is both the cleanest expression and the safest place to enforce that pairing.
 
 ---
 

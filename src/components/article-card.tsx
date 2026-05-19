@@ -48,12 +48,12 @@ export function ArticleCard({
     <li
       className={clsx(
         'grid grid-cols-1 gap-4 border-b border-rule py-6 last:border-b-0',
-        hasIllustration && 'md:grid-cols-article-card md:gap-6 md:items-stretch',
+        hasIllustration && 'md:grid-cols-article-card md:gap-6',
         className,
       )}
     >
       { hasIllustration && (
-        <div className="relative w-full max-w-80 md:max-w-none min-h-36 border border-rule bg-canvas overflow-hidden shrink-0">
+        <div className="relative w-full aspect-video border border-rule bg-canvas overflow-hidden shrink-0">
           { illustration }
         </div>
       ) }

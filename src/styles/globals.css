@@ -82,8 +82,8 @@
    See docs/design-system.md §"Stay as raw CSS variables".
    ============================================================ */
 :root {
-  --photo-filter: grayscale(1) sepia(1) hue-rotate(33deg) saturate(2.25) contrast(1) brightness(1);
-  --photo-filter-soft: grayscale(1) sepia(0.5) hue-rotate(33deg) saturate(1.15) contrast(1) brightness(1);
+  --photo-filter: grayscale(1) contrast(0.95) brightness(1.02);
+  --photo-filter-soft: grayscale(1) contrast(0.9) brightness(1.04);
 
   /* Hero art (stipple) box dimensions — the <stipple-art> embed has no
      intrinsic size, so the host box must be sized explicitly. Desktop
