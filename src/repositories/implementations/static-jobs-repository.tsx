@@ -7,7 +7,7 @@ export class StaticJobsRepository implements JobsRepository {
         title: 'Senior Engineer',
         company: 'MPA',
         formerly: 'Healthy Labs',
-        startDate: new Date(2025, 3),
+        startDate: new Date(Date.UTC(2025, 3)),
         description: (
           <ul>
             <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
@@ -21,8 +21,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Senior Front-end Engineer',
         company: 'Atlas Technologies',
-        startDate: new Date(2024, 0),
-        endDate: new Date(2025, 3),
+        startDate: new Date(Date.UTC(2024, 0)),
+        endDate: new Date(Date.UTC(2025, 3)),
         description: (
           <ul>
             <li>
@@ -45,8 +45,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Front-end Engineering Consultant',
         company: 'Atlas Technologies',
-        startDate: new Date(2022, 2),
-        endDate: new Date(2024, 0),
+        startDate: new Date(Date.UTC(2022, 2)),
+        endDate: new Date(Date.UTC(2024, 0)),
         description: (
           <ul>
             <li>Mentored and provided technical guidance to front-end engineers</li>
@@ -66,8 +66,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Front-end Engineer',
         company: 'Atlas Technologies',
-        startDate: new Date(2021, 10),
-        endDate: new Date(2022, 2),
+        startDate: new Date(Date.UTC(2021, 10)),
+        endDate: new Date(Date.UTC(2022, 2)),
         description: (
           <ul>
             <li>
@@ -84,8 +84,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'CEO & Co-Founder',
         company: 'Nuxstep',
-        startDate: new Date(2018, 5),
-        endDate: new Date(2021, 9),
+        startDate: new Date(Date.UTC(2018, 5)),
+        endDate: new Date(Date.UTC(2021, 9)),
         links: [
           {
             name: 'NativeScript Spotify',
@@ -109,8 +109,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Software Development Intern',
         company: 'Grupo Gmaes',
-        startDate: new Date(2017, 2),
-        endDate: new Date(2018, 11),
+        startDate: new Date(Date.UTC(2017, 2)),
+        endDate: new Date(Date.UTC(2018, 11)),
         links: [
           {
             name: 'CONFEA',

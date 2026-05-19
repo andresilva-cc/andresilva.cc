@@ -42,9 +42,9 @@ export function Cover() {
 
       <dl className="mt-6 grid grid-cols-1 sm:grid-cols-3 border border-rule" aria-label="System at a glance">
         {[
-          { label: 'tokens', value: '42' },
+          { label: 'tokens', value: '43' },
           { label: 'components', value: '17' },
-          { label: 'standing rules', value: '15' },
+          { label: 'standing rules', value: '16' },
         ].map((stat, i, arr) => (
           <div
             key={stat.label}

@@ -14,7 +14,7 @@ export default async function Home() {
 
   const currentJob = jobsRepository.getAll()[0];
   const projects = projectsRepository.getAll();
-  const featuredProject = projects.find((p) => p.featured) ?? projects[0];
+  const featuredProject = projects.find((p) => p.featured);
 
   let latestArticleTitle = '';
   try {

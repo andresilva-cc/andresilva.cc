@@ -1,30 +1,14 @@
 import { PageHead } from '@/components/page-head';
 import { ArticleCard } from '@/components/article-card';
-import { StippleArt } from '@/components/stipple-art';
+import { ArticleIllustration } from '@/components/article-illustration';
 import { Text } from '@/components/text';
 import { getSlug } from '@/lib/get-slug';
-import { safeHref } from '@/lib/safe-href';
+import { formatArticleDate } from '@/lib/format-date';
 import { getRepositories } from '@/repositories';
 
 export const metadata = {
   title: 'André Silva · Articles',
 };
-
-/* Format a forem ISO timestamp into the canonical `YYYY.MM.DD` lowercase
-   date used across the redesign for article metadata. Returns an empty
-   string for invalid or missing timestamps. */
-function formatArticleDate(isoString: string | null | undefined): string {
-  if (!isoString) return '';
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return '';
-  // UTC accessors so the rendered date doesn't shift with the server's
-  // local timezone — forem returns UTC ISO strings, and we want a
-  // single canonical date string regardless of where the build runs.
-  const yyyy = date.getUTCFullYear();
-  const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const dd = String(date.getUTCDate()).padStart(2, '0');
-  return `${yyyy}.${mm}.${dd}`;
-}
 
 /* Stipple embed configs keyed by article slug (path segment of dev.to URL).
    Only articles with a config get the two-column layout with an animation.
@@ -72,35 +56,11 @@ export default async function Articles() {
               const config = articleArt[slug];
               const illustration = config
                 ? (
-                    <a
-                      href={safeHref(article.url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={article.title}
-                      className="absolute inset-0"
-                    >
-                      {/*
-                        The illustration links to the article itself; the
-                        embed's own link="badge" renders a small hover-
-                        revealed permalink badge that opens the art in
-                        stipple — so the art doubles as an article click
-                        target without losing the link back to stipple.
-
-                        No cols/rows: the embed derives the grid from the
-                        host box, so the grid IS the container (verified:
-                        grid pixel size matches the host within ~1px).
-                        fit="none" renders it 1:1 — no scaling, no crop, no
-                        letterbox. font-size sets grid density.
-                      */}
-                      <StippleArt
-                        mode="hover"
-                        config={config}
-                        link="badge"
-                        fit="none"
-                        className="font-mono text-fg-muted m-0 p-0 select-none block overflow-hidden w-full h-full"
-                        style={{ fontSize: '6px', lineHeight: 1 }}
-                      />
-                    </a>
+                    <ArticleIllustration
+                      url={article.url}
+                      config={config}
+                      title={article.title}
+                    />
                   )
                 : undefined;
               return (

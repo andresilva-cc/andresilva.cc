@@ -60,7 +60,7 @@ andresilva.cc/
 │   │   └── forem.ts           # axios client for dev.to's Forem API
 │   ├── app/                   # Next.js App Router
 │   │   ├── layout.tsx         # bare root layout: <html>/<body> + fonts + GA
-│   │   ├── not-found.tsx      # 404 — at root; replicates the shell itself
+│   │   ├── not-found.tsx      # 404 — at root; replicates the shell — SkipLink + Header + Footer + container
 │   │   ├── fonts.ts           # next/font loaders
 │   │   ├── sitemap.ts         # static sitemap for the five content routes
 │   │   ├── favicon.ico

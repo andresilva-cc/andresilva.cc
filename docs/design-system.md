@@ -12,7 +12,7 @@ A **brutalist mono** design system in service of a quiet personal site. The regi
 
 ## Token families
 
-All tokens live in `src/styles/globals.css` — 40 in the `@theme inline` block (registered as Tailwind utilities) plus 2 raw `:root` CSS variables that stay un-tokenized (see "Stay as raw CSS variables" below). **42 primary tokens total.** Count convention: each named CSS variable counts once; the seven `--text-*--line-height` sub-tokens are bundled with their size tokens per Tailwind v4 syntax and are not counted separately.
+All tokens live in `src/styles/globals.css` — 38 in the `@theme inline` block (registered as Tailwind utilities) plus 5 raw `:root` CSS variables that stay un-tokenized (see "Stay as raw CSS variables" below). **43 primary tokens total.** Count convention: each named CSS variable counts once; the seven `--text-*--line-height` sub-tokens are bundled with their size tokens per Tailwind v4 syntax and are not counted separately.
 
 ### Colors
 
@@ -81,8 +81,10 @@ Press feedback is `transform: scale(0.97)`, gated by `prefers-reduced-motion: no
 
 | Token | Value | Role |
 |---|---|---|
-| `--photo-filter` | `grayscale(1) sepia(1) hue-rotate(33deg) saturate(2.25) contrast(1) brightness(1)` | About portrait — duotones the photo into lime |
-| `--photo-filter-soft` | half-strength `sepia` and `saturate`, same `hue-rotate` | Touch-device fallback (hover unreachable) |
+| `--photo-filter` | `grayscale(1) contrast(0.95) brightness(1.02)` | About portrait — desaturates the photo to monochrome |
+| `--photo-filter-soft` | `grayscale(1) contrast(0.9) brightness(1.04)` | Touch-device fallback (hover unreachable) |
+
+The portrait's green-grey duotone is *not* in the filter — it's a separate `.portrait::before` layer: a solid `--color-fg-muted` fill with `mix-blend-mode: multiply` over the grayscale photo, an exact, drift-free recolour. Focus/hover fades the tint and the scanline overlay to reveal the natural-colour photo.
 
 ---
 
@@ -157,9 +159,10 @@ The canon spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 px) is byte-al
 
 ### Stay as raw CSS variables (do not tokenize)
 
-Two tokens are consumed inside component-scoped CSS (in `globals.css`, alongside the `.portrait` rules), not as Tailwind utilities. They are deliberately kept out of `@theme`:
+Five tokens are consumed inside component-scoped CSS (in `globals.css`), not as Tailwind utilities. They are deliberately kept out of `@theme`:
 
 - `--photo-filter` and `--photo-filter-soft` — multi-function `filter` chains (`grayscale → contrast → brightness`) that Tailwind v4 has no namespace for. Composing them out of utilities would mean a class per function with no way to ensure they stay in the canonical order, and the soft variant is kept in step with the primary per standing rule 8. They only land on the About portrait, so keeping them as raw `:root` variables is both the cleanest expression and the safest place to enforce that pairing.
+- `--hero-art-w`, `--hero-art-h`, and `--hero-art-h-mobile` — the `<stipple-art>` embed has no intrinsic size, so the host box must be sized explicitly. These dimensions are consumed via `var()` in `hero-art.tsx`; Tailwind has no clean namespace for embed-box dimensions that must be read as CSS variables.
 
 ---
 
@@ -181,7 +184,7 @@ Two tokens are consumed inside component-scoped CSS (in `globals.css`, alongside
 12. **Button CTA** — outlined accent button; hover fills with `--accent-tint`; active inverts to solid `--accent` on `--bg`.
 13. **Card patterns** — project card (`.pr`), career role (`.role`), article (`.art`), Latest row (`.row`); each is an `<li>` directly, no inner `<article>`.
 14. **Grid frame** — closed-corner grid where outer cells have no outside borders, only internal `1px` rules.
-15. **Photo wrap** — CRT scanline overlay + lime duotone filter; clears on focus/hover, soft fallback on touch.
+15. **Photo wrap** — monochrome photo + a `--color-fg-muted` multiply duotone + a CRT scanline overlay; the tint and scanlines clear on focus/hover to reveal natural colour, soft fallback on touch.
 16. **Hero plasma** — Home only; ASCII plasma field rendered into a `<pre>`, accent chars stand out, static frame under reduced-motion.
 17. **Footer** — single row of lowercase social links separated by `·` dots; thin top border.
 
@@ -198,7 +201,7 @@ Sixteen load-bearing rules. Removing any would compromise consistency, accessibi
 5. **Tabular figures are unnecessary in monospace stacks.** JetBrains Mono and VT323 are fixed-width by construction. `tabular-nums` is a no-op here.
 6. **`:root` token blocks are canonical mirrors across all 5 pages.** No shared stylesheet. Tokens not consumed on a page are kept for parity, not pruned.
 7. **`.sec-head--flush` zeros both margin-bottom and border-bottom.** Prevents a doubled 2px line where the next element already provides a top rule.
-8. **`--photo-filter-soft` is mathematically derived from `--photo-filter`.** Same `hue-rotate`, halved `sepia` and `saturate`. Re-derive both together.
+8. **`--photo-filter-soft` is the touch-device variant of `--photo-filter`.** Slightly softer `contrast` / `brightness`; keep the two in step — re-tune both together.
 9. **Prose uses curly quotes and apostrophes.** `U+2019` for apostrophes, `U+201C / U+201D` for double quotes. Straight `'` and `"` are reserved for HTML attributes, CSS strings, and code.
 10. **Grid for identifier rows, list for content rows.** A row earns a grid when its value is being one of many comparable items at a glance — career, projects, education cells, facts cells. A row earns a list when its value is its own internal content — articles, where shrinking an item to fit a peer damages the read. The article surface stays flush-to-shell intentionally; wrapping it to match career exposes asymmetric internal whitespace instead of aligning the two.
 11. **Inline connector glyphs in a heading — `@`, `·`, `—`, `/`, `×` — inherit the parent's size and line-height; differentiate them by color and weight only.** Reserve size shifts for content that lives on its own line or in its own slot (metadata rows, eyebrows, captions), not for glyphs sharing a baseline with display text. This is why home and career both render the `@` at h3 scale despite the career mock originally specifying meta-sized.
