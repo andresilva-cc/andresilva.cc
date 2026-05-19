@@ -90,7 +90,7 @@
      box + mobile band; consumed via var() in hero-art.tsx. */
   --hero-art-w: 296px;
   --hero-art-h: 200px;
-  --hero-art-h-mobile: 130px;
+  --hero-art-h-mobile: 180px;
 }
 
 /* ============================================================

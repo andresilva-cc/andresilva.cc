@@ -51,7 +51,7 @@ export function HeroArt() {
           link="badge"
           fit="cover"
           cols={72}
-          rows={14}
+          rows={18}
           className={ART_CLASS}
           style={{ width: '100%', height: 'var(--hero-art-h-mobile)' }}
         />
