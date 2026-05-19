@@ -5,11 +5,13 @@ import { StippleArt } from '@/components/stipple-art';
  * responsive forms. Stipple art is treated as site identity, not
  * decoration, so it appears at every breakpoint:
  *
- *  - >= lg: a 296x200 box in the hero's right column, animating
- *    (mode="always").
- *  - < lg: a full-width band below the pitch, rendered as a single
- *    static frame (mode="static") — no animation loop, so it costs a
- *    phone zero ongoing CPU/battery while still showing the identity.
+ *  - >= lg: a 296x200 box in the hero's right column.
+ *  - < lg: a full-width band below the pitch.
+ *
+ * Both animate (mode="always"). The embed's IntersectionObserver pauses
+ * the loop whenever the element is off-screen, and prefers-reduced-motion
+ * forces a single static frame — so the cost is bounded to "animates
+ * while on screen" at every breakpoint.
  *
  * Both use the acid palette (black→lime→white, the site's lime accent)
  * and the `classic` plasma mode — a centerless interference field that
@@ -41,10 +43,10 @@ export function HeroArt() {
           style={{ width: 'var(--hero-art-w)', height: 'var(--hero-art-h)' }}
         />
       </div>
-      {/* Mobile — full-width band below the pitch; one static frame. */}
+      {/* Mobile — full-width band below the pitch; animates. */}
       <div className="border border-rule overflow-hidden lg:hidden">
         <StippleArt
-          mode="static"
+          mode="always"
           config={PLASMA_CONFIG}
           link="badge"
           fit="cover"
