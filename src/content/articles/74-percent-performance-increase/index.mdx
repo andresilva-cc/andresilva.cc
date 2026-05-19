@@ -1,0 +1,73 @@
+---
+title: How I Achieved a 74% Performance Increase on a Page
+summary: Tracking down the long-tail of slow renders on a high-traffic Nuxt page — images, lazy loading, and a duplicated gtag script.
+publishedAt: 2025-02-13
+tags: [Vue.js, Nuxt, Web Performance, Frontend]
+devtoUrl: https://dev.to/andresilva-cc/how-i-achieved-a-74-performance-increase-on-a-page-2gjm
+coverArt:
+  preset: flow
+  params: p=flow&pathCount=70&pathLength=140&trail=0.97&speed=2&noiseScale=0.8&ramp=block&palette=mono
+---
+
+## Performance vs DX
+
+Atlas Technologies operates Brazil's **leading platform in its category**, with over 50 million monthly visits. Since most traffic comes from organic search, **SEO and performance are critical**. Over the past few years, our team has grown rapidly, with over 200 people across technology and product. With this scale and our platform growing faster than ever, **DX (Developer Experience) is really important**, thus being one of the responsibilities of the Platform Team that I'm part of.
+
+Our monolith is built with [Laravel](https://laravel.com/) and [Vue.js](https://vuejs.org/), where Vue.js powers **dynamic features at the expense of performance**, since it runs completely on the client-side. For performance-sensitive features, we rely on Blade (Laravel's template engine) with raw JavaScript or jQuery, **resulting in a more complex and less developer-friendly approach**.
+
+## Adopting Nuxt
+
+A natural next step was adopting [Nuxt](https://nuxt.com/), Vue.js' meta-framework, which improves both DX and performance. We started by introducing Nuxt in less performance-sensitive areas, such as the user panel. As adoption grew, we eventually ended up with 3 Nuxt projects, each focused on specific sections of the product designed for logged-in users, where performance was less critical. The clear benefit was that developers enjoyed working with Nuxt due to its DX, **enabling more dynamic features that are shipping faster**.
+
+More recently, we finally decided to launch a new Nuxt project focused on public pages, ensuring strong performance without sacrificing DX. Since then, we've migrated several pages to this project, some of which saw an **immediate performance boost simply by moving to Nuxt**, without major code changes. Of course, migration alone wasn't enough, we also had to **dive deep into optimization**.
+
+## Measuring Performance
+
+We focused our efforts on a critical, content-heavy page that had one of the worst performance scores, an ideal candidate for improvement.
+
+But first, how do we reliably measure performance? This is a common challenge for anyone working with performance optimizations, and there are countless ways to do it. One obvious choice is [Google PageSpeed](https://pagespeed.web.dev/), which provides a **Core Web Vitals** report when analyzing a page. Core Web Vitals offers highly reliable data since it's **collected from real users**. However, changes take **several days** **to reflect** in the metrics, making it inefficient to measure your work.
+
+Below the Core Web Vitals panel, we have **lab metrics**, which simulates a mobile device on a mobile connection. While less reliable than Core Web Vitals, lab metrics **reflect changes instantly**. The downside is that results **vary significantly between runs**, further reducing reliability.
+
+Still, I decided lab metrics could serve as a useful benchmark. To reduce the variability, I ran each test **5 times and calculated the average**. The data was logged in a spreadsheet to track changes and assess how they impacted performance.
+
+While this method isn't perfect, it provided an easy and fairly reliable way to monitor progress. Before any improvements were made, PageSpeed reported the following averages:
+
+| **Performance** | **FCP (seconds)** | **LCP (seconds)** | **TBT (milliseconds)** | **CLS** | **Speed Index** |
+| --- | --- | --- | --- | --- | --- |
+| 37.60 | 5.08 | 8.42 | 1108 | 0.001 | 6.76 |
+
+## Optimizations
+
+I started by optimizing images with [Nuxt Image](https://image.nuxt.com/). Since we were already using [CloudFlare Images](https://www.cloudflare.com/pt-br/lp/pg-images/) in other projects, setting up Nuxt Image was straightforward. For local development, I used UnJS's [IPX](https://github.com/unjs/ipx) to avoid unnecessary CloudFlare costs. The provider alternates dynamically based on the environment:
+
+```js
+provider: process.env.APP_ENV === 'production' ? 'cloudflare' : 'ipx'
+```
+
+Next, I implemented **lazy loading** for sections below the fold to reduce the initial load time. To achieve this, I created a utility function called `loadWhenVisible`, which **renders components only when they enter the viewport**. Until then, a placeholder is shown to indicate loading.
+
+However, this caused issues with anchor links when users navigated directly to a specific section. Since placeholders had fixed heights and section sizes were unknown in advance, scrolling sometimes landed in the wrong position. To improve this, I developed another utility function called `loadSequential`, which **loads sections one by one** instead of relying on visibility. This helped but didn't fully resolve all anchor issues. That's a topic for another article, but the most important here is that **performance improved significantly**.
+
+I also tested `nuxt-lcp-speedup` (now called [Nuxt Vitalizer](https://github.com/johannschopplich/nuxt-vitalizer)), which removes unnecessary prefetching of dynamic assets and eliminates some duplicate CSS, **reducing LCP** (Largest Contentful Paint).
+
+Another discovery was a **duplicated** `gtag` script, which I removed to ensure it only loads once.
+
+Finally, I leveraged [Nuxt's lazy loading for components](https://nuxt.com/docs/guide/directory-structure/components#dynamic-imports). By prefixing component names with `Lazy` and using `v-if` conditions, I deferred loading of components that **weren't needed immediately**. Since this feature requires [Nuxt auto-imports](https://nuxt.com/docs/guide/concepts/auto-imports), I refactored the entire project to enable auto-imports while ensuring no component names were duplicated.
+
+## Conclusion
+
+All these optimizations led to the following results:
+
+|  | **Performance** | **FCP (seconds)** | **LCP (seconds)** | **TBT (milliseconds)** | **CLS** | **Speed Index** |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Before** | 37.60 | 5.08 | 8.42 | 1108 | 0.001 | 6.76 |
+| **After** | 65.60 | 2.50 | 3.00 | 1388 | 0.001 | 3.04 |
+| **Difference** | +28.00 | -2.58 | -5.42 | +280 | 0.000 | -3.72 |
+| **Difference (%)** | +74.47% | -50.79% | -64.37% | +25,27% | 0.00% | -55.03% |
+
+We saw a **significant improvement** in the overall performance score, as well as in FCP, LCP, and Speed Index. However, TBT (Total Blocking Time) increased, though it's hard to draw conclusions from it. Among all the metrics, TBT had the **highest variability**, sometimes fluctuating between 500ms and 2000ms. 5 test runs may not have been enough to smooth out these variations.
+
+It's also worth noting that **other teams were making changes to the same page during this period**, which may have influenced the final metrics. Still, the results clearly show that the effort was worthwhile.
+
+There's still room for further optimization, but most of it would involve fine-tuning and content-related adjustments. With our main objectives achieved, we considered this phase of the work complete, leaving future improvements to other teams.

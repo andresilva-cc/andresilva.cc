@@ -37,6 +37,9 @@ next-env.d.ts
 # velite generated output
 /.velite
 
+# velite-emitted assets (built from src/content/articles/*/images/, content-hashed)
+/public/static
+
 # grafex-generated OG images (build artifact — not committed unless escape hatch is active)
 /public/og/articles/
 
