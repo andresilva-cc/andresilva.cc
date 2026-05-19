@@ -1,33 +1,34 @@
 # andresilva.cc
 
-My personal website :)
+![Deploy](https://img.shields.io/github/deployments/andresilva-cc/andresilva.cc/production?style=flat&label=deploy)
 
-![GitHub deployments](https://img.shields.io/github/deployments/andresilva-cc/andresilva.cc/production?style=flat&label=deploy)
+My personal site — a brutalist-mono portfolio. Live at **[andresilva.cc](https://andresilva.cc/)**.
 
-## Figma
+Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · TypeScript. Server
+Components by default; content comes from static repositories plus the
+dev.to (Forem) API. Deployed on Vercel.
 
-I made some improvements after the first version, but the essence is there:
+## Development
 
-Wireframe: https://www.figma.com/file/hEknpRUxnxyKDsUgAMVqVh/andresilva.cc-Wireframe
-
-Design: https://www.figma.com/file/QMDoHYc6LTtrIcz9GBWYHQ/andresilva.cc-Design?type=design&node-id=328%3A2&mode=design&t=gY7SAVigIFav5URs-1
-
-## Public URL
-
-Check it out on: https://andresilva.cc/
-
-## Setup
-
-Make sure to install the dependencies:
+Requires Node and [pnpm](https://pnpm.io/).
 
 ```bash
-yarn install
+pnpm install      # install dependencies
+pnpm dev          # dev server — http://localhost:3000
+pnpm build        # production build
+pnpm lint         # eslint
 ```
 
-## Development Server
+## Documentation
 
-Start the development server on http://localhost:3000:
+The repo carries its own docs in [`docs/`](docs/):
 
-```bash
-yarn dev
-```
+| Doc | Covers |
+| --- | --- |
+| [`architecture.md`](docs/architecture.md)   | How the site is built — structure, data flow, conventions |
+| [`design-system.md`](docs/design-system.md) | Tokens, components, the standing rules |
+| [`ui-spec.md`](docs/ui-spec.md)             | Page-level structure and content sources |
+| [`copy-guide.md`](docs/copy-guide.md)       | Voice and microcopy |
+| [`redesign-log.md`](docs/redesign-log.md)   | Decision history of the redesign |
+
+The `/design-system` route renders the design system live from production components.

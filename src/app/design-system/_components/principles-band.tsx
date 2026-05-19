@@ -1,0 +1,345 @@
+import { Text } from '@/components/text';
+import { SectionHead } from '@/components/section-head';
+
+export function PrinciplesBand() {
+  return (
+    <section id="principles" aria-labelledby="principles-h" className="py-8 border-b border-rule">
+      <SectionHead eyebrow="// 01 / what we won&#x2019;t compromise on" title="Design principles" id="principles-h" />
+      <Text variant="body" className="text-fg-muted max-w-prose-wide">
+        Fourteen rules. Each one is load-bearing &mdash; removing it would compromise either consistency,
+        accessibility, or affordance hygiene. They override local taste.
+      </Text>
+      <div className="mt-4">
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">01</Text>
+            Accent lands on the
+            {' '}
+            <span className="text-accent">surface&#x2019;s primary noun</span>
+            .
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Home hero is an identity statement, so the position carries
+            {' '}
+            <code className="text-accent">--color-accent</code>
+            . Career list is a comparative timeline, so the company carries
+            {' '}
+            <code className="text-accent">--color-accent</code>
+            . The rule is single and global; only the referent changes per surface.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">02</Text>
+            Chip hover is
+            {' '}
+            <span className="text-accent">texture</span>
+            , not affordance.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            <code className="text-accent">&lt;Tag&gt;</code>
+            {' '}
+            hover only nudges the border color &mdash; no background fill, no underline. Chips are categorical
+            labels, not click targets, so the hover signals ambient texture rather than button-promise.
+            Gated to
+            {' '}
+            <code className="text-accent">@media (hover: hover) and (prefers-reduced-motion: no-preference)</code>
+            .
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">03</Text>
+            Card lists are
+            {' '}
+            <span className="text-accent">&lt;ul&gt;/&lt;li&gt;</span>
+            ; card titles are non-heading elements.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Every project, career role, article entry, and home-Latest row is a database row rendered
+            visually &mdash; not a sub-section. The document outline is
+            {' '}
+            <code className="text-accent">page-h1 &rarr; list-of-items</code>
+            , so card titles use
+            {' '}
+            <code className="text-accent">&lt;RoleCard&gt;</code>
+            {' '}
+            (title rendered as
+            {' '}
+            <code className="text-accent">&lt;p&gt;</code>
+            ), not
+            {' '}
+            <code className="text-accent">&lt;h3&gt;</code>
+            .
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">04</Text>
+            Card components render as
+            {' '}
+            <span className="text-accent">&lt;li&gt;</span>
+            {' '}
+            directly &mdash; no inner &lt;article&gt;.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            The single-element pattern simplifies markup and CSS, and avoids screen readers announcing
+            two landmarks for what the user reads as one card.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">05</Text>
+            <span className="text-accent">Tabular figures</span>
+            {' '}
+            are unnecessary in monospace stacks.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            JetBrains Mono and VT323 are fixed-width by construction. The OpenType
+            {' '}
+            <code className="text-accent">tnum</code>
+            {' '}
+            feature and
+            {' '}
+            <code className="text-accent">font-variant-numeric: tabular-nums</code>
+            {' '}
+            are no-ops and create the false impression that the design depends on them.
+            Don&#x2019;t reach for
+            {' '}
+            <code className="text-accent">tabular-nums</code>
+            {' '}
+            until the design ships a proportional face.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">06</Text>
+            <span className="text-accent">:root</span>
+            {' '}
+            token blocks are canonical mirrors across all 5 pages.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            No shared stylesheet &mdash; each HTML preview carries its own
+            {' '}
+            <code className="text-accent">:root</code>
+            . Tokens must stay byte-identical across all 5 files so future code generation against any single
+            file produces the same token contract. Tokens not consumed on a given page are kept for parity,
+            not pruned.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">07</Text>
+            <span className="text-accent">flush</span>
+            {' '}
+            on SectionHead zeros both margin-bottom and border-bottom.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            When the next element provides its own top rule (a
+            {' '}
+            <code className="text-accent">&lt;GridFrame&gt;</code>
+            {' '}
+            or a list with a top border), the section head&#x2019;s bottom border would otherwise stack
+            with it into a doubled 2px line at the seam. Zero both so the rule reads as a single 1px stroke.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">08</Text>
+            <span className="text-accent">--photo-filter-soft</span>
+            {' '}
+            is mathematically derived from --photo-filter.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Same
+            {' '}
+            <code className="text-accent">hue-rotate</code>
+            {' '}
+            as the base, halved
+            {' '}
+            <code className="text-accent">sepia</code>
+            , halved
+            {' '}
+            <code className="text-accent">saturate</code>
+            . When the base filter is re-tuned, the soft variant must be re-derived in parallel.
+            About is the only consumer (touch devices, where the hover reveal is unreachable); the token is
+            mirrored across all 5
+            {' '}
+            <code className="text-accent">:root</code>
+            {' '}
+            blocks for parity.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">09</Text>
+            Prose uses
+            {' '}
+            <span className="text-accent">U+2019 / U+201C / U+201D</span>
+            {' '}
+            for apostrophes and quotes.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Straight
+            {' '}
+            <code className="text-accent">&apos;</code>
+            {' '}
+            and
+            {' '}
+            <code className="text-accent">&quot;</code>
+            {' '}
+            are reserved for HTML attributes, CSS strings, and script/comment internals.
+            User-facing prose uses
+            {' '}
+            <code className="text-accent">&#x26;#x2019;</code>
+            {' '}
+            for apostrophes,
+            {' '}
+            <code className="text-accent">&#x26;#x201C; / &#x26;#x201D;</code>
+            {' '}
+            for double quotes.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">10</Text>
+            <span className="text-accent">Grid</span>
+            {' '}
+            for identifier rows,
+            {' '}
+            <span className="text-accent">list</span>
+            {' '}
+            for content rows.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            A row earns a grid when its value is being one of many comparable items at a glance &mdash;
+            career, projects, education cells, facts cells. A row earns a list when its value is its own
+            internal content &mdash; articles, where shrinking an item to fit a peer damages the read.
+            The article surface stays flush-to-shell intentionally; wrapping it to match career exposes
+            asymmetric internal whitespace instead of aligning the two.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">11</Text>
+            Inline connector glyphs in a heading &mdash;
+            {' '}
+            <span className="text-accent">@</span>
+            ,
+            {' '}
+            <span className="text-accent">&#xB7;</span>
+            ,
+            {' '}
+            <span className="text-accent">&mdash;</span>
+            ,
+            {' '}
+            <span className="text-accent">/</span>
+            ,
+            {' '}
+            <span className="text-accent">&#xD7;</span>
+            {' '}
+            &mdash; inherit the parent&#x2019;s size and line-height.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Differentiate them by color and weight only. Reserve size shifts for content that lives on its
+            own line or in its own slot (metadata rows, eyebrows, captions), not for glyphs sharing a
+            baseline with display text. This is why Home and Career both render the
+            {' '}
+            <code className="text-accent">@</code>
+            {' '}
+            at h3 scale despite the Career mock originally specifying meta-sized.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">12</Text>
+            Brand mark &mdash; single source.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            The pixel-SVG &#x201C;A&#x201D; in
+            {' '}
+            <code className="text-accent">&lt;Wordmark&gt;</code>
+            {' '}
+            is the site&#x2019;s singular identity mark. It appears in three places only: the header
+            wordmark, the favicon (and platform icon variants), and OG/social cards. Everywhere else
+            &mdash; including PageHead titles like
+            {' '}
+            <code className="text-accent">&lt;ARTICLES /&gt;</code>
+            {' '}
+            &mdash; uses VT323 typeset text, which is type, not the mark. If a new surface needs identity,
+            it inherits
+            {' '}
+            <code className="text-accent">&lt;Wordmark&gt;</code>
+            ; it does not redraw an A in another font.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">13</Text>
+            System chrome inherits
+            {' '}
+            <span className="text-accent">canvas tokens</span>
+            {' '}
+            &mdash; never OS defaults.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Scrollbars, selection highlight, focus rings, caret, and autofill backgrounds must each be
+            explicitly themed to the dark canvas palette. A pale-grey native scrollbar or a Chrome-blue
+            selection band on
+            {' '}
+            <code className="text-accent">--color-canvas</code>
+            {' '}
+            reads as a leak from the host OS and breaks the brutalist mono register; treat every
+            UA-painted surface as in-scope for tokenisation.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule last:border-b-0">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">14</Text>
+            Inline prose links default to
+            {' '}
+            <span className="text-accent">body color</span>
+            {' '}
+            and lift to
+            {' '}
+            <span className="text-accent">text-accent</span>
+            {' '}
+            on hover/focus.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Accent-at-rest is reserved for identity affordances (
+            <code className="text-accent">&lt;ArrowLink&gt;</code>
+            ,
+            {' '}
+            <code className="text-accent">&lt;Wordmark&gt;</code>
+            , page-title accents) &mdash; links embedded in running prose are not identity moments and
+            must not compete with them. Use
+            {' '}
+            <code className="text-accent">&lt;InlineLink&gt;</code>
+            {' '}
+            for any hyperlink that sits inside a sentence or paragraph; never apply
+            {' '}
+            <code className="text-accent">text-accent</code>
+            {' '}
+            directly to prose anchors at rest.
+          </Text>
+        </div>
+
+      </div>
+    </section>
+  );
+}

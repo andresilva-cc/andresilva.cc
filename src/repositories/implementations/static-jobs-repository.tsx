@@ -6,25 +6,23 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Senior Engineer',
         company: 'MPA',
-        startDate: new Date(2025, 3),
+        formerly: 'Healthy Labs',
+        startDate: new Date(Date.UTC(2025, 3)),
         description: (
-          <>
-            <p className="text-auxiliary-500 mb-2">Formerly Healthy Labs</p>
-            <ul>
-              <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
-              <li>Built a preview orchestration server using WebSockets and Docker for instant CMS previews without deployment</li>
-              <li>Built core modules of an in-browser devtools panel for debugging page state, form values, and block rendering</li>
-              <li>Implemented lead compliance integrations (TrustedForm, Jornaya) across CMS and consumer-facing platforms</li>
-            </ul>
-          </>
+          <ul>
+            <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
+            <li>Built a preview orchestration server using WebSockets and Docker for instant CMS previews without deployment</li>
+            <li>Built core modules of an in-browser devtools panel for debugging page state, form values, and block rendering</li>
+            <li>Implemented lead compliance integrations (TrustedForm, Jornaya) across CMS and consumer-facing platforms</li>
+          </ul>
         ),
         technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'React', 'TanStack', 'Tailwind CSS', 'AI SDK'],
       },
       {
         title: 'Senior Front-end Engineer',
         company: 'Atlas Technologies',
-        startDate: new Date(2024, 0),
-        endDate: new Date(2025, 3),
+        startDate: new Date(Date.UTC(2024, 0)),
+        endDate: new Date(Date.UTC(2025, 3)),
         description: (
           <ul>
             <li>
@@ -47,8 +45,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Front-end Engineering Consultant',
         company: 'Atlas Technologies',
-        startDate: new Date(2022, 2),
-        endDate: new Date(2024, 0),
+        startDate: new Date(Date.UTC(2022, 2)),
+        endDate: new Date(Date.UTC(2024, 0)),
         description: (
           <ul>
             <li>Mentored and provided technical guidance to front-end engineers</li>
@@ -68,8 +66,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Front-end Engineer',
         company: 'Atlas Technologies',
-        startDate: new Date(2021, 10),
-        endDate: new Date(2022, 2),
+        startDate: new Date(Date.UTC(2021, 10)),
+        endDate: new Date(Date.UTC(2022, 2)),
         description: (
           <ul>
             <li>
@@ -86,8 +84,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'CEO & Co-Founder',
         company: 'Nuxstep',
-        startDate: new Date(2018, 5),
-        endDate: new Date(2021, 9),
+        startDate: new Date(Date.UTC(2018, 5)),
+        endDate: new Date(Date.UTC(2021, 9)),
         links: [
           {
             name: 'NativeScript Spotify',
@@ -111,8 +109,8 @@ export class StaticJobsRepository implements JobsRepository {
       {
         title: 'Software Development Intern',
         company: 'Grupo Gmaes',
-        startDate: new Date(2017, 2),
-        endDate: new Date(2018, 11),
+        startDate: new Date(Date.UTC(2017, 2)),
+        endDate: new Date(Date.UTC(2018, 11)),
         links: [
           {
             name: 'CONFEA',

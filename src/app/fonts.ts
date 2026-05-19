@@ -1,15 +1,15 @@
-import { Fira_Code, Fira_Sans } from 'next/font/google';
+import { JetBrains_Mono, VT323 } from 'next/font/google';
 
-export const firaSans = Fira_Sans({
-  weight: ['400', '500'],
+export const jetbrainsMono = JetBrains_Mono({
+  weight: ['400', '500', '600'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-fira-sans',
+  variable: '--font-jetbrains-mono',
 });
 
-export const firaCode = Fira_Code({
-  weight: ['400', '600', '700'],
+export const vt323 = VT323({
+  weight: '400',
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-fira-code',
+  variable: '--font-vt323',
 });

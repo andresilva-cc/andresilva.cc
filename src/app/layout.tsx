@@ -1,40 +1,65 @@
 import { ReactNode } from 'react';
-import { cookies } from 'next/headers';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import clsx from 'clsx';
 
 import '@/styles/globals.css';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { firaCode, firaSans } from '@/app/fonts';
+import { jetbrainsMono, vt323 } from '@/app/fonts';
 
 export const metadata = {
+  metadataBase: new URL('https://andresilva.cc'),
   title: 'André Silva',
-  description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling',
+  description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling.',
+  openGraph: {
+    title: 'André Silva',
+    description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling.',
+    url: 'https://andresilva.cc',
+    siteName: 'andresilva.cc',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'André Silva — Software Engineer — andresilva.cc' }],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'André Silva',
+    description: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling.',
+    images: ['/og.png'],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180' },
+  },
+  manifest: '/site.webmanifest',
+  appleWebApp: {
+    title: 'andresilva.cc',
+  },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const theme = cookieStore.get('theme')?.value;
-
   return (
-    <html lang="en" className="h-full" data-theme={theme}>
+    <html lang="en" className={clsx(jetbrainsMono.variable, vt323.variable)}>
+      {/* Warm the connection and prefetch the stipple embed engine so the
+          hero and article-card animations paint with minimal delay. React
+          hoists these <link>s into <head>. */}
+      <link rel="preconnect" href="https://art.andresilva.cc" crossOrigin="anonymous" />
+      <link
+        rel="modulepreload"
+        href="https://art.andresilva.cc/embed/stipple.js"
+        crossOrigin="anonymous"
+      />
+      {/* suppressHydrationWarning: browser extensions (Grammarly etc.) inject attributes onto <body> after SSR, causing harmless hydration mismatch warnings. */}
       <body
-        className={clsx(
-          firaSans.variable,
-          firaCode.variable,
-          'h-full flex flex-col px-4 md:px-8',
-        )}
+        className="min-h-screen flex flex-col"
+        suppressHydrationWarning
       >
-        <Header className="pt-4 md:pt-8 pb-8 md:pb-16" />
-        <main className="grow flex flex-col justify-center px-0 sm:px-6 md:px-12 lg:px-24 2xl:px-48">
-          { children }
-        </main>
-        <Footer className="py-8 md:py-16" />
+        {children}
       </body>
       <GoogleAnalytics gaId="G-TLHZYGS1SJ" />
     </html>

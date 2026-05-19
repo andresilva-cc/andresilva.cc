@@ -1,43 +1,60 @@
-import { ReactNode } from 'react';
-import clsx from 'clsx';
+import { ComponentProps, ReactNode } from 'react';
 import { Slot } from '@radix-ui/react-slot';
+import clsx from 'clsx';
+
 import { Text } from '@/components/text';
 
-const variants = {
-  default: 'text-gray-950 bg-primary-500 hover:bg-primary-400 active:bg-primary-300 focus:outline-primary-500',
-  text: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 focus:outline-auxiliary-500',
-  icon: 'text-auxiliary-500 hover:text-auxiliary-400 active:text-auxiliary-300 [&>svg]:inline-block focus:outline-auxiliary-500',
-};
+type ButtonElementProps = Omit<ComponentProps<'button'>, 'children' | 'className'>;
 
-export interface ButtonProps {
-  variant?: keyof typeof variants;
-  children: ReactNode;
+export interface ButtonProps extends ButtonElementProps {
+  /** Merge Button's classes onto a single child element (e.g. a next/link). Useful for link-buttons. */
   asChild?: boolean;
   className?: string;
-  onClick?: () => void;
+  children: ReactNode;
 }
 
+/*
+ * Button — the canonical outlined-accent CTA.
+ *
+ * Renders a 12px Mono / 600 / uppercase label with `--tracking-button`
+ * tracking, inside an `--accent-muted` border. Hover fills with
+ * `--accent-tint`, brightens the border to `--accent`, and shifts text
+ * to `--accent-strong`. Active inverts to a solid `--accent` fill with
+ * `--canvas` text — the "loud moment" that mirrors the SkipLink's solid
+ * fill. Press feedback uses the `scale-press` token (97%).
+ *
+ * Single style; no variants. The design has one button language.
+ *
+ * Polymorphic via `asChild` — pass `<Link>` or `<a>` as the single
+ * child to render a link styled as a button.
+ */
 export function Button({
-  variant = 'default', children, asChild = false, className, onClick = undefined, ...props
+  asChild = false, className, children, ...props
 }: ButtonProps) {
-  const isIcon = variant === 'icon';
-  const Tag = asChild ? Slot : 'button';
+  const Comp = asChild ? Slot : 'button';
 
   return (
-    <Text variant="button" asChild>
-      <Tag
+    <Text asChild variant="meta">
+      <Comp
         className={clsx(
-          'inline-block rounded cursor-pointer transition-colors hover:transition-none duration-300 focus:outline-2 focus:outline-offset-2',
-          { 'px-2.5 py-1': !isIcon },
-          variants[variant],
+          // font-semibold intentionally overrides meta's default 500 weight
+          // — Button is canonically 12px / 600 per docs/design-system.md.
+          'group/button inline-flex items-center gap-2 border border-accent-muted px-5 py-3 font-semibold uppercase tracking-button text-accent no-underline cursor-pointer select-none',
+          // `transition` (not `transition-colors`) so the press-scale on
+          // .active also animates — transition-colors + transition-transform
+          // would clobber each other since both set the shorthand.
+          'transition duration-fast ease-out',
+          'hover:bg-accent-tint hover:border-accent hover:text-accent-strong',
+          'active:bg-accent active:text-canvas active:border-accent',
+          'motion-safe:active:scale-press',
+          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
           className,
         )}
-        onClick={onClick}
+        {...(asChild ? {} : { type: 'button' as const })}
         {...props}
       >
-
         { children }
-      </Tag>
+      </Comp>
     </Text>
   );
 }
