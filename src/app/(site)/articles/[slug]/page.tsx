@@ -1,7 +1,7 @@
 import { type ComponentType } from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { run, type RunOptions } from '@mdx-js/mdx';
+import { run } from '@mdx-js/mdx';
 import * as jsxRuntime from 'react/jsx-runtime';
 
 import { Text } from '@/components/text';
@@ -76,9 +76,9 @@ export default async function ArticlePage({
   // article.body is a build-time-compiled MDX function-body string emitted by
   // Velite — not runtime user input — so run() here is not dynamic code
   // execution in the security sense. Analogous to the JSON-LD serialization below.
-  const mdxModule = await run(article.body, { ...jsxRuntime, baseUrl: import.meta.url } as unknown as RunOptions);
+  const mdxModule = await run(article.body, { ...jsxRuntime, baseUrl: import.meta.url });
 
-  const Content = mdxModule.default as unknown as ComponentType<{ components: typeof mdxComponents }>;
+  const Content = mdxModule.default as ComponentType<{ components: typeof mdxComponents }>;
 
   const titleIsShort = article.title.length <= 40;
   const formattedDate = formatArticleDate(article.publishedAt);

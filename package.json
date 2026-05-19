@@ -3,9 +3,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/og/generate.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "og:generate": "node scripts/og/generate.mjs"
   },
   "dependencies": {
     "@next/third-parties": "16.2.6",

@@ -37,6 +37,9 @@ next-env.d.ts
 # velite generated output
 /.velite
 
+# grafex-generated OG images (build artifact — not committed unless escape hatch is active)
+/public/og/articles/
+
 # agent pipeline (ephemeral)
 .reviews/*
 !.reviews/.gitkeep
