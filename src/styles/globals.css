@@ -174,7 +174,6 @@ pre {
 .portrait {
   position: relative;
   overflow: hidden;
-  cursor: pointer;
   /* Confine the ::before multiply blend to inside .portrait — without
      this it would multiply against the page canvas behind it. */
   isolation: isolate;
