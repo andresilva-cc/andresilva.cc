@@ -187,16 +187,19 @@ pre {
   filter: var(--photo-filter);
   transition: filter 200ms cubic-bezier(0, 0, 0.2, 1);
 }
-/* Duotone tint — a solid foreground-colour layer multiplied over the
+/* Duotone tint — a solid foreground-muted layer multiplied over the
    grayscale photo. multiply is per-channel arithmetic (no hue rotation),
-   so a white pixel lands on exactly var(--color-fg) on every display —
-   the exact-colour guarantee `color:` gives text. Fades out on the
-   focus/hover reveal so the photo returns to natural colour. */
+   so a white pixel lands on exactly var(--color-fg-muted) on every
+   display — the exact-colour guarantee `color:` gives text, with no
+   cross-display drift. (fg-muted, not fg: fg is near-white and tints
+   almost imperceptibly; fg-muted carries a visible green-grey cast.)
+   Fades out on the focus/hover reveal so the photo returns to natural
+   colour. */
 .portrait::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--color-fg);
+  background: var(--color-fg-muted);
   mix-blend-mode: multiply;
   pointer-events: none;
   transition: opacity 200ms cubic-bezier(0, 0, 0.2, 1);
