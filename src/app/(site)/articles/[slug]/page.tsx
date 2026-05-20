@@ -133,18 +133,24 @@ export default async function ArticlePage({
           { article.summary }
         </Text>
 
+        {/* Each segment after the first is an atomic [· segment] flex item with
+            whitespace-nowrap, so the wrap on narrow viewports happens between
+            segments — never inside one — and the previous line never trails
+            with an orphan separator. */}
         <Text variant="meta" as="p" className="mt-6 mb-0 inline-flex flex-wrap items-baseline gap-2 text-fg-subtle">
           <time dateTime={article.publishedAt} className="text-fg-muted">
             { formattedDate }
           </time>
-          <span aria-hidden="true">·</span>
-          <span>{`${article.readingTime} min`}</span>
-          { article.tags.length > 0 && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{ article.tags.join(' · ') }</span>
-            </>
-          ) }
+          <span className="whitespace-nowrap">
+            <span aria-hidden="true">· </span>
+            {`${article.readingTime} min`}
+          </span>
+          { article.tags.map((tag) => (
+            <span key={tag} className="whitespace-nowrap">
+              <span aria-hidden="true">· </span>
+              {tag}
+            </span>
+          )) }
         </Text>
 
         { updatedPrefix && (
