@@ -199,7 +199,7 @@ export default async function ArticlePage({
           </div>
         ) }
 
-        <div className="mt-12 pb-12">
+        <div className="mt-8 pb-12">
           <ArrowLink href="/articles" direction="back">back to articles</ArrowLink>
         </div>
       </footer>
