@@ -50,7 +50,7 @@ export function YouTubeSwap({ id, caption, thumbnailSrc, embedSrc }: YouTubeSwap
               aria-hidden="true"
               className="absolute inset-0 flex items-center justify-center"
             >
-              <span className="flex items-center justify-center size-16 bg-canvas border border-accent text-accent text-2xl motion-safe:transition-colors duration-fast ease-out motion-safe:group-hover/yt-play:border-accent-strong">
+              <span className="flex items-center justify-center size-16 bg-canvas border border-accent text-accent text-2xl leading-none motion-safe:transition-colors duration-fast ease-out motion-safe:group-hover/yt-play:border-accent-strong">
                 ▶
               </span>
             </span>
