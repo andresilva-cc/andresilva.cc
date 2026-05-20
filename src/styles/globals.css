@@ -325,7 +325,6 @@ pre {
   line-height: var(--text-body--line-height);
   margin-top: 1rem;    /* mt-4 */
   margin-bottom: 0;
-  text-wrap: pretty;
 }
 .article-prose > *:first-child {
   margin-top: 0;
@@ -355,7 +354,6 @@ pre {
   line-height: var(--text-body--line-height);
   color: var(--color-fg-muted);
   position: relative;
-  text-wrap: pretty;
 }
 .article-prose ul > li::before {
   content: '+';
@@ -449,6 +447,11 @@ pre {
 }
 .article-prose tbody tr:last-child {
   border-bottom: 0;
+}
+.article-prose > p:last-of-type,
+.article-prose > p:has(+ h2),
+.article-prose > p:has(+ h3) {
+  text-wrap: pretty;
 }
 
 /* Rehype-pretty-code: strip the wrapping <figure> styles if any */
