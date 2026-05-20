@@ -30,12 +30,11 @@ export interface ArticleCardProps {
  * the primary click surface; a "read article" ArrowLink provides an
  * explicit navigation affordance at the bottom.
  *
- * Meta line: date · readingTime — tags ship as chips below the
- * description, not as dot-separated text in the meta strip, so the
- * card has a single tag surface (chips do the scan job). The article
- * page intentionally differs: tags appear both in the meta strip and as
- * chips in the footer there, because the reader's context is different —
- * triage-time on the card, post-read discovery on the article page.
+ * Meta line: date · readingTime. Tags ship as chips below the
+ * description — same pattern as the article page meta strip. The
+ * `·` separator is reserved for within-a-value short conjunctions
+ * (1–3 atoms, never wraps); sibling-link lists like tags use chips.
+ * See docs/articles-decision-log.md §16b (Q1) for the rationale.
  *
  * Article tags are brand-cased (e.g. "LLMs", "Rust", "Next.js") in
  * frontmatter and rendered verbatim. See docs/articles-decision-log.md
