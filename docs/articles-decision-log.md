@@ -696,6 +696,24 @@ Total: ~7 issues. Could collapse to ~4 (pipeline+repo, route+components+OG, feed
 
 ---
 
+## 16b. Polish round (post-launch critique)
+
+The following decisions evolved after the article page shipped, based on a structured critique pass.
+
+**Copy button (T5 — previously deferred):** `CopyButton` was listed as "optional, deferred" in §T5. It shipped in the polish round. Rationale: the deferred justification was build-blocking risk; once the route was stable, the cost was two small files (`pre-shiki.tsx` extraction + `copy-button.tsx` client island). Server-side text extraction in `PreShiki` means the client component receives a ready string with no DOM traversal.
+
+**Q2 — Head order:** The original spec (§5.4) showed `<PageHead>` (eyebrow + meta on the same row) as a design deliverable. The polish round separated these into a strict vertical sequence: eyebrow → title → summary → meta strip. The identity cluster (eyebrow/title/summary) is uninterrupted; meta sits below as a soft transition into the body.
+
+**Q4 — `<strong>` / `<b>` backdrop (reversed):** The polish round added an `accent-tint` backdrop (`background-color: var(--color-accent-tint); padding: 0 0.2em`) to `.article-prose strong, .article-prose b`, reasoning that monospace weight-600 gives shallow contrast against weight-400 in muted body prose. **Reversed in the same round**: the backdrop read as `<mark>` semantics (highlighted span) rather than bold emphasis, adding visual chrome that was unnecessary noise. Weight 600 is sufficient for `<strong>` semantics. The article-scope rule was removed entirely; both `<strong>` and `<b>` now fall through to the site-wide `@layer base` rule (broadened from `strong` to `strong, b`). No per-surface treatment.
+
+**Q5 — Title color: accent → fg (reversed):** The original spec (§2.1) set the article `<h1>` title to `text-accent`, reasoning it is the page's primary noun (standing rule 01). The polish round reversed to `text-fg` (no color class): Career, About, and Projects all use fg/white titles; the article page should match site-wide pattern. The eyebrow in `text-accent` plus VT323 at display size already supplies the identity moment — accent on the title itself was redundant color that broke cross-page consistency. The spec's "primary noun rule" was superseded by the stronger "eyebrow-accent + title-fg" pattern established across the rest of the site.
+
+**Q8 — Prose max-width stays at 68ch:** Designer recommended narrowing to 64ch for tighter line length. Kept at 68ch (`--max-width-prose-wide`). Rationale: 64ch would require renaming or adding a token (`prose-narrow-2`), and 68ch reads cleanly at 14px body size. The token value is an implementation detail; the designer can revisit if the next article campaign validates the concern.
+
+**Q11 — Body paragraph color reverted to fg-muted:** The Velite/MDX migration initially set article body `p` and `li` to `--fg` (full-brightness) for "long-form contrast." The polish round reverted to `--fg-muted` (`#9DAA95`). Rationale: `--fg` is reserved for headings and interactive affordances; running text at full brightness created false hierarchy against `h2`/`h3` which share `--fg`. `InlineLink` supplies the lift within body text via its own `text-fg` rule.
+
+---
+
 ## 17. Risks and the one decision that could come back
 
 | Risk | Likelihood | Impact | Mitigation |

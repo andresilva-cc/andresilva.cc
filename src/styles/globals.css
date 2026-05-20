@@ -107,7 +107,8 @@ body {
 }
 
 @layer base {
-  strong {
+  strong,
+  b {
     color: var(--color-fg);
     font-weight: 600;
   }
@@ -317,7 +318,7 @@ pre {
 
 /* Paragraphs */
 .article-prose p {
-  color: var(--color-fg);
+  color: var(--color-fg-muted);
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
   margin-top: 1rem;    /* mt-4 */
@@ -334,10 +335,10 @@ pre {
   background-color: var(--color-surface);
   border: 1px solid var(--color-rule);
   padding: 0 4px;
-  font-size: 0.9em;
+  font-size: var(--text-meta);
 }
 
-/* Lists */
+/* Lists — both markers render in --accent: UL uses '+', OL uses '01.' (decimal-leading-zero) */
 .article-prose ul,
 .article-prose ol {
   list-style: none;
@@ -349,7 +350,7 @@ pre {
   margin-top: 0.5rem;  /* mt-2 */
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
-  color: var(--color-fg);
+  color: var(--color-fg-muted);
   position: relative;
 }
 .article-prose ul > li::before {
@@ -369,7 +370,7 @@ pre {
   content: counter(ol-counter, decimal-leading-zero) '.';
   position: absolute;
   left: -2rem;
-  color: var(--color-fg-subtle);
+  color: var(--color-accent);
 }
 /* Nested lists */
 .article-prose ul ul,
@@ -383,7 +384,9 @@ pre {
 
 /* Blockquotes */
 .article-prose blockquote {
-  border-left: 2px solid var(--color-accent-muted);
+  /* --color-rule: canonical 1px-divider token, correct for structural borders.
+     --color-accent-muted is DS-reserved for chip/badge borders only. */
+  border-left: 2px solid var(--color-rule);
   padding-left: 1rem;  /* pl-4 */
   margin-top: 1.5rem;  /* my-6 */
   margin-bottom: 1.5rem;
@@ -424,7 +427,7 @@ pre {
   text-align: left;
   padding: 0.5rem 1rem;
   font-size: var(--text-meta);
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: var(--tracking-eyebrow);
   color: var(--color-fg-subtle);

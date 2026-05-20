@@ -107,6 +107,7 @@ export default async function ArticlePage({
   // string variable to avoid the react/jsx-no-comment-textnodes lint rule which
   // flags direct // text nodes in JSX as likely accidental comments.
   const eyebrowLabel = '// article';
+  const syndicationEyebrow = '// elsewhere';
   const updatedPrefix = formattedUpdated ? `// last updated ${formattedUpdated}` : null;
 
   return (
@@ -116,33 +117,14 @@ export default async function ArticlePage({
           <ArrowLink href="/articles" direction="back">back to articles</ArrowLink>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-          <Eyebrow>{ eyebrowLabel }</Eyebrow>
-          <Text variant="meta" as="span" className="inline-flex flex-wrap items-baseline gap-2 text-fg-subtle">
-            <time dateTime={article.publishedAt} className="text-fg-muted">
-              { formattedDate }
-            </time>
-            <span aria-hidden="true">·</span>
-            <span>{`${article.readingTime} min`}</span>
-            { article.tags.length > 0 && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{ article.tags.join(' · ') }</span>
-              </>
-            ) }
-          </Text>
-        </div>
+        <Eyebrow className="mt-8 block">{ eyebrowLabel }</Eyebrow>
 
-        { updatedPrefix && (
-          <Text variant="meta" as="p" className="mt-1 text-fg-subtle italic m-0">
-            { updatedPrefix }
-          </Text>
-        ) }
-
+        {/* Eyebrow → title → summary is the identity cluster (uninterrupted);
+            meta sits below as publication info / soft transition into the body. */}
         <Text
           variant={titleIsShort ? 'display' : 'h1'}
           as="h1"
-          className="mt-3 mb-0 text-accent"
+          className="mt-3 mb-0"
         >
           { article.title }
         </Text>
@@ -150,6 +132,26 @@ export default async function ArticlePage({
         <Text variant="body" className="mt-4 mb-0 text-fg-muted max-w-prose-wide">
           { article.summary }
         </Text>
+
+        <Text variant="meta" as="p" className="mt-6 mb-0 inline-flex flex-wrap items-baseline gap-2 text-fg-subtle">
+          <time dateTime={article.publishedAt} className="text-fg-muted">
+            { formattedDate }
+          </time>
+          <span aria-hidden="true">·</span>
+          <span>{`${article.readingTime} min`}</span>
+          { article.tags.length > 0 && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{ article.tags.join(' · ') }</span>
+            </>
+          ) }
+        </Text>
+
+        { updatedPrefix && (
+          <Text variant="meta" as="p" className="mt-1 mb-0 text-fg-subtle italic">
+            { updatedPrefix }
+          </Text>
+        ) }
 
         { article.coverArt && (
           <>
@@ -165,6 +167,7 @@ export default async function ArticlePage({
                   fit="cover"
                   link="none"
                   className="w-full h-full block"
+                  style={{ fontSize: '6px', lineHeight: 1 }}
                 />
               </div>
             </section>
@@ -191,11 +194,12 @@ export default async function ArticlePage({
 
         { article.devtoUrl && (
           <div className="mt-6">
+            <Eyebrow className="block mb-2">{ syndicationEyebrow }</Eyebrow>
             <ArrowLink href={article.devtoUrl}>also on dev.to</ArrowLink>
           </div>
         ) }
 
-        <div className="mt-8 pb-12">
+        <div className="mt-12 pb-12">
           <ArrowLink href="/articles" direction="back">back to articles</ArrowLink>
         </div>
       </footer>
@@ -203,7 +207,9 @@ export default async function ArticlePage({
       <script
         type="application/ld+json"
 
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+        // Escape </script> in case any frontmatter field ever contains the literal sequence —
+        // would otherwise break out of the JSON-LD block. Cheap defense-in-depth.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/<\/script>/gi, '<\\/script>') }}
       />
     </article>
   );

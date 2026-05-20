@@ -1,5 +1,9 @@
-import { HTMLAttributes, ReactNode } from 'react';
+import {
+  HTMLAttributes, ReactNode, ReactElement, Children, isValidElement,
+} from 'react';
 import clsx from 'clsx';
+
+import { CopyButton } from '@/components/mdx/copy-button';
 
 type DataLanguage = { 'data-language'?: string };
 
@@ -29,12 +33,31 @@ export type PreShikiProps = HTMLAttributes<HTMLPreElement> & DataLanguage & { ch
  * Highlighted lines:
  *   rehype-pretty-code adds data-highlighted-line to the <span> wrapping
  *   each highlighted line. CSS handles the accent-tint bg and left rule.
+ *
+ * Copy button:
+ *   CopyButton client island revealed on group-hover/pre. Extracts plain text
+ *   from the nested <code> element server-side so the client component receives
+ *   a ready string with no DOM traversal needed.
  */
+
+function extractCodeText(node: ReactNode): string {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractCodeText).join('');
+  if (isValidElement(node)) {
+    const el = node as ReactElement<{ children?: ReactNode }>;
+    return Children.toArray(el.props.children).map(extractCodeText).join('');
+  }
+  return '';
+}
+
 export function PreShiki(props: PreShikiProps) {
   const { className, children, ...rest } = props;
 
   const lang = props['data-language'];
   const hasLang = Boolean(lang);
+
+  const codeText = extractCodeText(children);
 
   return (
     <div className="my-6 max-w-prose-wide">
@@ -45,16 +68,19 @@ export function PreShiki(props: PreShikiProps) {
           </span>
         </div>
       ) }
-      <pre
-        className={clsx(
-          'border border-rule bg-surface overflow-x-auto py-4 px-5',
-          hasLang && '-mt-px',
-          className,
-        )}
-        {...rest}
-      >
-        { children }
-      </pre>
+      <div className="group/pre relative">
+        <pre
+          className={clsx(
+            'border border-rule bg-surface overflow-x-auto py-4 px-5',
+            hasLang && '-mt-px',
+            className,
+          )}
+          {...rest}
+        >
+          { children }
+        </pre>
+        <CopyButton code={codeText} />
+      </div>
     </div>
   );
 }

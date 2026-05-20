@@ -27,13 +27,17 @@ There is **no `<PageHead>`** on this page. The brace-head pattern (`<ARTICLE_NAM
 │                                                                         │
 │  «back to articles»                ← orienting backlink                 │
 │                                                                         │
-│  // article · 2024.08.14 · 6 min   ← eyebrow + meta strip               │
+│  // article                         ← eyebrow                           │
 │                                                                         │
-│  How I Achieved a 74%               ← h1 (VT323, accent on title)       │
+│  How I Achieved a 74%               ← h1 (VT323, fg color)              │
 │  Performance Increase on a Page                                         │
 │                                                                         │
-│  Tracking down the long-tail of     ← summary / lede (optional)         │
+│  Tracking down the long-tail of     ← summary / lede                    │
 │  slow renders…                                                          │
+│                                                                         │
+│  2024.08.14 · 6 min · react · perf  ← meta line (date, reading time,    │
+│                                       textual tags) — soft transition  │
+│                                       into the body                     │
 │  ─────────────────────────────                                          │
 │                                                                         │
 │  ┌──────────────────────────────┐                                       │
@@ -61,11 +65,12 @@ There is **no `<PageHead>`** on this page. The brace-head pattern (`<ARTICLE_NAM
 
 Order, with rationale per slot:
 
-1. **Orienting backlink** — `← back to articles`, an `<ArrowLink>` rotated for direction (see §3.2). Top of `<main>`, above the meta strip. Replaces the role `<PageHead>` plays elsewhere (telling the reader *where in the site they are*). Without it, the reader lands inside an article with no visible nav-anchor beyond the header bar.
-2. **Eyebrow + meta strip** — one line. `// article` eyebrow on the left, `publishedAt · readingTime · tags` on the right (or stacked below at mobile, see §7). Mirrors the `// 01 / current focus` pattern from sectional eyebrows on Home, but the second clause replaces the section number with the date/duration. Reading-time and date sit *here*, not in the footer — the reader makes the "should I invest the next N minutes" decision before they start reading, not after.
-3. **Title (h1)** — VT323 display face, large. Accent color applied to the **first sentence-cased line of the title**, not just one word (see §2.1 for why). Wraps to 1–3 lines.
-4. **Summary / lede** — the `summary` field rendered as a single de-emphasized paragraph in `text-fg-muted`, capped at `max-w-prose-wide`. Same prose the OG card uses and that the dev.to mirror uses as its excerpt. Optional only insofar as `summary` is *required* in frontmatter — every article will have one.
-5. **1px `border-rule` hairline** — separates the head block from the body. The brutalist-mono pattern uses hairlines as structure; this is where one earns its keep.
+1. **Orienting backlink** — `← back to articles`, an `<ArrowLink>` rotated for direction (see §3.2). Top of `<main>`, above the eyebrow. Replaces the role `<PageHead>` plays elsewhere (telling the reader *where in the site they are*). Without it, the reader lands inside an article with no visible nav-anchor beyond the header bar.
+2. **Eyebrow** — `// article`. Single comment-tag, on its own line, left-aligned. Mirrors the `// 01 / current focus` pattern from sectional eyebrows on Home; the slash is omitted because there is no section numbering on an article page. The eyebrow opens the identity cluster (eyebrow → title → summary) and labels the surface as long-form.
+3. **Title (h1)** — VT323 display face, large, left-aligned. Title in `text-fg` (see §2.1). Wraps to 1–3 lines.
+4. **Summary / lede** — the `summary` field rendered as a single de-emphasized paragraph in `text-fg-muted`, capped at `max-w-prose-wide`, left-aligned. Same prose the OG card uses and that the dev.to mirror uses as its excerpt. `summary` is required in frontmatter; every article carries one. The summary closes the identity cluster — eyebrow, title, and summary read as one uninterrupted unit.
+5. **Meta line** — `publishedAt · readingTime · tags`, left-aligned, beneath the summary. Date + reading time + textual tag list on a single wrapping line. The meta sits *below* the summary rather than above it because (a) the identity cluster (eyebrow → title → summary) reads cleanly when nothing interrupts it, and (b) date + duration function as publication metadata — a soft transition from the lede into the body, in the same role a byline plays in NYT/Atlantic editorial layouts. The reader still gets the "should I invest the next N minutes" cue before the prose begins; placing it after the lede only delays that signal by a single line. **No right-alignment.** An earlier round had the meta right-aligned across from the eyebrow on row A; that was vetoed in the critique round for breaking site-wide left-alignment consistency.
+6. **1px `border-rule` hairline** — separates the head block from the body. The brutalist-mono pattern uses hairlines as structure; this is where one earns its keep.
 6. **Cover art** — optional. Renders only when `article.coverArt` is set. Full content-width banded slot (see §3). Sits *above* body prose and *below* the title, so the visual lands as part of the head identity, not as a body illustration. (Rationale: putting it above the title pushes the title below the fold on smaller laptops; putting it inside the prose makes it compete with the article's own images.)
 7. **1px `border-rule` hairline** — separates cover art from body. Omitted when there is no cover art (the head→body hairline above already serves).
 8. **Body prose** — MDX-compiled article content, with the prose styles spec'd in §4. Capped at `max-w-prose-wide` (68ch).
@@ -87,6 +92,8 @@ The two backlinks at top and bottom are intentional and not duplicates: one is a
 
 **On the choice of `prose-wide` (68ch) over `prose-bio` (60ch) or `prose-narrow` (56ch):** The About bio sits at 60ch because it is a *block of identity prose* meant to feel intimate. The hero pitch sits at 56ch because it is *one short statement*. An article is long-form narrative that the reader scans paragraph-by-paragraph — which is exactly the role `--prose-w` (68ch) was defined for, in standing rule 15. Career bullet paragraphs and the home "Now" paragraph already use it. Narrowing the article body to 60ch would make code blocks (which can't soft-wrap) feel pinched, and would push the article into a smaller percentage of the viewport than the index cards beneath it. 68ch is the right answer.
 
+**Reconsidered in the critique round, confirmed at 68ch.** The critique round explicitly weighed two alternatives: (a) narrowing the body to 64ch for a tighter mono read-measure, and (b) an **asymmetric** approach where prose ran narrow (~60ch) while code blocks, tables, images, and pull-out figures broke out to a wider column. Both were rejected. 64ch pinches the non-prose blocks (code, tables, lists with long items) in a long-form developer article — the cases where the wider column earns its keep are the *common* cases, not the rare ones. The asymmetric column was rejected as architectural complexity (two width tokens applied at MDX-component level, an extra wrapper for break-out, ambiguous behavior for tables-inside-lists) not justified by the small read-comfort gain on plain paragraphs. 68ch across the board is the shipped width.
+
 ### 1.4 Vertical rhythm
 
 Between blocks in the head:
@@ -94,14 +101,15 @@ Between blocks in the head:
 | From → To | Gap | Notes |
 |---|---|---|
 | Header bottom rule → Backlink | `py-8` (32px) like other page tops | Same as `PageHead`'s `pt-12` *minus* the visible h1 weight — backlink is lighter, so 32px instead of 48px. |
-| Backlink → Eyebrow+meta | `mt-8` (32px) | Section-band rhythm. |
-| Eyebrow+meta → Title | `mt-3` (12px) | Eyebrow is a label for the title; gap stays tight, matching `<SectionHead>` internal spacing. |
+| Backlink → Eyebrow | `mt-8` (32px) | Section-band rhythm. |
+| Eyebrow → Title | `mt-3` (12px) | Eyebrow is a label for the title; gap stays tight, matching `<SectionHead>` internal spacing. |
 | Title → Summary | `mt-4` (16px) | A grown-up gap, but not band-sized — summary is a continuation of the head, not its own section. |
-| Summary → hairline → Cover art | `mt-8` above hairline, `mt-8` below (32px each) | Banded rhythm; hairline owns the seam. |
+| Summary → Meta line | `mt-4` (16px) | Same gap as title→summary — the meta sits as a publication-info coda to the identity cluster, not a section break. |
+| Meta line → hairline → Cover art | `mt-8` above hairline, `mt-8` below (32px each) | Banded rhythm; hairline owns the seam. |
 | Cover art → hairline → Body | `mt-8` above hairline, `mt-8` below | Same. |
 | Body → Tags | `mt-12` (48px) | Larger gap signals end-of-prose. |
 | Tags → Syndication callout | `mt-6` (24px) | Group these — they are both "this article in context" affordances. |
-| Syndication → Terminal backlink | `mt-8` (32px) | Lighter "you are done" close. |
+| Syndication → Terminal backlink | `mt-12` (48px) | Separates the syndication block (article elsewhere) from the terminal backlink (back to the list); 32px ran them together as a single cluster — see §5.3. |
 | Terminal backlink → Footer top rule | `pb-12` (48px) | Generous tail, matching the page-top opener. |
 
 These numbers are deliberate, not arbitrary. The pattern: tight gaps inside a logical group (eyebrow→title, tags→syndication), band gaps between groups (head→art→body), generous gaps at start and end (`pt-8` top, `pb-12` bottom).
@@ -120,39 +128,43 @@ These numbers are deliberate, not arbitrary. The pattern: tight gaps inside a lo
   - Articles longer than 80 chars: still use `--text-h1` 28px. The system *never* synthesizes new sizes; it picks between the two existing display sizes based on length.
 - **Weight**: VT323 ships at 400; no override.
 - **Line-height**: tied to the token (1.10 for both `--text-display` and `--text-h1`).
-- **Color**: the title noun pattern from `PageHead` does not apply — there is no single noun to highlight. Instead:
-  - **Whole title in `text-accent`** (`--color-accent`, `#C8FF3D`).
-  - VT323 at high contrast on canvas — the accent is the system's identity color and lands here for the same reason the company name lands on Career and the project name lands on Projects: it is the surface's primary noun. Standing rule 01 is satisfied.
+- **Color**: the title uses `text-fg` (inherits from body) — no accent class. Matches site-wide title color on Career, About, and Projects, all of which use white/fg titles. The eyebrow (`text-accent`) and the display size + VT323 face give the title all the hierarchy it needs without accent coloring the text. (An earlier round used `text-accent` on the title, reasoning that the article title is the page's primary noun; reversed for cross-page consistency — eyebrow-accent + title-fg is the established site pattern, and VT323 at display scale is already a strong enough identity moment.)
 - **Brace decoration**: **no** `<X />` braces. The title is the title — VT323 + accent is already the typographic identity moment. Wrapping the title in braces would (a) compete with the eyebrow's `// article` comment-tag for "this is a typographic affordance, not content," (b) force a uniform brace-frame around prose-shaped text that doesn't read as a JSX-tag identifier, and (c) consume horizontal width the title's own characters need.
 - **Curly quotes**: titles use `U+2018`/`U+2019` for apostrophes and `U+201C`/`U+201D` for double quotes (standing rule 09). Authored straight in MDX, transformed at parse via remark's smartypants (the `remark-gfm` pipeline already does this).
 
-### 2.2 The eyebrow + meta strip
+### 2.2 The eyebrow and the meta line
 
-A single `<div>` that arranges two clusters horizontally on desktop, stacks them at mobile:
+The head is now four left-aligned blocks stacked vertically: **eyebrow → title → summary → meta line**, each on its own row. There is no horizontal eyebrow-vs-meta strip. (An earlier round paired the eyebrow on row A with a right-aligned meta cluster across from it; that composition was vetoed in the critique round both for breaking site-wide left-alignment and for interrupting the identity cluster — see §1.2.)
+
+The **eyebrow** opens the identity cluster. The **meta line** closes the head as a soft, publication-info transition into the body.
 
 ```
-<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-  <Eyebrow>// article</Eyebrow>
-  <Text variant="meta" as="span" class="inline-flex flex-wrap items-baseline gap-2 text-fg-subtle">
-    <time datetime="2024-08-14" class="text-fg-muted">2024.08.14</time>
-    <span aria-hidden="true">·</span>
-    <span>6 min</span>
-    <span aria-hidden="true">·</span>
-    <span>react · performance · profiling</span>
-  </Text>
-</div>
+<Eyebrow>// article</Eyebrow>
+
+<h1 …>How I Achieved a 74% Performance Increase on a Page</h1>
+
+<p class="article-summary">Tracking down the long-tail of slow renders…</p>
+
+<p class="article-meta">
+  <time datetime="2024-08-14" class="text-fg-muted">2024.08.14</time>
+  <span aria-hidden="true"> · </span>
+  <span>6 min</span>
+  <span aria-hidden="true"> · </span>
+  <span>react · performance · profiling</span>
+</p>
 ```
 
 - **Eyebrow**: `<Eyebrow>// article</Eyebrow>`. Identical to the section eyebrows on every other page, except the second clause says `article` instead of `01 / current focus`. The slash is omitted because there is no numbering on a one-section page; following the standing convention from sectional pages with a single content section.
+- **Meta line position**: on its own row, left-aligned, **below the summary**. Rationale recap (also in §1.2): the identity cluster (eyebrow → title → summary) reads cleanly when nothing interrupts it; date + reading time + tags then function as publication metadata — a soft byline-style transition into the body, the same role bylines play in NYT / Atlantic editorial layouts.
 - **Date**: ISO-formatted lowercase as `YYYY.MM.DD` (matches `formatArticleDate` already used on article cards). Wrapped in a `<time datetime="ISO">` element for machine readability. Elevated to `text-fg-muted` so the date — the primary scannable metadata — stands proud of the comments-style subtle text around it.
 - **Reading time**: `${n} min` (singular even at 1 minute — copy convention from cards). `text-fg-subtle` like the rest.
-- **Tag list (textual, not chips)**: tags joined by ` · ` separators, brand-cased the way they ship in frontmatter. **This is the only place tags appear textually.** The chip strip at page foot uses the `<Tag>` component. Reason: the head meta strip is dense single-line scannable; chips here would inflate the strip and steal visual weight from the title. Tags do not link anywhere — there is no tag-archive route in v1.
-- **Updated date** (when set): appended as a second `<Text variant="meta">` line *below* the meta strip, italicized and in `text-fg-subtle`: `// last updated 2024.09.02`. The `//` comment-tag prefix marks it as ambient metadata, not first-class content. The updated date is **never** substituted in place of `publishedAt`; both surfaces stay.
+- **Tag list (textual, not chips)**: tags joined by ` · ` separators, brand-cased the way they ship in frontmatter. **On the article page only**, textual tags appear here *and* the foot-of-page chip strip carries the same tags as `<Tag>` chips (§5.1). The asymmetry with the index card is deliberate: the card surface dropped textual tags from its meta strip and shows tags only as chips below the description (so the card's tight meta line stays date + reading time), while the article page keeps both. The contexts are different — a card is triage ("what is this, should I open it?"), an article page is post-read orientation ("what was that about, what should I do next?"). Each surface gets the affordance that fits it. Tags do not link anywhere — there is no tag-archive route in v1.
+- **Updated date** (when set): appended as a second `<Text variant="meta">` line *below* the meta line, italicized and in `text-fg-subtle`: `// last updated 2024.09.02`. The `//` comment-tag prefix marks it as ambient metadata, not first-class content. The updated date is **never** substituted in place of `publishedAt`; both surfaces stay.
 
 ### 2.3 The summary / lede
 
 - One paragraph (`<p>`), `<Text variant="body">`.
-- **Color**: `text-fg-muted` — a step down from body prose, signaling that this is a precis, not the start of the article. The body prose itself opens at `text-fg`.
+- **Color**: `text-fg-muted` — matching body prose (both default to muted; see §4.2 and §11). Summary and body now share the muted baseline, with `<strong>` and `<InlineLink>` lifting to full `text-fg` to provide the in-prose hierarchy. (An earlier round had body at full `text-fg` while the summary stayed muted — that produced a backwards hierarchy where the lede read lighter than the prose it introduced. The critique round reverted body to muted; the summary's muted color is now consistent with what follows it, not contrasted against it.)
 - **Width**: capped at `max-w-prose-wide`.
 - **Font weight**: 400 (the default for `<Text variant="body">`).
 - **No quotes**, no italics, no eyebrow framing. The summary just is the summary.
@@ -231,21 +243,22 @@ Headings get `id` attributes auto-generated by the MDX pipeline (slugified) for 
 ### 4.2 Body paragraphs
 
 - `<Text variant="body">` equivalent: `font-mono`, `text-body` (14px / 1.65).
-- **Color**: `text-fg` for primary prose (note: muted on the *summary* in the head, but full-strength inside the body).
+- **Color**: `text-fg-muted` for primary prose. (`<li>` content sits at the same `text-fg-muted`.) This matches the site-wide convention — body prose elsewhere on the site is muted; `<strong>` and `<InlineLink>` lift to `text-fg` to provide in-prose hierarchy (see §4.3 and §11). An earlier round of this spec set the body at full `text-fg` with the summary at `text-fg-muted`; the critique round flipped that — the body is muted, and the strong/link affordances are the elements that pop forward. The contrast hierarchy now reads: muted prose → strong/links/headings at `text-fg` → accent on title, list markers, OL counters.
 - **Top margin**: `mt-4` (16px) between consecutive paragraphs. **First paragraph** in body has no top margin (the hairline above carries the seam).
 - **Bottom margin**: zero; spacing owned by the next element's top.
 
 ### 4.3 Inline text — strong, em, inline `code`
 
-- **`<strong>`**: `text-fg`, `font-semibold` (600). Already the global `@layer base` style in `globals.css`. Used for emphasis nouns, magnitudes (`74% increase`), and the same patterns the rest of the site uses inside prose.
+- **`<strong>`, `<b>`** (inside `.article-prose`): `text-fg`, `font-semibold` (600). No per-surface backdrop or padding. Both tags fall through to the site-wide `@layer base` rule (`strong, b { color: var(--color-fg); font-weight: 600; }`); no article-scoped override is needed. (A polish round added an `accent-tint` backdrop and `padding: 0 0.2em` to make emphasis more visible in monospace; that was reversed — the backdrop read as `<mark>` semantics rather than bold emphasis, adding chrome that the face's 600 weight already provides. The `@layer base` rule was broadened from `strong` to `strong, b` so both tags are covered without a per-surface rule.)
 - **`<em>`**: `italic` (browser default), no color change. Italic JetBrains Mono is a real cut (the font has true italics, not synthesized).
-- **Inline `<code>`** (Markdown `` ` ``): `font-mono` (no-op since the whole site is mono — but it costs nothing to declare), `text-fg`, `bg-surface` (a hair lighter than canvas), `border border-rule`, `px-1 py-0` (2px vertical, 4px horizontal), `text-[0.9em]` (a hair smaller so the border doesn't make it loom above the line). No syntax highlighting on inline code (it's typically a single identifier — Shiki on one-token strings is wasted CPU and ugly).
+- **Inline `<code>`** (Markdown `` ` ``): `font-mono` (no-op since the whole site is mono — but it costs nothing to declare), `text-fg`, `bg-surface` (a hair lighter than canvas), `border border-rule`, `px-1 py-0` (2px vertical, 4px horizontal), **`font-size: var(--text-meta)`** (12px — the DS-tokenized "meta" size; an earlier round used `0.9em`, which the critique flagged as the only non-tokenized size in the prose rules. The token resolves close to the same visual size but stays inside the system). No syntax highlighting on inline code (it's typically a single identifier — Shiki on one-token strings is wasted CPU and ugly).
 
 ### 4.4 Inline links inside body prose
 
 Reuse `<InlineLink>` verbatim. The MDX components map binds `a` → `<InlineLink>`:
 
-- Default `text-fg`, hover lifts to `text-accent` with a 1px underline at 3px offset.
+- **At rest**: `text-fg` (the lifted color) — full strength against the surrounding muted prose. The link affordance is the color lift itself: the link sits one step *brighter* than the prose it interrupts, just like `<strong>` (§4.3) does. (An earlier round had body at full `text-fg` with links *also* at `text-fg` and the affordance was an underline-on-hover only; the critique round reverted body to muted (§4.2), which freed the lift-to-fg pattern to do its natural work — links and strong now both pop forward against muted body prose.)
+- **On hover/focus**: lifts to `text-accent`, with a 1px underline at 3px offset.
 - External links auto-apply `target="_blank" rel="noopener noreferrer"`.
 - No special "external" icon affixed — the underline-on-hover plus the standing convention is enough.
 
@@ -254,7 +267,7 @@ Internal links (relative paths or `https://andresilva.cc/*`) open in the same ta
 ### 4.5 Lists — `<ul>`, `<ol>`, nested
 
 - **`<ul>`**: `list-none` (no disc marker). Each `<li>` carries a leading **`+` glyph** in `text-accent` (same pattern as career bullets — `.role__bullets` in the design system). The glyph is rendered via CSS `::before` content: `+` with `mr-2` spacing, *not* as authored text in the MDX. This keeps the markdown source clean.
-- **`<ol>`**: `list-none` too. The number is rendered via CSS counter, formatted as `01.`, `02.`, `03.` (zero-padded to 2 digits — VT323-flavored numerics). `text-fg-subtle` color so the numbers don't compete with the prose. Padding via `pl-8` (32px) on the `<ol>`; counter rendered at the left edge.
+- **`<ol>`**: `list-none` too. The number is rendered via CSS counter, formatted as `01.`, `02.`, `03.` (zero-padded to 2 digits — VT323-flavored numerics). **Counter color `text-accent`** — matching the unordered list's `+` glyph. List markers belong to one color category, and an earlier round used `text-fg-subtle` here, which made the OL counter visually subordinate to its UL sibling for no good reason. The critique round unified them: both `+` and `01.` are accent, both function as the list's "list-ness" marker. Padding via `pl-8` (32px) on the `<ol>`; counter rendered at the left edge.
 - **Nested lists**: indent by `pl-6` (24px). The same `+` or counter pattern applies at the next level. Visual hierarchy by indent only — no different glyph shape per level. (Mixed ul-inside-ol or ol-inside-ul: the child's glyph follows the child's element type — `+` for nested ul under ol, etc.)
 - **Spacing**: `<li>` to `<li>`: `mt-2` (8px). List to surrounding prose: `mt-4 mb-4` (16px each, treated as a block).
 - **Item content**: a list item is itself a paragraph; the same body-prose styles apply. Inline `<strong>` and `<em>` work inside `<li>` exactly as in `<p>`.
@@ -262,12 +275,12 @@ Internal links (relative paths or `https://andresilva.cc/*`) open in the same ta
 ### 4.6 Blockquotes
 
 - **Element**: `<blockquote>`.
-- **Container**: `border-l-2 border-accent-muted pl-4 my-6`.
+- **Container**: `border-l-2 border-rule pl-4 my-6`. (An earlier round used `border-accent-muted`; the critique flagged that `--accent-muted` is reserved as the chip/badge border token — it shouldn't double as a divider color. `--rule` is the canonical divider token and was the right fit for a structural left rule.)
 - **Text**: `text-fg-muted italic` — the muted color signals "this is not in André's voice." Italic adds a typographic hand on top.
 - **Nested paragraph spacing**: same `mt-4` between paragraphs as body prose, but the whole block sits inside the muted treatment.
 - **Citations**: if the blockquote ends with an `— Name` line, the author can mark it `<cite>`. Style: `block mt-2 text-fg-subtle not-italic`. Optional — many quotes won't carry one.
 
-The left rule is the brutalist-mono structural vocabulary; it's the same hairline the section bands use, just rotated 90° and accent-muted instead of `rule`.
+The left rule is the brutalist-mono structural vocabulary; it's the same hairline the section bands use, just rotated 90°.
 
 ### 4.7 Code blocks
 
@@ -275,9 +288,9 @@ This is heavy real estate in a developer's article. The treatment must read as *
 
 ```
 ┌────────────────────────────────────────────────┐
-│ ts                                         ↗   │   ← optional language label, no copy button v1
+│ ts                                             │   ← optional language label (top-left of header strip)
 ├────────────────────────────────────────────────┤
-│                                                │
+│                                          copy  │   ← copy button (top-right, revealed on hover)
 │  const foo = 'bar';                            │
 │  function baz(): number {                      │
 │    return 42;                                  │
@@ -304,7 +317,16 @@ This is heavy real estate in a developer's article. The treatment must read as *
 - When the fence has no language, the header strip is omitted; the code block stands alone.
 - Visually this creates a two-cell vertical sandwich: header strip (1px borders on top/left/right), `<pre>` (1px borders on all sides — top edge will overlap with header bottom, that's fine; CSS `margin-top: -1px` on the `<pre>` collapses the doubled rule).
 
-**No copy button in v1**. The "copy to clipboard" affordance is convenient but it is *also* the kind of pseudo-app-UI chrome the design system principles veto ("texture not affordance"; "app-UI chrome a portfolio doesn't need"). Modern browsers support text selection + cmd-C fine; readers who want the code can take it. Reconsider in a future revision if a real user need surfaces.
+**Copy-to-clipboard button** (shipped). An earlier round of this spec rejected the copy button as pseudo-app-UI chrome ("texture not affordance"; "app-UI chrome a portfolio doesn't need"). The critique round reversed that call: a copy button on code in a *developer*'s article is a content-honest affordance, not chrome — it serves the reader's actual workflow (paste the snippet into a buffer) better than asking them to text-select multi-line code with the mouse. The veto stands for *generic* app-UI controls (search bars, filter toolbars); copy on code blocks is sufficiently content-specific to earn its keep.
+
+The shipped treatment is deliberately quiet:
+
+- **Trigger**: a text label `copy` (lowercase, **no icon**) in the top-right of the `<pre>`, inside the same padding as the code. No clipboard glyph, no border, no fill — just the word.
+- **Typography**: `var(--text-meta)` (12px), `font-mono`, `text-fg-subtle` at rest → `text-accent` on hover/focus.
+- **Reveal-on-hover**: the label is `opacity: 0` until the `<pre>` is hovered or the button is keyboard-focused; then it fades in (`duration-fast` 120ms). Always available to assistive tech regardless of opacity.
+- **Confirmation**: on click, the label swaps from `copy` → `copied` and holds for 1500ms, then reverts. No other surface change (no toast, no colour flash beyond the existing hover color shift).
+- **Implementation seam**: the shipped pattern is a **server shell + client island** — `<PreShiki>` (server) renders the highlighted code, `<CopyButton>` (client component) renders the button and owns the clipboard interaction. This mirrors the same split the `<YouTube>` façade uses for its server/client boundary (architect's spec §3.7) — the page stays mostly static; only the small interactive sliver hydrates.
+- **Accessibility**: the button carries an `aria-label` describing the action ("Copy code to clipboard"), and confirmation is announced via a separate `<span role="status" aria-live="polite">` element so screen readers receive the state change without the visible label needing to be `aria-live` (which would announce on every hover).
 
 **No line numbers in v1**. Same rationale — they add visual noise. The reader who needs to reference "line 12" of an in-article code block has bigger orientation problems.
 
@@ -330,7 +352,7 @@ rehype-pretty-code supports per-line emphasis via `data-highlighted-line` attrib
 
 - **`<table>`**: `w-full max-w-prose-wide border-collapse my-6`.
 - **`<thead>`**: `bg-surface`, `border-y border-rule`, `text-fg`. Header row is structurally distinct.
-- **`<th>`**: `text-left px-4 py-2 text-meta font-semibold uppercase tracking-eyebrow text-fg-subtle`. Header cells use the eyebrow recipe — they are labels, not headlines.
+- **`<th>`**: `text-left px-4 py-2 text-meta font-medium uppercase tracking-eyebrow text-fg-subtle`. Weight **500** (`font-medium`), not 600 — the design system prescribes 500 at meta size, and an earlier round had this at 600. The critique round brought `<th>` into line with the DS meta-weight rule. Header cells use the eyebrow recipe — they are labels, not headlines.
 - **`<tbody>`**: no zebra striping. Rules carry the row separation.
 - **`<tr>`**: `border-b border-rule`. Last row drops its border (CSS `:last-child`).
 - **`<td>`**: `px-4 py-2 text-body align-top`. Body color `text-fg-muted` (one step down from prose) — table data is meant to be scanned, not read prose-style; the muted color says "scan, don't dwell."
@@ -362,7 +384,7 @@ The MDX component `<YouTube id="..." />` (§3.7 of the architecture doc) renders
 
 - `<figure class="my-6">` outer container, same as images.
 - A `relative` div with `aspect-ratio: 16 / 9`, capped at `max-w-prose-wide`, `border border-rule`, `bg-canvas`.
-- Inside: the YouTube thumbnail (`https://i.ytimg.com/vi/<id>/hqdefault.jpg`) as an `<img>` (or `<Image>`), full-bleed, `object-cover`. **Grayscale filter** at rest (`filter: grayscale(1) contrast(0.95)`) — the same recipe as `--photo-filter` minus the brightness boost. This keeps the page palette quiet; YouTube thumbnails ship with whatever colors creators chose, often dramatic, and unfiltered they'd punch through the canvas like a foreign body.
+- Inside: the YouTube thumbnail (`https://i.ytimg.com/vi/<id>/hqdefault.jpg`) as an `<img>` (or `<Image>`), full-bleed, `object-cover`. **Grayscale filter** at rest: `filter: grayscale(1) contrast(0.95)`. This is intentionally **not** the `--photo-filter` token (which carries the duotone + scanline treatment used on identity photography like André's About portrait). YouTube is *content media* — illustrative video the article points at — not identity media; it gets a quieter, more neutral desaturation that keeps the page palette calm without imposing the identity-portrait look on someone else's thumbnail. Verified at ship: the implementation matches this recipe; no change. (YouTube thumbnails ship with whatever colors creators chose, often dramatic, and unfiltered they'd punch through the canvas like a foreign body — hence the grayscale.)
 - Centered on top: a play-button overlay — a 64×64 square in `bg-canvas border border-accent`, with a `▶` glyph inside in `text-accent`. **Square, not round** (no circles in the system).
 
 **On hover/focus**:
@@ -409,6 +431,7 @@ Render only when `article.devtoUrl` is set:
 
 ```html
 <div class="mt-6">
+  <Eyebrow>// elsewhere</Eyebrow>   {/* optional, see below */}
   <ArrowLink href={article.devtoUrl}>also on dev.to</ArrowLink>
 </div>
 ```
@@ -416,16 +439,19 @@ Render only when `article.devtoUrl` is set:
 - **Component**: `<ArrowLink>` — reused verbatim.
 - **Label**: `also on dev.to` (lowercase, no period). Three words say what the link is: a syndicated mirror, not "the canonical version."
 - **Position**: own line, below tags, above the terminal backlink.
+- **Optional eyebrow `// elsewhere`** above the link. Uses the same `<Eyebrow>` component as `// article` in the head. When rendered, it labels the syndication block as a "this article lives elsewhere too" section — a small typographic frame that does the same job for the foot of the page that `// article` does for the head. Whether to render it is a copy decision that may vary article-to-article (some articles syndicate to multiple places later, in which case a labeled block is more readable); the component supports it, and ships unrendered when there's just the single dev.to link.
 - **No accompanying explanatory prose**. The reader who follows the link to dev.to lands on the dev.to copy, which itself carries `<link rel="canonical">` pointing back to the site. The site doesn't need to disclaim or annotate; the link goes to the mirror, and that mirror's HTML self-discloses where the real article lives.
 - **No "discuss on dev.to," no "share this article" social-affordance row, no comment-count CTA.** The strategy doc treats dev.to as a discovery surface, not the engagement loop. The syndication callout is a *signpost*. The brand register rejects engagement theater (likes counts, share rows, comments-driven CTAs). The reader who wants to discuss will email André (the footer carries `email` as a primary social link).
 
 ### 5.3 Terminal backlink
 
 ```html
-<div class="mt-8">
+<div class="mt-12">
   <ArrowLink href="/articles" class="rotate-arrow-back">↑ back to articles</ArrowLink>
 </div>
 ```
+
+The gap from the syndication callout to the terminal backlink is **`mt-12` (48px)**, not the earlier `mt-8` (32px). The critique round felt the syndication block and the terminal backlink were running together — a 32px gap read as "these are one cluster of footer links" when they are actually two distinct affordances (syndication = "this article elsewhere"; terminal backlink = "back to the list"). 48px gives the terminal backlink visual independence as the final, page-ending action.
 
 - **Component**: `<ArrowLink>`, with an **arrow direction modifier**. The default `<ArrowLink>` renders a right-pointing arrow that nudges right on hover. The article page needs a left-pointing arrow for "back to articles." Two ways the engineer can do this:
   - Add a `direction="back"` prop to `<ArrowLink>` that swaps the SVG and flips the hover nudge (`translate-x-0.5` → `-translate-x-0.5`).
@@ -515,7 +541,8 @@ The design system declares two non-default breakpoints in `globals.css`: `--brea
 | Element | Desktop | Mobile (< 768px) |
 |---|---|---|
 | Backlink | own row, top of `<main>` | unchanged |
-| Eyebrow + meta strip | horizontal: eyebrow left, meta right, single-line meta cluster | `flex-wrap`: eyebrow on its own line, meta cluster wraps to next line(s). The `flex-wrap items-baseline justify-between gap-x-4 gap-y-2` already handles this — no extra rules. |
+| Eyebrow row | own row, left-aligned | unchanged (already left-aligned, own row) |
+| Meta line | own row below summary, left-aligned; `· `-separated segments inside the row wrap naturally if narrow | unchanged composition; the wrap behavior absorbs any segments that don't fit on one row |
 | Title | up to 3 lines at 56px or 28px | same sizes; wraps to more lines naturally |
 | Summary | 68ch | reads at the viewport width (which is narrower than 68ch on phones); the cap still applies but doesn't activate |
 | Cover art | 16:7 aspect-ratio | switches to **4:3** at `< 640px` (mobile-first cover-art aspect ratio per §3.2) |
@@ -613,9 +640,9 @@ No tab traps. The article body's natural element flow handles tab order; nothing
 - **`<time>` elements**: both `publishedAt` and `updatedAt` are wrapped in `<time datetime="YYYY-MM-DD">…</time>` for machine readability.
 - **Focus indicators**: inherited global `:focus-visible` rule (2px accent outline, 2px offset, square corners).
 - **Color contrast** (from `docs/design-system.md` §"Accessibility floor"):
-  - Title: `text-accent` on `bg-canvas` → 16.4:1 (AAA).
-  - Body prose: `text-fg` on `bg-canvas` → 14.7:1 (AAA).
-  - Muted body (summary, table cells, asides): `text-fg-muted` on `bg-canvas` → 7.92:1 (AAA).
+  - Title: `text-fg` on `bg-canvas` → 14.7:1 (AAA). Per the B2 reversal in the critique round; matches site-wide eyebrow-accent + title-white pattern.
+  - Body prose (paragraphs, list items, table cells): `text-fg-muted` on `bg-canvas` → 7.92:1 (AAA). Per the Q11 revert.
+  - Eyebrow, `<strong>`, inline links at rest, table headers, code-block fg: `text-fg` on `bg-canvas` → 14.7:1 (AAA) — lift forward against the muted body.
   - Code block surface: `text-fg` on `bg-surface` (close to canvas) — still AAA; Shiki token colors (see §10) are calibrated for the same surface.
 - **Reduced motion**: honored as above.
 - **Touch targets**: backlinks, syndication callout, YouTube button all ≥ 32px in their hit area (the global CTA/ArrowLink baseline).
@@ -857,7 +884,7 @@ These are deliberately out of v1 scope but flagged here so future work has a rec
 
 - **TOC for long articles** (>3000 words). Pattern is unclear (right-rail steals from prose column; floating overlay needs JS). Defer until the corpus has 3+ articles that would benefit.
 - **`<Aside>` callout component** in the MDX allowlist. Design exists in §4.12; engineer adds the component + extends the allowlist when an article needs it.
-- **Inline copy-to-clipboard button on code blocks**. Rejected for v1 as pseudo-app-UI; revisit if a real reader-need surfaces.
+- ~~**Inline copy-to-clipboard button on code blocks**~~. Shipped in the polish round — see §4.7. (Originally listed here as rejected-for-v1 pseudo-app-UI; the critique round reversed that call.)
 - **Tag-archive routes** (`/articles/tag/[slug]`). Would let the foot-of-page chips become links. Out of scope; would require the tags to be linkable across the index and the body footer.
 - **Article-to-article navigation** ("previous / next article"). Would require time-ordering UX inside individual articles. Out of scope.
 - **`<ImageMdx wide>` opt-in for full-shell-width figures**. Useful for occasional architecture diagrams; not in v1 because no migrated article needs it.

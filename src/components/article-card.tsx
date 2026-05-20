@@ -30,8 +30,12 @@ export interface ArticleCardProps {
  * the primary click surface; a "read article" ArrowLink provides an
  * explicit navigation affordance at the bottom.
  *
- * Meta line: date · readingTime · tags — no reactions or comments
- * (Forem-only metadata, dropped in the local-content migration).
+ * Meta line: date · readingTime — tags ship as chips below the
+ * description, not as dot-separated text in the meta strip, so the
+ * card has a single tag surface (chips do the scan job). The article
+ * page intentionally differs: tags appear both in the meta strip and as
+ * chips in the footer there, because the reader's context is different —
+ * triage-time on the card, post-read discovery on the article page.
  *
  * Article tags are brand-cased (e.g. "LLMs", "Rust", "Next.js") in
  * frontmatter and rendered verbatim. See docs/articles-decision-log.md
@@ -60,12 +64,6 @@ export function ArticleCard({
           <span className="text-fg-muted">{ date }</span>
           <span aria-hidden="true">·</span>
           <span>{`${readingTime} min`}</span>
-          { tags.length > 0 && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{ tags.join(' · ') }</span>
-            </>
-          ) }
         </Text>
         <Text variant="h3" as="p" className="mt-3 mb-0">
           <InlineLink href={url}>{ title }</InlineLink>

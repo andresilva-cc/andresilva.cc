@@ -10,7 +10,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 
 - **Domain**: https://andresilva.cc
 - **Purpose**: Personal site — home, about, career, projects, and articles authored in the repo.
-- **Shape**: Next.js App Router app, Server Components by default, with three `'use client'` islands: `nav.tsx` (route-aware active highlighting), `stipple-art.tsx` (loads the external ASCII-art Web Component), and `mdx/youtube-swap.tsx` (click-to-load YouTube embed inside article prose).
+- **Shape**: Next.js App Router app, Server Components by default, with four `'use client'` islands: `nav.tsx` (route-aware active highlighting), `stipple-art.tsx` (loads the external ASCII-art Web Component), `mdx/youtube-swap.tsx` (click-to-load YouTube embed inside article prose), and `mdx/copy-button.tsx` (code-block copy button with local clipboard state).
 - **Visual reference**: the shipped code is the source of truth — the token block in `src/styles/globals.css` and the components in `src/components/`, live-rendered at the `/design-system` route. `docs/redesign-log.md` is the decision log.
 - **Data**: Content is either hard-coded in "static" repositories or authored as MDX files in `src/content/articles/` and compiled at build time by Velite. The site is the canonical home for articles; dev.to is a syndicated mirror (with `canonical_url` pointing back here). There is no database, no auth, no backend of our own, and no user-generated content.
 - **Deployment**: Vercel, auto-deploy from `main`.
@@ -166,11 +166,12 @@ The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `GoogleA
 
 ### Server-first, client where needed
 
-Pages and structural components stay server-rendered. Exactly three files carry `'use client'`, and only because they genuinely need a client hook or DOM access:
+Pages and structural components stay server-rendered. Exactly four files carry `'use client'`, and only because they genuinely need a client hook or DOM access:
 
 - **`nav.tsx`** — reads `usePathname()` to mark the active item with `aria-current="page"` and route-aware accent highlighting. The header itself stays a Server Component; it reflows responsively via CSS flex-wrap at the `xs` breakpoint, with no JS disclosure/hamburger.
 - **`stipple-art.tsx`** — loads the external `<stipple-art>` Web Component (home hero + article-thumbnail ASCII art) via a `useEffect` script injection.
 - **`mdx/youtube-swap.tsx`** — the click-to-load swap for in-prose `<YouTube />` embeds. The outer `<YouTube />` component is a Server Component that renders a static thumbnail façade plus a `<noscript>` iframe fallback; this small island only owns the post-click state that swaps the façade for the live iframe. The YouTube embed JS itself is never loaded until the user clicks.
+- **`mdx/copy-button.tsx`** — code-block copy button; owns local `copied` state and the clipboard API call, revealed on `group-hover/pre`.
 
 Everything else — header, footer, page heads, section heads, project cards, role cards, article cards, tags, status dots, link arrows, and the `ImageMdx` / `PreShiki` / outer `YouTube` MDX components — is a Server Component.
 
