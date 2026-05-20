@@ -1,92 +1,127 @@
 # Agent Pipeline Workflow
 
-This document describes how the AI agent pipeline operates for andresilva.cc. It is intended for the **orchestrator** (the main Claude Code session) and should **not** be read by individual agents — they receive their instructions directly from the orchestrator.
-
-The project is mature. Each unit of work is a **single task** (one GitHub Issue → one PR → one merge). There are no phases, no milestones, and no multi-task implementation plans.
+This document describes how the AI agent pipeline operates. It is intended for the **orchestrator** (the main Claude Code session) and should **not** be read by individual agents — they receive their instructions directly from the orchestrator.
 
 ---
 
 ## Agent Roles
 
-| Agent                  | Purpose                                                                |
-| ---------------------- | ---------------------------------------------------------------------- |
-| **Software Architect** | Consulted for tech-stack or structural decisions on a task             |
-| **UI/UX Designer**     | Designs visual updates; maintains design system and UI spec on demand  |
-| **Copywriter**         | Writes or refines on-page copy; maintains the copy style guide on demand |
-| **Tech Lead**          | Breaks down a larger task into smaller steps when a single Engineer pass would be too much |
-| **Engineer**           | Implements the task                                                    |
-| **Code Reviewer**      | Reviews code changes (read-only — never edits code files)              |
-| **QA**                 | Verifies acceptance criteria for bigger or regression-sensitive tasks  |
-| **DevOps**             | Deployment, CI/CD, and infrastructure (Vercel, GitHub Actions) on demand |
-| **Orchestrator**       | Coordinates the pipeline, commits code, tracks progress                |
-
-There is no Product Manager — **André is his own PM**. He provides the spec directly (via chat or an issue body).
+| Agent                  | Purpose                                                          |
+| ---------------------- | ---------------------------------------------------------------- |
+| **Product Manager**    | Writes and maintains the product spec                            |
+| **Software Architect** | Writes and maintains the architecture doc                        |
+| **UI/UX Designer**     | Designs the design system and UI spec (two documents, one agent) |
+| **Tech Lead**          | Produces implementation plans from the spec, architecture, and UI spec |
+| **Engineer**           | Implements tasks from the implementation plan                    |
+| **Code Reviewer**      | Reviews code changes (read-only — never edits code files)        |
+| **QA**                 | Verifies acceptance criteria after a full phase is implemented   |
+| **Copywriter**         | Defines product voice and writes English UI copy (copy guide + locale) |
+| **Translator**         | Translates English locale into target languages with cultural adaptation |
+| **Legal Writer**       | Produces legal documents (TOS, Privacy Policy, etc.) based on governing law |
+| **Revenue Strategist** | Defines payment flows, fiscal compliance, billing operations, and multi-country payment routing |
+| **Marketing Manager**  | Produces promotional content, launch plans, social media posts, and platform-specific announcements |
+| **DevOps**             | Handles deployment, CI/CD, and infrastructure (on-demand)        |
+| **Orchestrator**       | Coordinates the pipeline, commits code, tracks progress          |
 
 ---
 
 ## GitHub Issues as Task Tracker
 
-GitHub Issues is the centralized task tracker. Each task is a standalone issue — no phase grouping, no milestone, no implementation-plan file.
+GitHub Issues is the centralized task tracker. The implementation plan file remains as a design document (rationale, dependencies, architecture decisions), but all task state (open/closed, comments, deferred findings) lives in GitHub Issues.
 
 ### Issue Title Format
 
-`{type}: {short description}` — e.g., `feat: add dark-mode toggle to navbar`, `fix: hero image overflows on mobile Safari`.
+`[Phase {N}] Task {M}: {short description}`
 
-### Labels (optional)
+### Labels
 
 | Label               | Purpose                                        |
 | ------------------- | ---------------------------------------------- |
-| `agent:engineer`    | Task to be implemented by the engineer         |
-| `priority:high`     | Should be handled soon                         |
-| `bug`               | Bug                                            |
-| `follow-up`         | Deferred finding from a prior review           |
+| `phase:{N}`         | Groups issues by implementation phase          |
+| `agent:engineer`    | Task to be implemented by the engineer agent   |
+| `priority:critical` | Must be done first; blocks other work          |
+| `priority:high`     | Important; should be done early in the phase   |
+| `priority:normal`   | Standard priority                              |
+| `bug`               | Bug discovered during implementation or QA     |
+| `follow-up`         | Deferred finding or improvement from code review |
+
+### Milestones
+
+One milestone per phase: `Phase {N}: {Phase Title}`. This groups issues and shows progress percentage.
 
 ### Who Creates Issues
 
-| Source           | When                                                           |
-| ---------------- | -------------------------------------------------------------- |
-| **User**         | Ideas, bug reports, feature requests — created directly on GitHub or via chat |
-| **Orchestrator** | Ad-hoc issues discovered during a task: bugs, follow-ups, deferred findings |
+| Source               | When                                                                 |
+| -------------------- | -------------------------------------------------------------------- |
+| **User**             | Rough ideas, bug reports, feature requests — created directly on GitHub |
+| **Tech Lead**        | Planned tasks when producing an implementation plan (batch creation)  |
+| **Orchestrator**     | Ad-hoc issues: bugs, follow-ups, deferred findings during task cycle |
 
-The orchestrator refines rough user-created issues (adds acceptance criteria, labels) before starting work.
+The orchestrator or TL refines rough user-created issues (adds ACs, labels, milestone) before they enter the pipeline.
 
 ### Querying Tasks
 
 ```bash
 # Next open task for the engineer
-gh issue list --state open --label "agent:engineer" --json number,title
+gh issue list --milestone "Phase {N}" --state open --label "agent:engineer" --json number,title
 
-# All open issues
-gh issue list --state open
+# All open issues in current phase
+gh issue list --milestone "Phase {N}" --state open
+
+# Completed issues in current phase
+gh issue list --milestone "Phase {N}" --state closed
 ```
 
 ---
 
-## Per-Task Execution Cycle
+## Pipeline Flow
 
-For each task, follow this cycle:
+### Phase Planning
+
+Before any implementation begins for a phase, the orchestrator must ensure:
+
+1. **Product spec exists and is approved** — if not, launch the Product Manager agent.
+2. **Architecture doc exists and is approved** — if not, launch the Software Architect agent.
+3. **Design system and UI spec exist** (for phases with UI work) — if not, launch the UI/UX Designer agent twice: first to produce `docs/design-system.md`, then `docs/ui-spec.md`.
+4. **Copy style guide and English locale strings exist** (for phases with UI work) — if not, launch the Copywriter agent twice: first to produce `docs/copy-guide.md`, then to write the English locale strings. The Copywriter needs the UI spec to know what pages need copy.
+5. **Implementation plan exists for the current phase** — if not, launch the Tech Lead agent to produce one (e.g., `docs/implementation-plan-phase-1.md`).
+6. **Plan review round** (for complex phases) — see below. After review, the Tech Lead creates GitHub Issues from the final plan. Verify issues were created with `gh issue list --milestone "Phase {N}"`.
+
+### Plan Review Round
+
+For complex phases (orchestrator's judgment), run a plan review before creating GitHub Issues. Skip this for simple phases — go straight to issue creation.
+
+**When to trigger:**
+- Phase touches multiple agent domains (design + engineering + copy + infra)
+- More than ~8 tasks with complex interdependencies
+- Previous phases had plan-related failures
+
+**Process:**
+
+1. Tell the Tech Lead to produce the plan **without creating GitHub Issues** (add "do not create issues yet" to the prompt).
+2. Send the plan file to 2-3 agents for a focused review. Each agent reads the actual plan file and produces a brief list of concerns:
+   - **Architect**: structural feasibility — do tasks align with the architecture? Any technical impossibilities? Missing infrastructure tasks?
+   - **Engineer**: implementation clarity — are tasks specific enough? Do any overlap (touching same files/modules)? Are dependencies correct?
+   - **UI/UX Designer** (if UI phase): design coherence — proper sequencing of design system → UI spec → implementation? Will parallel tasks conflict?
+3. Orchestrator consolidates the feedback and sends it to the Tech Lead.
+4. Tech Lead revises the plan if needed.
+5. Tech Lead creates GitHub Issues from the final plan.
+
+One review round only — no second pass. The goal is to catch structural problems before execution, not to achieve consensus.
+
+### Task Execution Cycle
+
+For each task in the implementation plan, follow this cycle:
 
 ```
-0. (Optional) Pre-implementation agents — invoke only if the task needs them:
-   - Software Architect → if the task changes the stack, introduces a new dependency, or
-     requires a structural decision. Produces or updates `docs/architecture.md`.
-   - UI/UX Designer    → if the task is visual (new section, redesign, visual refactor).
-                         Updates `docs/design-system.md` and/or `docs/ui-spec.md` on demand.
-   - Copywriter        → if the task introduces or rewrites user-facing copy.
-                         Updates `docs/copy-guide.md` on demand.
-   - Tech Lead         → only if the task is large enough that a single Engineer pass
-                         is unwieldy. Produces a short step breakdown inside the issue
-                         (comment), NOT a separate plan document.
-         │
-         ▼
 1. Engineer implements the task
          │
          ▼
 2. Orchestrator launches 4 parallel code reviews (ONE agent per review type — NEVER combine multiple types into a single agent):
-   - Code Quality  → .reviews/code-quality-task-{issue-number}.md
-   - Security      → .reviews/security-task-{issue-number}.md
-   - Testing       → .reviews/testing-task-{issue-number}.md
-   - Architecture  → .reviews/architecture-task-{issue-number}.md
+   - Code Quality  → .reviews/code-quality-task-{N}.md
+   - Security      → .reviews/security-task-{N}.md
+   - Testing       → .reviews/testing-task-{N}.md
+   - Architecture  → .reviews/architecture-task-{N}.md
          │
          ▼
 3. Orchestrator merges findings from all reviews, deduplicates,
@@ -98,7 +133,7 @@ For each task, follow this cycle:
     │      - Suggestion → orchestrator decides; can defer
     │   b. Orchestrator sends consolidated numbered findings to the Engineer
     │   c. Engineer fixes issues one at a time:
-    │         Fix #1 → run quality checks → Fix #2 → run quality checks → ...
+    │         Fix #1 → run tests → confirm passing → Fix #2 → run tests → ...
     │      Engineer saves learnings to its memory after all fixes.
     │   d. Orchestrator deletes all review files
     │   e. Back to step 2 (re-review only the types that had findings)
@@ -108,66 +143,41 @@ For each task, follow this cycle:
         b. Continue
          │
          ▼
-4. (Optional) QA pass — invoke only for regression-sensitive changes (accessibility,
-   responsive layout on new pages, content migration, analytics wiring). Skip for
-   routine tweaks.
-         │
-         ▼
-5. Orchestrator commits and pushes to remote
+4. Orchestrator commits and pushes to remote
    (stage source files AND any updated files under .claude/agent-memory/)
          │
          ▼
-6. Orchestrator opens a PR and waits for CI to pass
+5. Orchestrator opens a PR and waits for CI to pass
    (gh pr create, then gh pr checks <number> --watch)
    CI MUST pass before merging. If CI fails, diagnose and fix before proceeding.
          │
          ▼
-7. Orchestrator merges the PR and closes the GitHub Issue
+6. Orchestrator merges the PR and closes the GitHub Issue
    (gh pr merge <number> --merge, then gh issue close <number>)
+         │
+         ▼
+7. Move to next open issue in the milestone
 ```
 
-For small tweaks (copy change, one-line bug fix, style adjustment), the optional steps drop away and the cycle collapses to **Engineer → Reviews → Commit → PR → Merge**.
+### Review Gate
 
----
+Hooks enforce the review cycle automatically — the orchestrator does not write or touch the gate's artifacts:
 
-## Decision Tree for the Orchestrator
+- When each code-reviewer subagent finishes, a `SubagentStop` hook writes a marker per completed review type and a content hash of the current change set to `.reviews/`.
+- A `PreToolUse` hook blocks `git commit` unless the required markers exist, are fresh (<30 min), and the change set still hashes to what was reviewed.
+- A `PostToolUse` hook clears the markers and hash after a successful commit, so the next commit needs fresh reviews.
 
-When the user asks to work on a task:
+The content hash is **staging-independent** — it covers the working-tree content of every changed file regardless of when `git add` runs, so reviews and staging can happen in any order. `.claude/` is excluded, so staging agent-memory updates does not perturb it. The hash is global (it spans the whole change set), while markers are per-type: when a fix pass re-runs only the review types that had findings, the hash is refreshed but the non-re-run types' markers vouch for the pre-fix code. This is an accepted limitation — fix passes are localized, and the gate's purpose is to stop wholly-unreviewed code from being committed, not to prove every type re-reviewed every line.
 
-1. **Is there a GitHub Issue for it?**
-   - No → Create one capturing the request and acceptance criteria (or ask the user to)
-   - Yes → continue
+### Phase Completion
 
-2. **Does the task introduce a new dependency, change the stack, or require a structural decision?**
-   - Yes → Launch **Software Architect** to update `docs/architecture.md` (create it if absent)
-   - No → continue
+After all tasks in a phase are completed and committed:
 
-3. **Is the task visual (new section, redesign, visual refactor)?**
-   - Yes, and no design system → Launch **UI/UX Designer** to produce `docs/design-system.md`
-   - Yes, no UI spec for this surface → Launch **UI/UX Designer** to produce `docs/ui-spec.md` (requires design system)
-   - Not visual → continue
-
-4. **Does the task introduce or rewrite user-facing copy?**
-   - Yes, and no copy guide → Launch **Copywriter** to produce `docs/copy-guide.md`
-   - Yes, copy guide exists → Launch **Copywriter** to write the copy
-   - No copy change → continue
-
-5. **Is the task large enough that a single Engineer pass would be unwieldy?**
-   - Yes → Launch **Tech Lead** to add a brief step breakdown as a comment on the issue
-   - No → continue
-
-6. **Implement**:
-   - Launch **Engineer** with the issue number
-   - Run 4 parallel code reviews
-   - Fix, re-review, commit, PR, wait for CI, merge, close issue
-
-7. **Is this change regression-sensitive (accessibility, responsive behavior, analytics, content migration)?**
-   - Yes → Launch **QA** before merging the PR
-   - No → skip QA
-
-8. **Does the task touch deployment, CI/CD, or infra?**
-   - Yes → Launch **DevOps** at the appropriate point (before or after engineer, depending on the change)
-   - No → skip DevOps
+1. **Translate locale files** (if the project supports multiple languages) — launch the Translator agent for each target language. The Translator works from the final `en-US.json` (or equivalent) that the Engineer implemented, so it sees real keys and interpolation placeholders. Run one Translator agent per target language; they can run in parallel.
+2. Launch the **QA agent** to verify the entire phase against acceptance criteria.
+   - **Skip QA** if the phase includes a dedicated integration test task that exercises real end-to-end behavior against live dependencies. In that case, the integration tests are the acceptance test — a QA agent pass would only re-read ACs that are already checked off.
+3. If QA finds issues, send them to the Engineer for fixes, then re-run the review cycle.
+4. Once QA passes, the phase is complete.
 
 ---
 
@@ -175,58 +185,95 @@ When the user asks to work on a task:
 
 The orchestrator (main Claude Code session) is responsible for:
 
-- **Deciding which agents to call** based on the task (see Decision Tree above). Default to the lightest possible pipeline: Engineer + Code Reviews. Add specialty agents only when the task genuinely needs them.
-- **Committing and pushing code** — agents never commit. The orchestrator commits after the engineer's code passes review, pushes to a feature branch, and opens a PR. **CI must pass before merging** — check with `gh pr checks <number> --watch`. If CI fails, diagnose and fix before merging. Never merge a PR with failing CI. Always stage updated agent memory files (`.claude/agent-memory/`) in the same commit as the source changes.
+- **Deciding which agent to call** based on the current state of the project.
+- **Committing and pushing code** — agents never commit. The orchestrator commits after the engineer's code passes review, pushes to a branch, and opens a PR. **CI must pass before merging** — check with `gh pr checks <number> --watch`. If CI fails, diagnose and fix before merging. Never merge a PR with failing CI. Always stage updated agent memory files (`.claude/agent-memory/`) in the same commit as the source changes.
 - **Never writing code** — the orchestrator never writes or edits source code directly, regardless of how simple the change appears. All implementation goes through the engineer, and all engineer output goes through code review. Even one-line fixes must follow this path — the orchestrator's judgment of "simple" is unreliable, and skipping review has caused bugs to ship.
 - **Closing issues** — closing the GitHub Issue when a task passes review (`gh issue close <number>`).
 - **Passing context between agents** — e.g., forwarding code review findings to the engineer for fixes.
 - **Managing review files** — deleting `.reviews/code-review-*.md` files after the engineer has addressed the findings (or after a clean review). Review files are ephemeral; they should not accumulate.
-- **Tracking deferred findings** — when a finding is deferred, create a new GitHub Issue with the `follow-up` label referencing the original issue. Verbal deferral without a written record means the finding will be silently dropped.
-- **Creating ad-hoc issues** — when bugs, follow-ups, or unplanned work is discovered during the task cycle, create a GitHub Issue directly with appropriate labels (`bug`, `follow-up`).
-- **Specifying the worktree path for ALL agents** — when working in a worktree, every agent prompt must include the explicit worktree path for reading and writing files. This applies to ALL agents, not just engineers — designers, copywriters, architects all produce files that must go to the worktree. If a doc-producing agent writes to the main repo instead of the worktree, downstream agents will read stale documents and all their work will be wasted. When unsure whether to use a worktree or main, ask the user.
-- **Verifying agent output before proceeding** — after each agent completes, **read the actual file content** (not just the agent's summary) and verify it matches the request. For doc-producing agents (designer, copywriter, architect), open the file and check for specific indicators (e.g., new tokens in a redesigned design system, new layouts in a UI spec). For visual work, use Chrome DevTools MCP to take screenshots and confirm the output looks correct. If the output is incomplete, misses requirements, or contradicts the site's direction, re-engage the agent with specific feedback. **Never proceed to downstream agents based on an agent's verbal summary alone** — the cost of 5 minutes of reading is infinitely less than redoing dependent work.
+- **Tracking deferred findings** — when a finding is deferred, create a new GitHub Issue with the `follow-up` label referencing the original issue. For simple additions to an existing future task, add a comment on that task's issue instead. Verbal deferral without a written record means the finding will be silently dropped.
+- **Tracking cross-task TODOs** — after the engineer completes a task, scan the changed files for TODO comments that reference a future task number (e.g., `// TODO: Task N`). For each one found, add a comment on the referenced task's GitHub Issue noting the dependency.
+- **Tracking pre-implemented future work** — if the engineer's implementation incidentally covers work that belongs to a future task, add a comment on that task's GitHub Issue noting what was already implemented.
+- **Creating ad-hoc issues** — when bugs, follow-ups, or unplanned work is discovered during the task cycle, create a GitHub Issue directly with appropriate labels (`bug`, `follow-up`) without invoking the Tech Lead. The TL is only needed for full phase planning, not individual issue creation.
+- **Specifying the worktree path for ALL agents** — when working in a worktree, every agent prompt must include the explicit worktree path for reading and writing files. This applies to ALL agents, not just engineers — designers, copywriters, tech leads, translators, and legal writers all produce files that must go to the worktree. If a doc-producing agent writes to the main repo instead of the worktree, downstream agents will read stale documents and all their work will be wasted. When unsure whether to use a worktree or main, ask the user.
+- **Managing the task backlog** — query open issues in the current milestone to determine the next task, verifying dependencies by checking that dependency issues are closed.
+- **Verifying agent output before proceeding** — after each agent completes, **read the actual file content** (not just the agent's summary) and verify it matches the request. For doc-producing agents (designer, copywriter, tech lead, legal writer, etc.), open the file and check for specific indicators (e.g., new tokens in a redesigned design system, new layouts in a UI spec, correct legal clauses). For visual work, use Chrome DevTools MCP to take screenshots and confirm the output looks correct. If the output is incomplete, misses requirements, or contradicts the product vision, re-engage the agent with specific feedback. **Never proceed to downstream agents based on an agent's verbal summary alone** — the cost of 5 minutes of reading is infinitely less than redoing hours of dependent work.
 - **Resolving issues autonomously** — re-engage agents to fix quality problems without involving the user. Only surface to the user when a decision requires product judgment (see "When to Involve the User" below).
-- **Maintaining site coherence** — the orchestrator owns consistency across the site. If any agent's output contradicts the existing design, copy voice, or architecture, correct it by re-engaging the agent with targeted feedback rather than asking the user.
+- **Maintaining product vision** — the orchestrator owns consistency across all documents. If any agent's output contradicts the product vision or the spec, correct it by re-engaging the agent with targeted feedback rather than asking the user.
 
 ### When to Involve the User
 
 **Involve the user** when a decision requires their judgment:
-- Scope changes (what the task should actually include)
-- Trade-offs where the user's preference is unknown (visual direction, copy tone, tech choice)
-- Bugs or edge cases that require judgment to resolve
-- Decisions that affect external dependencies, integrations, or credentials
+- Feature scope changes (adding or removing features from the spec)
+- Trade-offs between features where the user's preference is unknown
+- Conflicting requirements with no clear winner
+- Bugs or edge cases that require product judgment to resolve (e.g., "should behavior X be retained or changed?")
+- Decisions that affect the user's external dependencies, integrations, or credentials
 
 **Handle autonomously** — do not ask the user:
 - Re-engaging an agent to fix incomplete or incorrect output
-- Document quality issues → re-engage the upstream agent
+- Agent output that contradicts the product vision → re-engage with correction
+- Document quality issues (missing ACs, unclear acceptance criteria) → re-engage the upstream agent
 - Code review findings and fix passes
-- Implementation approach decisions within the task's scope
+- Implementation approach decisions within spec scope
 
 ---
 
 ## Document Cross-Check Protocol
 
-Before passing an agent's output downstream, verify it meets the minimum quality bar. If a check fails, re-engage the upstream agent with the specific gaps listed.
+Before passing an agent's output downstream (calling the next agent in the chain), verify it meets the minimum quality bar. If a check fails, re-engage the upstream agent with the specific gaps listed — do not proceed downstream until resolved.
 
-**After Software Architect updates the architecture:**
-- The decision or change being introduced is clearly stated with rationale
-- No undocumented constraints that would block the task
-- Tech choices are consistent with existing project constraints (Next.js 16, React 19, Tailwind 4, pnpm)
+**After Product Manager produces a spec:**
+- All requirements from the user's request are addressed
+- Every acceptance criterion is specific, unambiguous, and checkable (pass/fail)
+- No conflicting requirements exist
 
-**After UI/UX Designer produces/updates a design system or UI spec:**
-- New tokens, components, or layouts are present and named consistently
-- Dark mode variants are included if the site uses them
-- The file references existing tokens rather than reinventing them
+**After Software Architect produces an architecture:**
+- Architecture supports every must-have spec requirement
+- No undocumented constraints that would block spec features
+- Tech choices are consistent with existing project constraints (language, runtime, dependencies)
 
-**After Copywriter updates the copy guide or writes copy:**
-- Voice adjectives are specific, not generic
-- New strings follow the existing voice on the site
-- Error/empty states include a path forward where applicable
+**After Copywriter produces a copy style guide:**
 
-**After Tech Lead breaks down a task:**
-- Every sub-step has a clear deliverable
-- Sub-steps are sequenced correctly (no step assumes work not yet done)
-- The breakdown lives in the issue comment, not a separate file
+- Voice adjectives are specific, not generic (not "professional" or "modern")
+- Tone spectrum covers all UI contexts (success, error, empty, loading, onboarding, marketing)
+- Writing rules are concrete with examples, not vague guidelines
+- Terminology glossary covers all product-specific terms
+
+**After Copywriter produces English locale strings:**
+
+- Every page in the UI spec has corresponding locale strings
+- All strings follow the copy style guide's voice and tone
+- Button labels start with verbs
+- Error messages include what to do next
+- Empty states include a path forward
+- Interpolation placeholders are consistent with the project's i18n format
+
+**After Revenue Strategist produces a revenue architecture:**
+
+- Every target market has its own payment and fiscal strategy
+- All fiscal obligations per country are documented with automation providers
+- The subscription lifecycle covers all states (active, trial, past-due, cancelled, refunded)
+- Refund flows account for fiscal document cancellation/correction
+- Provider recommendations include rationale and alternatives considered
+- The PM's pricing model has been validated against fiscal/payment constraints
+- No manual steps exist in the payment-to-accounting flow (or they are flagged as risks)
+- Customer-facing documents are specified per country
+
+**After Legal Writer produces a legal document:**
+
+- All applicable legislation is referenced where relevant
+- Company details are correctly sourced from `docs/legal-context.md`
+- All data collection points from the product spec are addressed in privacy documents
+- All third-party services from the architecture doc are covered in data sharing clauses
+- Legal bases are specified for each data processing activity
+- Effective date is included
+- No placeholder text or generic clauses remain
+
+**After Tech Lead produces an implementation plan:**
+- Every must-have spec feature maps to at least one task's acceptance criteria
+- Task dependencies are correctly sequenced (no task assumes work not yet done)
+- No task references files, modules, or interfaces not established by a prior task
 
 ---
 
@@ -236,23 +283,102 @@ Before passing an agent's output downstream, verify it meets the minimum quality
 - The **Engineer** must save learnings from code review findings to its persistent memory so it avoids repeating the same mistakes in future tasks.
 - **Review files are ephemeral**. The orchestrator deletes them after the engineer has processed the feedback (or immediately if the review is clean). They should never be committed to the repository.
 - Agents do not communicate with each other directly. All coordination goes through the orchestrator.
-- The **Copywriter** defines voice and terminology. Once `docs/copy-guide.md` exists, all on-page copy must follow it. The Copywriter saves terminology decisions to its persistent memory for consistency across sessions.
-- **Agents have persistent memory** (`.claude/agent-memory/<agent-name>/`). The Engineer, Code Reviewer, and Copywriter save learnings from each task, which makes them more effective over time. Memory files should be committed alongside source code changes.
+- The **Copywriter** defines the product's voice and terminology. Once `docs/copy-guide.md` exists, all UI copy must follow it. The Copywriter saves terminology decisions to its persistent memory for consistency across sessions.
+- The **Translator** adapts English copy culturally, not literally. It saves terminology glossaries and cultural decisions per target language to its persistent memory.
+- The **Revenue Strategist** defines payment flows, fiscal compliance, and billing operations. It produces `docs/revenue-architecture.md` covering the full lifecycle from payment to accounting, with per-country strategies. Its output is consumed by the Software Architect (for technical design) and the Legal Writer (for payment terms in legal documents).
+- The **Legal Writer** produces legally binding documents based on the project's governing law. It reads `docs/legal-context.md` for company details and data flows. Its output is final — not a draft. The Legal Writer saves regulatory interpretations and terminology to its persistent memory.
+- **Agents have persistent memory** (`.claude/agent-memory/<agent-name>/`). The Engineer, Code Reviewer, Copywriter, Translator, and Legal Writer save learnings from each task, which makes them more effective over time. Memory files should be committed alongside source code changes.
 
 ---
 
 ## Document Lifecycle
 
-All project-level docs are **created on demand** — only when a task calls for them.
+| Document                                | Created by         | Consumed by                                                           |
+| --------------------------------------- | ------------------ | --------------------------------------------------------------------- |
+| `docs/product-spec.md`                  | Product Manager    | Architect, UI/UX Designer, Copywriter, Translator, Tech Lead, QA      |
+| `docs/architecture.md`                  | Software Architect | UI/UX Designer, Tech Lead, Engineer, Code Reviewer, QA                |
+| `docs/design-system.md`                 | UI/UX Designer     | Copywriter, Tech Lead, Engineer, Code Reviewer                        |
+| `docs/ui-spec.md`                       | UI/UX Designer     | Copywriter, Tech Lead, Engineer, Code Reviewer                        |
+| `docs/copy-guide.md`                    | Copywriter         | Translator, Engineer, Code Reviewer                                   |
+| English locale file (e.g., `en-US.json`)| Copywriter         | Tech Lead, Engineer, Translator                                       |
+| Target locale files (e.g., `pt-BR.json`)| Translator         | Engineer, QA                                                          |
+| `docs/plans/implementation-plan-phase-{N}.md` | Tech Lead          | Engineer (reference), Code Reviewer (reference), Orchestrator         |
+| GitHub Issues                           | Tech Lead, Orchestrator | Engineer, Code Reviewer, QA, Orchestrator                          |
+| `docs/revenue-architecture.md`           | Revenue Strategist | Software Architect, Legal Writer, Tech Lead, Engineer, Orchestrator   |
+| `docs/legal/*`                           | Legal Writer       | Engineer, QA, Orchestrator                                            |
+| `docs/legal-context.md`                 | Orchestrator/User  | Legal Writer                                                          |
+| `.reviews/code-review-*.md`              | Code Reviewer      | Engineer (via Orchestrator) — **ephemeral, deleted after processing** |
 
-| Document                 | Created by         | Consumed by                                                  |
-| ------------------------ | ------------------ | ------------------------------------------------------------ |
-| `docs/architecture.md`   | Software Architect | Tech Lead, Engineer, Code Reviewer                           |
-| `docs/design-system.md`  | UI/UX Designer     | Copywriter, Engineer, Code Reviewer                          |
-| `docs/ui-spec.md`        | UI/UX Designer     | Copywriter, Engineer, Code Reviewer                          |
-| `docs/copy-guide.md`     | Copywriter         | Engineer, Code Reviewer                                      |
-| GitHub Issues            | User, Orchestrator | Engineer, Code Reviewer, QA, Orchestrator                    |
-| `.reviews/code-review-*.md` | Code Reviewer   | Engineer (via Orchestrator) — **ephemeral, deleted after processing** |
+---
+
+## Decision Tree for the Orchestrator
+
+When the user asks to work on a task or phase:
+
+1. **Is there an approved product spec?**
+   - No → Launch Product Manager
+   - Yes → continue
+
+2. **Is there an approved architecture doc?**
+   - No → Launch Software Architect
+   - Yes → continue
+
+3. **Does this phase include UI work? If so, do the design system and UI spec exist?**
+   - No design system → If this is a new product or major redesign, run the **design exploration process** first (see UI/UX Designer prompt checklist). Otherwise, launch UI/UX Designer to produce `docs/design-system.md`
+   - No UI spec → Launch UI/UX Designer to produce `docs/ui-spec.md` (requires design system). **After completion, read the actual file and verify it contains the expected layouts/tokens before proceeding.**
+   - Both exist or no UI work → continue
+
+4. **Does this phase include UI work? If so, do the copy style guide and English locale strings exist?**
+   - No copy guide → Launch Copywriter to produce `docs/copy-guide.md` (requires UI spec)
+   - No English locale strings → Launch Copywriter to write them (requires copy guide)
+   - Both exist or no UI work → continue
+
+5. **Does the product charge users? If so, does the revenue architecture exist?**
+   - No payment/billing needed → continue
+   - No revenue architecture → Launch Revenue Strategist to produce `docs/revenue-architecture.md` (requires product spec, architecture doc, and `docs/legal-context.md`)
+   - Exists → continue
+
+6. **Does the project need legal documents? If so, do they exist?**
+   - No legal documents needed → continue
+   - Missing documents → Launch Legal Writer to produce them (requires `docs/legal-context.md`; also reference `docs/revenue-architecture.md` if it exists for payment terms)
+   - All exist → continue
+
+7. **Is there an implementation plan for this phase?**
+   - No → Launch Tech Lead to produce the plan. If the phase is complex (multi-domain, 8+ tasks, interdependencies), tell the TL to skip issue creation and run a **plan review round** first (see Phase Planning). Otherwise, the TL produces the plan and creates issues in one pass.
+   - Plan exists but no GitHub Issues → Launch Tech Lead to create issues from existing plan
+   - Yes, with issues → continue
+
+8. **Which task is next?**
+   - Run `gh issue list --milestone "Phase {N}" --state open --label "agent:engineer"` to see open tasks
+   - Verify dependencies are met (dependency issues are closed)
+   - Launch Engineer to implement it (include the GitHub Issue number in the prompt)
+
+9. **After Engineer completes a task:**
+   - Launch 4 parallel code reviews (Code Quality, Security, Testing, Architecture) — each writes to `.reviews/{type}-task-{N}.md`
+   - Merge and deduplicate findings across all reviews
+   - If findings exist → send consolidated list to Engineer → Engineer fixes → re-review only the types that had findings
+   - If clean → delete all review files → commit and push → open PR → wait for CI to pass (`gh pr checks --watch`) → merge PR → close the GitHub Issue (`gh issue close <number>`)
+
+10. **After all tasks in the phase are done:**
+   - If the project supports multiple languages → Launch Translator agent for each target language (can run in parallel). Translators work from the final English locale file.
+   - Launch QA agent for full phase verification
+
+---
+
+## Escalation Path
+
+When an agent encounters an issue beyond its scope, the orchestrator escalates step by step up the chain:
+
+1. **Code Reviewer or Engineer finds an implementation plan issue** (e.g., a task is wrong, incomplete, or contradicts another task):
+   - Escalate to the **Tech Lead** to analyze and revise the implementation plan.
+
+2. **Tech Lead determines the issue is architectural** (e.g., the architecture doesn't support what the spec requires, or a design decision needs revisiting):
+   - Escalate to the **Software Architect** to review and update the architecture doc.
+
+3. **Architect determines the issue is in the product requirements** (e.g., conflicting requirements, missing acceptance criteria, or an infeasible feature):
+   - Escalate to the **Product Manager** to clarify or update the product spec.
+
+After the upstream agent resolves the issue, work flows back down: updated spec → updated architecture (if affected) → updated implementation plan (if affected) → resume task execution.
 
 ---
 
@@ -261,17 +387,22 @@ All project-level docs are **created on demand** — only when a task calls for 
 When launching an agent, include the following context in the prompt:
 
 **Engineer** (new task):
-- Include the GitHub Issue number (e.g., "Implement issue #42")
+- Include the GitHub Issue number (e.g., "Implement Task 5, issue #42")
 - Remind to read `docs/agents/engineer.md` for project-specific pitfalls and conditional reading list
-- Issue number only — the engineer reads the issue body itself, so do not duplicate description or acceptance criteria in the prompt
-- Any context that is NOT in the issue (e.g., "skip unit tests for this task")
-- Remind: write failing tests for each AC **before** implementing (when tests are applicable — many UI tweaks won't have unit tests) — run them to confirm they fail for the right reason, then implement until they pass
+- Task number only — the engineer reads the implementation plan itself, so do not duplicate task description or acceptance criteria in the prompt
+- Any context that is NOT in the implementation plan (e.g., "skip unit tests for this task", "use an in-memory DB in tests")
+- Remind to follow the file structure in the Implementation Notes section of the plan
+- If the task's acceptance criteria includes a coverage threshold, add `npm run test -- --coverage` to the quality check sequence
+- Remind: if the task references specific config values or defaults, verify them against the actual config schema file — the plan's documentation may differ from the code
+- Remind: write failing tests for each AC **before** implementing — run them to confirm they fail for the right reason, then implement until they pass
+- Remind: before starting, search the files you'll be touching for TODO comments referencing this task number — these are known cross-task dependencies
 
 **Engineer** (fix pass):
 - The review findings to fix (copy from the review file), numbered
-- Remind: fix one at a time, run quality checks (lint, typecheck, build) after each fix before moving to the next
+- Remind: fix one at a time, run tests after each fix before moving to the next
 - Remind: fix only what's described — do not remove or modify adjacent code unless explicitly instructed
-- Remind: if a fix adds any new functions, consider whether a unit test is warranted for this codebase
+- Remind: if a fix adds any new functions or methods, add unit tests for them before considering the fix complete
+- Remind: add new tests to the existing test file for the module — do not create a separate findings test file
 - Use a **fresh agent** for trivial fixes (single file, adding tests, updating a comment). Reserve agent resume for complex fix passes where prior context genuinely matters.
 - For a **3rd or later fix pass** on the same task, launch a fresh agent with just the file contents and the specific fix needed — accumulated conversation history makes resumed agents expensive.
 
@@ -280,56 +411,99 @@ When launching an agent, include the following context in the prompt:
 Each review type gets its own dedicated agent instance — NEVER combine multiple review types into a single agent call. Batching reviews into one agent defeats specialization and reduces review quality. Launch exactly 4 Agent calls in a single message:
 - The review type: "Run a {Code Quality | Security | Testing | Architecture} review"
 - List of files to review
-- Issue number and what was implemented
-- Output path: `.reviews/{type}-task-{issue-number}.md` (e.g., `.reviews/security-task-42.md`)
+- Task number and what was implemented
+- Output path: `.reviews/{type}-task-{N}.md` (e.g., `.reviews/security-task-5.md`)
 
 **Code Reviews** (re-review after fix pass):
 - Only re-run the review types that had findings — skip clean types
 - Send only the specific findings from the previous review for that type
 - Task: verify each finding is resolved — do NOT look for new issues
 
-**QA** (invoked on demand for regression-sensitive changes):
-- Issue number and what was implemented
-- The specific acceptance criteria to verify (from the issue body)
-- The specific regression surface to check (accessibility, responsive breakpoints, analytics wiring, etc.)
+**QA**:
+- Phase number and what was implemented
+- Pointer to the implementation plan with acceptance criteria
 
-**Software Architect** (consult for a task):
-- Tell it the specific decision or change being considered
-- Existing constraints (Next.js 16, React 19, Tailwind 4, pnpm)
-- Whether the output should update `docs/architecture.md` or just return a recommendation in the chat
-
-**UI/UX Designer** (design system):
-- Tell it to produce or update `docs/design-system.md`
-- Mention brand preferences, color direction, or existing visual assets
-- Reference any existing design tokens or variables in `src/styles/`
-
-**UI/UX Designer** (UI spec):
-- Tell it to produce or update `docs/ui-spec.md` for the specific page/section
-- Remind it to reference `docs/design-system.md` for token names and components
-- Mention UX preferences or specific page requirements from the user
-- After completion: orchestrator must read the actual file and verify new layouts/tokens are present — do not rely on the agent's summary
-
-**UI/UX Designer** (design exploration — major redesign):
+**UI/UX Designer** (design exploration — new product or major redesign):
 - Tell it to read `docs/agents/ui-ux-designer/ui-ux-designer.md` for the full design exploration process
 - Tell it to produce 5+ distinct design options with HTML preview pages
+- Mention brand preferences, constraints (dark-mode-first, etc.), target audience
 - After completion: orchestrator must review previews via Chrome DevTools screenshots before presenting to user
 
+**UI/UX Designer** (design system):
+- Tell it to produce `docs/design-system.md`
+- Mention any brand preferences, color direction, or existing visual assets
+- If a design exploration was done, reference the chosen direction
+
+**UI/UX Designer** (UI spec):
+- Tell it to produce `docs/ui-spec.md`
+- Remind it to reference `docs/design-system.md` for token names and components
+- Mention any UX preferences or specific page requirements from the user
+- After completion: orchestrator must read the actual file and verify new layouts/tokens are present — do not rely on the agent's summary
+
+**UI/UX Designer** (logo design):
+- Tell it to read `docs/agents/ui-ux-designer/ui-ux-designer.md` for the full logo design process
+- Tell it to present 4+ distinct concepts with SVG implementations and an HTML brand guide preview page
+- Mention any brand constraints, color palette, existing visual identity
+- Remind: include both abstract and literal directions, dark mode variants from the start, test SVGs at 16px
+
 **Copywriter** (copy style guide):
-- Tell it to produce or update `docs/copy-guide.md`
-- Mention any tone preferences or existing copy conventions on the site
 
-**Copywriter** (on-page copy):
-- Tell it which surface/component needs copy and what it should communicate
+- Tell it to produce `docs/copy-guide.md`
+- Mention any brand personality, tone preferences, or existing copy conventions
+- Remind it to reference the product spec for product personality and target users
+- Remind it to reference the UI spec for what pages and elements need copy
+
+**Copywriter** (English locale strings):
+
+- Tell it to write the English locale file (e.g., `src/locales/en-US.json`)
 - Remind it to follow `docs/copy-guide.md` for voice, tone, and terminology
-- If updating existing strings: specify which component(s) have new or changed copy
+- Mention the project's i18n format for interpolation placeholders (e.g., `{{name}}` vs `{name}`)
+- If updating existing strings: specify which pages/features have new or changed copy
 
-**Tech Lead** (break down a large task):
-- Tell it to produce the breakdown as a comment on the GitHub Issue — do NOT create a separate plan document
-- Every step must have a clear deliverable
-- Steps must be sequenced correctly
+**Translator** (new locale or update):
+
+- The target language code (e.g., `pt-BR`, `es-ES`, `fr-FR`)
+- Path to the English locale file (source)
+- Whether this is a full translation (new language) or partial update (new/changed strings only)
+- If partial update: list of new or changed English keys to translate
+- Any cultural preferences or formality overrides for the target language
+
+**Revenue Strategist** (new or update):
+
+- Confirm `docs/legal-context.md` exists with company fiscal identity
+- Mention the target markets (which countries the product serves)
+- Reference the PM's pricing model from the product spec
+- If updating: specify what changed (new market, new payment method, pricing change, etc.)
+- Remind to research current provider offerings via web search before recommending
+
+**Legal Writer** (new document):
+
+- Which document to produce (TOS, Privacy Policy, Cookie Policy, etc.)
+- Confirm `docs/legal-context.md` exists and is up to date
+- Mention any specific regulatory concerns or clauses the user has requested
+- If updating an existing document: specify what changed (new feature, new third-party service, etc.)
+
+**Legal Writer** (translation for Translator):
+
+- After the Legal Writer produces documents, launch the Translator to produce courtesy translations
+- Remind the Translator to include a clause: "This is a translation for convenience. The [original language] version prevails in case of conflict."
+
+**Marketing Manager** (launch plan):
+
+- Mention the product/feature being launched and the target audience
+- Specify which platforms to target (Twitter/X, HN, Reddit, LinkedIn, Product Hunt, etc.)
+- Mention any timing constraints (e.g., "launch next Tuesday")
+- Remind to read the product spec and copy guide for voice/terminology
+
+**Marketing Manager** (individual content):
+
+- Specify the platform and content type (tweet, thread, Show HN, blog post, changelog, etc.)
+- Provide context on what's new or noteworthy (feature, release, milestone)
+- Mention any specific angle or hook the user wants to emphasize
+- Remind: write in the user's voice (first person), not the product's voice
 
 **DevOps** (deployment setup / CI/CD):
-- The target platform (Vercel, GitHub Actions) and what needs to be configured
+- The target platform and what needs to be configured
 - Any existing infra config files and their locations
 - For failures: the error message or build log output
 
@@ -337,6 +511,35 @@ Each review type gets its own dedicated agent instance — NEVER combine multipl
 - The exact error from the build/deploy logs
 - What changed since the last successful deploy
 - Remind: read logs and platform docs before changing config — one change at a time
+
+**Tech Lead / Architect / Product Manager**:
+- The specific issue or question that triggered the escalation
+- Relevant context from the agent that escalated
+
+**Tech Lead** (producing an implementation plan):
+- Every must-have behaviour must appear in the acceptance criteria list — not only in the Notes section. Notes are advisory; ACs must be exhaustive and checkable.
+- If the phase includes a live validation or integration test task, add a reserved "Post-Validation Findings" task at the end of the plan — a placeholder for bugs and unplanned features discovered during validation. This gives ad-hoc discoveries a defined home in the pipeline rather than being fully untracked.
+- For complex phases: tell the TL "produce the plan but do NOT create GitHub Issues yet — a plan review will happen first"
+- For simple phases: remind to create GitHub Issues after saving the plan using `gh issue create`. Create a milestone first if it doesn't exist. Append the issue mapping to the plan file.
+
+**Tech Lead** (creating issues after plan review):
+- Tell it to read the final plan and create GitHub Issues for all tasks
+- Remind: create milestone first, then issues in dependency order, then append issue mapping to the plan
+
+**Plan Review** (architect reviewing a plan):
+- Send the plan file path — the architect must read the actual file
+- Ask: "Review this implementation plan for structural feasibility. Flag: tasks that conflict with the architecture, technical impossibilities, missing infrastructure tasks, incorrect dependency ordering."
+- Brief output only — a numbered list of concerns, not a rewrite
+
+**Plan Review** (engineer reviewing a plan):
+- Send the plan file path — the engineer must read the actual file
+- Ask: "Review this implementation plan for implementation clarity. Flag: tasks that are too vague to implement, tasks that overlap (touch the same files/modules), incorrect dependencies, missing edge cases."
+- Brief output only — a numbered list of concerns, not a rewrite
+
+**Plan Review** (UI/UX designer reviewing a plan — UI phases only):
+- Send the plan file path — the designer must read the actual file
+- Ask: "Review this implementation plan for design coherence. Flag: incorrect sequencing of design tasks, parallel tasks that will conflict visually, missing design system or UI spec updates."
+- Brief output only — a numbered list of concerns, not a rewrite
 
 ---
 
@@ -372,7 +575,7 @@ Do **not** use Telegram for:
 ```
 
 Always tell the user what to reply to unblock you, e.g.:
-> "Issue #17 requires a decision on X. Reply **yes** to proceed with option A or **no** to defer."
+> "Task 7 requires a decision on X. Reply **yes** to proceed with option A or **no** to defer."
 
 If `wait_for_reply` returns `null` (timeout), add a comment on the relevant GitHub Issue noting the pending decision and stop. Do not proceed with a decision that requires user input.
 
@@ -383,13 +586,13 @@ If `wait_for_reply` returns `null` (timeout), add a comment on the relevant GitH
 When the user asks for a post-task report, produce it in this format:
 
 ```
-Issue #{N} — Post-Task Report
+Task {N} — Post-Task Report
 
 Agent Calls
 
 | Agent | Purpose | Tokens | Time |
 |---|---|---|---|
-| Engineer | Implement #{N} | {tokens} | {time} |
+| Engineer | Implement Task {N} | {tokens} | {time} |
 | Code Reviewer | First review | {tokens} | {time} |
 | Engineer | Fix pass ({findings}) | {tokens} | {time} |  ← omit if no fix pass
 | Code Reviewer | Re-review | {tokens} | {time} |         ← omit if no fix pass
@@ -406,4 +609,4 @@ What Could Improve
 - ...  ← use "Nothing notable." if clean
 ```
 
-This report is produced **on request only** — not automatically after every task. When produced, save it to `.reports/issue-{N}-report.md` **in the main working tree** (not the worktree). Reports are gitignored and not committed — writing them to a worktree means they are lost when the worktree is removed.
+This report is produced **on request only** — not automatically after every task. When produced, save it to `.reports/task-{N}-report.md` **in the main working tree** (not the worktree). Reports are gitignored and not committed — writing them to a worktree means they are lost when the worktree is removed.

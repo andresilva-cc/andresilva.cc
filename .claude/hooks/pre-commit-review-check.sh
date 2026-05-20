@@ -12,6 +12,8 @@
 #
 # Uses $CWD from hook input — requires EnterWorktree so cwd = worktree.
 
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
@@ -118,15 +120,29 @@ if [[ ${#MISSING[@]} -gt 0 || ${#STALE[@]} -gt 0 ]]; then
   exit 2
 fi
 
-# Check staged content hash matches review-time hash
+# Verify the change set still matches what was reviewed. Reaching here means
+# reviews were required and all markers passed — so a missing hash is a gate
+# failure, not a free pass (the gate must not silently degrade to markers-only).
 HASH_FILE="$REVIEWS_DIR/review-hash.json"
-if [[ -f "$HASH_FILE" ]]; then
-  CURRENT_HASH=$(git -C "$CWD" diff --cached 2>/dev/null | shasum -a 256 | cut -d' ' -f1)
-  REVIEW_HASH=$(jq -r '.hash // empty' "$HASH_FILE" 2>/dev/null)
-  if [[ -n "$REVIEW_HASH" && "$CURRENT_HASH" != "$REVIEW_HASH" ]]; then
-    echo "BLOCKED: Staged files changed since last review. Re-run reviews." >&2
-    exit 2
-  fi
+if [[ ! -f "$HASH_FILE" ]]; then
+  {
+    echo "BLOCKED: Review markers exist but the review hash is missing."
+    echo "The gate cannot verify the reviewed content. Re-run reviews."
+    echo ""
+    echo "To bypass: git commit --no-verify -m \"message\""
+  } >&2
+  exit 2
+fi
+
+CURRENT_HASH=$("$HOOK_DIR/review-content-hash.sh" "$CWD" 2>/dev/null)
+REVIEW_HASH=$(jq -r '.hash // empty' "$HASH_FILE" 2>/dev/null)
+if [[ -z "$CURRENT_HASH" ]]; then
+  echo "BLOCKED: Could not compute the current content hash. Re-run reviews." >&2
+  exit 2
+fi
+if [[ -z "$REVIEW_HASH" || "$CURRENT_HASH" != "$REVIEW_HASH" ]]; then
+  echo "BLOCKED: Files changed since last review. Re-run reviews." >&2
+  exit 2
 fi
 
 exit 0

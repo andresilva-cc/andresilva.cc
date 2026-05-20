@@ -3,9 +3,11 @@
 #
 # When a code-reviewer agent finishes:
 # 1. Create marker JSON files for completed review types
-# 2. Compute and write the staged content hash
+# 2. Compute and write the reviewed content hash
 #
 # Uses $CWD from hook input — requires EnterWorktree so cwd = worktree.
+
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 INPUT=$(cat)
 CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
@@ -34,11 +36,17 @@ for type in "${TYPES[@]}"; do
   fi
 done
 
-# Write staged content hash — captures state at review completion.
-# If code changes after review, hash won't match at commit time.
-HASH=$(git -C "$CWD" diff --cached 2>/dev/null | shasum -a 256 | cut -d' ' -f1)
+# Write the reviewed content hash — captures the change set at review completion.
+# Staging-independent (see review-content-hash.sh); if code changes after review,
+# the hash won't match at commit time. Written atomically via mktemp: 4 reviewers
+# fire this hook concurrently, so a fixed temp name would let them clobber.
+HASH=$("$HOOK_DIR/review-content-hash.sh" "$CWD" 2>/dev/null)
 if [[ -n "$HASH" ]]; then
-  echo "{\"hash\": \"$HASH\", \"timestamp\": \"$TIMESTAMP\"}" > "$REVIEWS_DIR/review-hash.json"
+  TMP=$(mktemp "$REVIEWS_DIR/.review-hash.XXXXXX" 2>/dev/null)
+  if [[ -n "$TMP" ]]; then
+    echo "{\"hash\": \"$HASH\", \"timestamp\": \"$TIMESTAMP\"}" > "$TMP"
+    mv -f "$TMP" "$REVIEWS_DIR/review-hash.json"
+  fi
 fi
 
 exit 0
