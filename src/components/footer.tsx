@@ -39,7 +39,7 @@ export function Footer({ className }: FooterProps) {
                   href={href}
                   target={isMail ? undefined : '_blank'}
                   rel={isMail ? undefined : 'noopener noreferrer'}
-                  className="lowercase font-normal text-fg-subtle no-underline transition-colors duration-fast ease-out motion-safe:hover:text-accent-strong motion-safe:hover:underline"
+                  className="lowercase font-normal text-fg-subtle no-underline transition-colors duration-fast ease-out motion-safe:hover:text-accent motion-safe:hover:underline"
                 >
                   { item.title }
                 </a>
