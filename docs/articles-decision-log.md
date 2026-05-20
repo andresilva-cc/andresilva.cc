@@ -121,6 +121,43 @@ The brief asks for the "least-JS option." Three candidates:
 
 Thumbnail comes from `https://i.ytimg.com/vi/<id>/hqdefault.jpg`. The component is added to the MDX components allowlist (§3.1).
 
+### 3.8 Slug naming convention — **short, keyword-focused, immutable**
+
+Slugs are 2–5 words, lowercase, hyphenated. No first-person pronouns (`i`, `my`), no helper verbs (`how`, `why`, `what`), no trailing context filler (`on-a-page`, `in-production`). Once published, a slug is immutable; the title can evolve freely.
+
+**Examples:**
+
+- Title: *How I Achieved a 74% Performance Increase on a Page* → slug: `74-percent-performance-increase`
+- Not: `how-i-achieved-a-74-percent-performance-increase-on-a-page`
+
+**Why short over 1:1 slugify-the-title:**
+
+1. **Slug as claim, not sentence fragment.** Slugs are read in two places that matter — as link previews in Slack/iMessage/tweets, and as the URL bar. `74-percent-performance-increase` reads as a claim; the long form reads as a sentence with the verb stranded mid-URL. Claims are more shareable.
+2. **Title-slug independence is the correct behavior.** Titles get sharpened post-publish (editorial refinement); URLs are addresses and must not move. A 1:1 `slugify(title)` policy *forces* a redirect on every title polish, or *forbids* title polish. Both worse than a stable short slug.
+3. **Voice fit.** The site's brutalist-mono register is terse — no editorial chrome elsewhere. Short slugs are the URL equivalent.
+4. **Industry pattern.** Stripe (`stripe.com/blog/...`), Fly.io (`fly.io/blog/just-use-postgres`), Vercel use short keyword slugs. Long 1:1 slugs are a WordPress/Medium default, not an engineering-blog convention.
+5. **Authoring cost is rounding error.** Picking a 2–5 word slug per article takes ~10 seconds. The "convention beats judgment" counter-argument (always `slugify(title)`) only pays off at publication volumes far above a one-author site.
+
+**Schema guardrail:** `velite.config.ts` enforces `SLUG_MAX_LEN = 60` chars in the transform — structural ceiling, not vibes. `SLUG_RE` continues to enforce lowercase kebab-case.
+
+**Process:** the regex + max-length check fires at content-pipeline build, so a too-long or malformed slug fails CI before deploy. No runtime fallback.
+
+**Rejected alternative — trailing unique identifier (Notion/Linear/dev.to pattern):** appending an opaque ID (`74-percent-performance-x9k2`) so the route resolves even after a rename was considered and rejected. The brutalist-mono register has zero opaque handles anywhere else on the site; an ID-suffix would be the single most machine-looking string on the domain and would flip the URL's read from *claim* back into *database row*, undermining the whole §3.8 rationale. The ID-in-URL pattern is exclusively a platform convention (multi-tenant, user-generated, collision-prone) — high-craft personal engineering blogs (Gwern, Dan Luu, Julia Evans, Simon Willison, ciechanow.ski) all expose clean slugs. The expected lifetime rename count is 1–3 events, which a manual redirect handles in 30 seconds.
+
+**Rename escape hatch:** if a slug ever does need to change, add a `permanent: true` 301 in `next.config.ts` `redirects()`:
+
+```ts
+async redirects() {
+  return [
+    { source: '/articles/old-slug', destination: '/articles/new-slug', permanent: true },
+  ];
+}
+```
+
+301 preserves SEO authority; Google follows the redirect; the old URL keeps resolving for any external backlinks.
+
+**Identity decoupling (do this regardless of any rename ever happening):** route identity is the URL, but *feed* and *structured-data* identity should not be. RSS items use `<guid isPermaLink="false">` with a stable value (e.g. `urn:andresilva-cc:article:<slug-at-publish>` or `<publishedAt>-<original-slug>`); JSON-LD `BlogPosting` uses an `@id` URN, not the canonical URL. This way, a slug rename emits a redirect at the URL layer without rewriting RSS reader databases or breaking JSON-LD continuity. OG image filenames already derive from the folder name (Velite-resolved), so they ride with the slug — acceptable since OG cards are not addressable.
+
 ---
 
 ## 4. Frontmatter schema

@@ -5,6 +5,7 @@ import { countWords, readingTime } from './src/lib/reading-time';
 import brutalistMono from './src/styles/shiki/brutalist-mono.json';
 
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+const SLUG_MAX_LEN = 60;
 
 const article = defineCollection({
   name: 'Article',
@@ -49,6 +50,11 @@ const article = defineCollection({
       const slug = data.slug.split('/').pop() ?? data.slug;
       if (!SLUG_RE.test(slug)) {
         throw new Error(`Invalid article slug "${slug}" — must be lowercase kebab-case`);
+      }
+      if (slug.length > SLUG_MAX_LEN) {
+        throw new Error(
+          `Article slug "${slug}" exceeds ${SLUG_MAX_LEN} chars — slugs are keyword-focused, not title-mirrors`,
+        );
       }
       // Destructure raw out so it does not appear in the emitted Article type
       const { raw, ...rest } = data;
