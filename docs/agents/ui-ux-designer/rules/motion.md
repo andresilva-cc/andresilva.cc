@@ -64,6 +64,10 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 **Applies to:** All web/CSS animation.
 **Why:** These stay on the compositor thread. Layout/paint-triggering properties (padding, margin, width, height, top, left) cannot hit 60fps reliably.
 
+### Exception: Button uses `transition` shorthand (all properties)
+**Applies to:** `<Button>` component only.
+**Why:** `transition-colors` and `transition-transform` both set the same CSS shorthand and clobber each other — the only fix is to animate all properties via `transition`. The cost is theoretical: the Button only animates colors (hover/active states) and `transform` (press scale), so no layout/paint properties are actually triggered. Do not "fix" this without first addressing the property-list collision.
+
 ### Rule: Animate the child, not the parent
 **Applies to:** Performance-critical animations; list items; menu items.
 **Why:** Parent-property animation cascades re-layouts to all siblings and descendants. Isolating the animation to a descendant with `transform` keeps the work GPU-bound.
