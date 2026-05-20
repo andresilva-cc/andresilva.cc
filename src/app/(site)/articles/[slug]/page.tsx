@@ -161,12 +161,16 @@ export default async function ArticlePage({
                 className="article-cover-art border border-rule bg-canvas overflow-hidden max-w-prose-wide w-full"
                 style={{ aspectRatio: '16 / 7' }}
               >
+                {/* Native-measured grid (no explicit cols/rows): cover renders at
+                    stipple's signature fine grain (~180 × 46 cells at desktop).
+                    The card thumbnail is a reduced preview, not a pixel-identical
+                    miniature — see docs/articles-decision-log.md §16b. */}
                 <StippleArt
                   config={article.coverArt.params}
                   mode="always"
                   fit="cover"
                   link="none"
-                  className="w-full h-full block"
+                  className="w-full h-full block text-fg-muted"
                   style={{ fontSize: '6px', lineHeight: 1 }}
                 />
               </div>
