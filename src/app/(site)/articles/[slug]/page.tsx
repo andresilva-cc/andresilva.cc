@@ -12,6 +12,7 @@ import { InlineLink } from '@/components/inline-link';
 import { StippleArt } from '@/components/stipple-art';
 import { YouTube } from '@/components/mdx/youtube';
 import { ImageMdx } from '@/components/mdx/image-mdx';
+import { Figure } from '@/components/mdx/figure';
 import { PreShiki } from '@/components/mdx/pre-shiki';
 import { getRepositories } from '@/repositories';
 import { formatArticleDate } from '@/lib/format-date';
@@ -19,6 +20,7 @@ import { SITE_ORIGIN } from '@/lib/config';
 
 const mdxComponents = {
   YouTube,
+  Figure,
   img: ImageMdx,
   a: InlineLink,
   pre: PreShiki,

@@ -158,6 +158,31 @@ async redirects() {
 
 **Identity decoupling (do this regardless of any rename ever happening):** route identity is the URL, but *feed* and *structured-data* identity should not be. RSS items use `<guid isPermaLink="false">` with a stable value (e.g. `urn:andresilva-cc:article:<slug-at-publish>` or `<publishedAt>-<original-slug>`); JSON-LD `BlogPosting` uses an `@id` URN, not the canonical URL. This way, a slug rename emits a redirect at the URL layer without rewriting RSS reader databases or breaking JSON-LD continuity. OG image filenames already derive from the folder name (Velite-resolved), so they ride with the slug — acceptable since OG cards are not addressable.
 
+### 3.9 Figure component — **flush image + typographic caption**
+
+Article diagrams render via `<Figure caption="..." number={N} src="./diagram.png" alt="..." width={W} height={H} />` (MDX, self-closing). The visual call (designer, re-evaluated after dropping the defensive "save old purple-card diagrams" constraint):
+
+- No frame, no mat, no card. The image sits flush on `--bg`.
+- Container `max-w-[80ch]`, centered — breaks ~15ch wider than prose so the figure reads as "a figure" without needing a border to say so.
+- Caption below the image, left-aligned, JetBrains Mono `text-sm`. `Fig. N —` prefix in `--accent` (lime), caption body in `--fg-muted`. Em-dash separator.
+- Image inherits `--bg` (transparent), `width: 100%`, `height: auto`, no other treatment.
+
+**Rationale (designer's words):** "A hairline rectangle around a diagram that already has its own whitespace doubles the boundary. Brutalist-mono treats hairlines as structural rules between *zones* — wrapping a figure in one demotes it to 'content card,' which is exactly the editorial-magazine register the system rejects." Type carries the figure signal; the lime `Fig. N` prefix is the single chromatic anchor.
+
+The previous spec (hairline border + 12px `--bg-elevated` mat) was defensive — it existed to neutralize old purple-card diagrams from the dev.to era. André's call: don't retrofit old diagrams; design the figure pattern for new diagrams instead. The mat became ornament fighting the aesthetic.
+
+### 3.10 Diagram-palette policy + grayscale-on-hover rule
+
+**Diagram palette (drawing-tool policy, not code):** going forward, diagrams are drawn **grayscale + one semantic accent chosen per-diagram** — the accent communicates something specific in *that* diagram (the failure node, the active path, the cache hit branch). Reasons: (1) site redesigns recur, (2) diagrams get reshared in contexts where site palette is gone (RSS, dev.to crossposts, screenshots), (3) figure-as-figure is a stronger mental model than figure-as-page-element. Old diagrams (the dev.to-era purple cards) are grandfathered — no retrofit.
+
+**Grayscale-on-hover treatment (e.g. videos, profile photo) does NOT apply to article figures.** Three tests must all pass to earn the treatment (designer's rule, worth saving for future cases):
+
+1. **Interactive** — surface has a click/tap action (play, navigate, open).
+2. **Identity-bearing, not information-bearing** — color is decorative/atmospheric, not load-bearing for comprehension.
+3. **Single dominant subject** — image has one focal subject the color refers to.
+
+Videos pass all three (play action, atmospheric framing, hero frame). The profile photo passes all three (mailto/about action, identity, single face). Diagrams fail #1 (no click action) and #2 (the per-diagram accent IS the comprehension signal — hiding it until hover inverts the attention/signal relationship).
+
 ---
 
 ## 4. Frontmatter schema

@@ -48,6 +48,7 @@
   --max-width-prose-narrow: 56ch;
   --max-width-prose-bio: 60ch;
   --max-width-prose-wide: 68ch;
+  --max-width-prose-figure: 80ch;
   --max-width-prose-card: 38ch;
 
   /* Shell width — 1240px max-width container that wraps every page */
