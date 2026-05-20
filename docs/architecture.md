@@ -292,7 +292,7 @@ LocalArticlesRepository (sync)  ──▶  /articles, /articles/[slug], /article
 - **Velite's asset handler** copies MDX-referenced images (e.g. `./images/diagram.png`) into `public/static/` with content-hashed filenames, rewrites the URLs in the emitted body, and threads width/height/blurDataURL through the schema. `ImageMdx` consumes those dimensions when mapping `<img>` to `next/image`.
 - **`next.config.mjs`** calls `await build({ silent: true })` at the top level (gated on `NODE_ENV !== 'test'`), so `.velite/` is populated before any module imports from `@/.velite`. The TS path alias `@/.velite` is configured in `tsconfig.json`.
 - **Canonical URLs** — every absolute URL emitted by the site (RSS items, sitemap, JSON-LD, OG meta) is built from the `SITE_ORIGIN` constant in `src/lib/config.ts`. There is one canonical origin, defined in one place.
-- **OG images** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then for each article invokes `grafex.render(tools/og-article.tsx, { props })` and writes `public/og/articles/<slug>.png`. The script is idempotent (skip if PNG mtime is newer than source MDX) and gated by `SKIP_OG_BUILD` — see §11–§12.
+- **OG images** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then for each article invokes `grafex.render(tools/og-article.tsx, { props })` and writes `public/og/articles/<slug>.png`. The script is idempotent (skip if PNG mtime is newer than the source MDX, the template (`tools/og-article.tsx`), and the generator script itself) and gated by `SKIP_OG_BUILD` — see §11–§12.
 
 ### Data fetching
 
@@ -349,7 +349,7 @@ No other external services (no CMS, no database, no auth provider, no email, no 
 | `pnpm build`       | `next build`                       | Triggers `prebuild` first via npm's lifecycle hook.                                    |
 | `pnpm start`       | `next start`                       |                                                                                        |
 | `pnpm lint`        | `eslint .`                         |                                                                                        |
-| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual OG-image regeneration (idempotent — skips PNGs newer than their source MDX).    |
+| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual OG-image regeneration (idempotent — skips PNGs newer than their source MDX, the template (`tools/og-article.tsx`), and the generator script itself).    |
 
 ### ESLint
 

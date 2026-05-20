@@ -10,8 +10,9 @@
  * PNGs to the repo and flip the env var in Vercel project settings.
  *
  * The script is idempotent: it skips any PNG that already exists and is newer
- * than the article's source index.mdx, so local dev and Vercel incremental
- * builds are fast.
+ * than the article's source index.mdx, the OG template (tools/og-article.tsx),
+ * and this generator script itself. Changing the template or generator
+ * invalidates all PNGs on the next build.
  */
 
 import { readFileSync, writeFileSync, mkdirSync, statSync, existsSync } from 'node:fs';
@@ -55,6 +56,14 @@ const outDir = join(ROOT, 'public', 'og', 'articles');
 mkdirSync(outDir, { recursive: true });
 
 const compositionPath = join(ROOT, 'tools', 'og-article.tsx');
+const thisScriptPath = fileURLToPath(import.meta.url);
+
+// Compute once outside the loop: max mtime of the template and this script.
+// Any change to either invalidates all existing PNGs.
+const templateMtime = Math.max(
+  statSync(compositionPath).mtimeMs,
+  statSync(thisScriptPath).mtimeMs,
+);
 
 // Import grafex programmatic API.
 const { render, close } = await import('grafex');
@@ -64,15 +73,17 @@ let skipped = 0;
 let errors = 0;
 
 for (const article of articles) {
-  const { slug, title, publishedAt, readingTime, tags, coverArt } = article;
+  const { slug, title, publishedAt, readingTime, coverArt } = article;
   const outPath = join(outDir, `${slug}.png`);
 
-  // Idempotency check: skip if PNG exists and is newer than source MDX.
+  // Idempotency check: skip if PNG exists and is newer than the source MDX,
+  // the OG template, and this generator script.
   const sourcePath = join(ROOT, 'src', 'content', 'articles', slug, 'index.mdx');
   if (existsSync(outPath) && existsSync(sourcePath)) {
     const pngMtime = statSync(outPath).mtimeMs;
     const mdxMtime = statSync(sourcePath).mtimeMs;
-    if (pngMtime > mdxMtime) {
+    const sourceMtime = Math.max(mdxMtime, templateMtime);
+    if (pngMtime > sourceMtime) {
       console.log(`[og:generate] skip  ${slug}.png (up to date)`);
       skipped += 1;
       continue;
@@ -91,7 +102,6 @@ for (const article of articles) {
         title,
         publishedAt,
         readingTime,
-        tags: tags ?? [],
         coverArt: coverArt ?? null,
       },
     });
