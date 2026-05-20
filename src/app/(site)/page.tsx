@@ -19,7 +19,9 @@ export default function Home() {
   // T3 stub: only the latest article title is surfaced here. T3 will rewrite
   // this to wire the latest-article card from LocalArticlesRepository properly.
   const articles = articlesRepository.getAll();
-  const latestArticleTitle = articles[0]?.title ?? '';
+  const latestArticle = articles[0];
+  const latestArticleTitle = latestArticle?.title ?? '';
+  const latestArticleSlug = latestArticle?.slug ?? '';
 
   return (
     <>
@@ -88,7 +90,7 @@ export default function Home() {
           { latestArticleTitle && (
             <LatestRow
               category="Article"
-              href="/articles"
+              href={`/articles/${latestArticleSlug}`}
               title={latestArticleTitle}
             />
           ) }
