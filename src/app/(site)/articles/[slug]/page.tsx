@@ -81,7 +81,6 @@ export default async function ArticlePage({
 
   const Content = mdxModule.default as ComponentType<{ components: typeof mdxComponents }>;
 
-  const titleIsShort = article.title.length <= 40;
   const formattedDate = formatArticleDate(article.publishedAt);
   const formattedUpdated = article.updatedAt ? formatArticleDate(article.updatedAt) : null;
 
@@ -124,7 +123,7 @@ export default async function ArticlePage({
         {/* Eyebrow → title → summary is the identity cluster (uninterrupted);
             meta sits below as publication info / soft transition into the body. */}
         <Text
-          variant={titleIsShort ? 'display' : 'h1'}
+          variant="h1"
           as="h1"
           className="mt-3 mb-0"
         >

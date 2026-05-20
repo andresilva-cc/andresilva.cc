@@ -121,11 +121,9 @@ These numbers are deliberate, not arbitrary. The pattern: tight gaps inside a lo
 ### 2.1 The title
 
 - **Element**: `<h1>` (the page's only h1).
-- **Component**: `<Text variant="h1">` *or* `<Text variant="display">`, depending on the article length tier (see below).
-- **Face**: VT323 — the design system's display face, used in `PageHead` titles and the home hero name. The article title is the same kind of identity moment.
-- **Size — two-tier**:
-  - **Default tier**: VT323 at 40px (between `--text-h1` 28px and `--text-display` 56px, but using the existing `--text-h1` token at a custom scale is *not* permitted because no such token exists). Therefore: use the **`--text-display` (56px) token** for short titles (≤ 40 characters), and the **`--text-h1` (28px) token** for medium-to-long titles (41–80 characters). This is a binary choice driven by character count, applied at build time via a class branch — no extra tokens needed.
-  - Articles longer than 80 chars: still use `--text-h1` 28px. The system *never* synthesizes new sizes; it picks between the two existing display sizes based on length.
+- **Component**: `<Text variant="h1">` — always. The `display` variant is reserved for the home hero name and must never appear on article titles.
+- **Face**: VT323 — the design system's display face, used in `PageHead` titles.
+- **Size**: `--text-h1` (28px) at all title lengths. Character count no longer influences the variant choice; two articles whose titles differ by one character must not render in different typographic registers. The `display` variant (56px VT323) is reserved for the home hero name — using it on article titles conflates identity with hierarchy.
 - **Weight**: VT323 ships at 400; no override.
 - **Line-height**: tied to the token (1.10 for both `--text-display` and `--text-h1`).
 - **Color**: the title uses `text-fg` (inherits from body) — no accent class. Matches site-wide title color on Career, About, and Projects, all of which use white/fg titles. The eyebrow (`text-accent`) and the display size + VT323 face give the title all the hierarchy it needs without accent coloring the text. (An earlier round used `text-accent` on the title, reasoning that the article title is the page's primary noun; reversed for cross-page consistency — eyebrow-accent + title-fg is the established site pattern, and VT323 at display scale is already a strong enough identity moment.)
@@ -543,7 +541,7 @@ The design system declares two non-default breakpoints in `globals.css`: `--brea
 | Backlink | own row, top of `<main>` | unchanged |
 | Eyebrow row | own row, left-aligned | unchanged (already left-aligned, own row) |
 | Meta line | own row below summary, left-aligned; `· `-separated segments inside the row wrap naturally if narrow | unchanged composition; the wrap behavior absorbs any segments that don't fit on one row |
-| Title | up to 3 lines at 56px or 28px | same sizes; wraps to more lines naturally |
+| Title | up to 3 lines at 28px (`h1` variant) | same size; wraps to more lines naturally |
 | Summary | 68ch | reads at the viewport width (which is narrower than 68ch on phones); the cap still applies but doesn't activate |
 | Cover art | 16:7 aspect-ratio | switches to **4:3** at `< 640px` (mobile-first cover-art aspect ratio per §3.2) |
 | Body prose | 68ch | reads at viewport width minus shell padding (32px × 2 = 64px) |
