@@ -1,4 +1,5 @@
 import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeUnwrapImages from 'rehype-unwrap-images';
 import { defineCollection, defineConfig, s } from 'velite';
 import { countWords, readingTime } from './src/lib/reading-time';
 import brutalistMono from './src/styles/shiki/brutalist-mono.json';
@@ -32,6 +33,7 @@ const article = defineCollection({
       // needed — Velite registers it internally before any custom plugins.
       body: s.mdx({
         rehypePlugins: [
+          rehypeUnwrapImages,
           [
             rehypePrettyCode,
             {
