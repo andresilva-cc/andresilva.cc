@@ -61,7 +61,7 @@ andresilva.cc/
 │   ├── logo.svg
 │   ├── robots.txt                 # allow-all
 │   ├── docs/teseu.pdf
-│   ├── og/articles/               # GENERATED (gitignored) — grafex per-article OG PNGs
+│   ├── og/articles/               # COMMITTED — grafex per-article OG PNGs (Vercel escape hatch active; regenerate locally and commit)
 │   └── static/                    # GENERATED (gitignored) — Velite-emitted hashed assets from MDX
 ├── src/
 │   ├── app/                       # Next.js App Router
@@ -393,8 +393,9 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 ## 12. Deployment
 
 - **Platform**: Vercel, connected to the GitHub repo `andresilva-cc/andresilva.cc`. Auto-deploy from `main`; preview deploys per PR.
-- **Build**: `pnpm install` (which runs grafex's postinstall — downloads Playwright/WebKit) → `pnpm build`, which fires the `prebuild` script (`scripts/og/generate.mjs` regenerates Velite output and emits OG PNGs via grafex) and then `next build`. The `next.config.mjs` pins `turbopack.root` and calls `await build()` from Velite at the top level so `.velite/` is populated before any module resolves `@/.velite`. Otherwise default Next output, image optimization, and runtime.
-- **Environment variables**: there are no required env vars for the site to build or render. GA ID is hardcoded. Optional: `SKIP_OG_BUILD=1` — sets the OG generator to a no-op (escape hatch for the day grafex/WebKit breaks on Vercel; when active, the OG PNGs in `public/og/articles/` are committed to the repo instead of regenerated on each build, per `docs/articles-decision-log.md` §6.1.2).
+- **Build**: `pnpm install` → `pnpm build`, which fires the `prebuild` script (`scripts/og/generate.mjs`) and then `next build`. The `next.config.mjs` pins `turbopack.root` and calls `await build()` from Velite at the top level so `.velite/` is populated before any module resolves `@/.velite`. Otherwise default Next output, image optimization, and runtime.
+- **OG generation on Vercel is currently disabled via the §6.1.2 escape hatch.** Vercel's build container is missing ~40 system libs that WebKit needs (libgtk-4, libgstreamer, libvulkan, libgraphene, …) and the container doesn't allow `apt install`. So `SKIP_OG_BUILD=1` is set in Vercel project env vars — the prebuild script exits before grafex is imported, and Vercel serves the per-article PNGs committed under `public/og/articles/`. Local flow: regenerate after editing article frontmatter or `tools/og-article.tsx` with `pnpm og:generate` (or `pnpm build` — both run the same script), then commit the updated PNGs.
+- **Environment variables**: there are no required env vars for the site to build or render. Analytics has no config (Vercel auto-detects). Required on Vercel: `SKIP_OG_BUILD=1` (see above — disables the OG prebuild that can't run on Vercel's container).
 - **Domain / DNS**: `andresilva.cc`, managed via Vercel.
 - **CI**: deployment status is visible via the deployments badge in `README.md`; there is no `.github/workflows/` directory — CI is whatever Vercel runs on push/PR.
 

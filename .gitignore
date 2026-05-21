@@ -40,8 +40,12 @@ next-env.d.ts
 # velite-emitted assets (built from src/content/articles/*/images/, content-hashed)
 /public/static
 
-# grafex-generated OG images (build artifact — not committed unless escape hatch is active)
-/public/og/articles/
+# grafex-generated OG images: committed (escape hatch active — Vercel container
+# is missing system libs for WebKit, so we generate locally and ship the PNGs).
+# Regenerate after editing article frontmatter or the OG template:
+#   pnpm og:generate   # or just pnpm build
+# Then commit the updated PNGs. SKIP_OG_BUILD=1 is set in Vercel env vars so
+# the deploy never tries to regenerate.
 
 # agent pipeline (ephemeral)
 .reviews/*
