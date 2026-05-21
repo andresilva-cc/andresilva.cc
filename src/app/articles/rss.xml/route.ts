@@ -1,5 +1,6 @@
 import { getRepositories } from '@/repositories';
 import { SITE_ORIGIN } from '@/lib/config';
+import { renderArticleHtml } from '@/lib/rss-renderer';
 
 export const dynamic = 'force-static';
 
@@ -20,24 +21,35 @@ function toRfc822(isoDate: string): string {
   return new Date(isoDate).toUTCString();
 }
 
-export function GET(): Response {
+// Escape any literal ]]> sequences so they don't close the CDATA section early.
+function escapeCdata(html: string): string {
+  return html.replace(/]]>/g, ']]]]><![CDATA[>');
+}
+
+export async function GET(): Promise<Response> {
   const { articlesRepository } = getRepositories();
   const articles = articlesRepository.getAll();
 
-  const items = articles
-    .map((a) => {
+  const itemsHtml = await Promise.all(
+    articles.map(async (a) => {
       const link = `${SITE_ORIGIN}/articles/${a.slug}`;
-      // summary is required by the Velite schema (velite.config.ts).
-      // If that ever changes, guard with a fallback string before escaping.
+      const contentHtml = await renderArticleHtml(a);
+      const categories = a.tags
+        .map((tag) => `\n      <category>${escapeXml(tag)}</category>`)
+        .join('');
       return `    <item>
       <title>${escapeXml(a.title)}</title>
       <link>${link}</link>
       <guid isPermaLink="true">${link}</guid>
       <pubDate>${toRfc822(a.publishedAt)}</pubDate>
+      <dc:creator>André Silva</dc:creator>
       <description>${escapeXml(a.summary)}</description>
+      <content:encoded><![CDATA[${escapeCdata(contentHtml)}]]></content:encoded>${categories}
     </item>`;
-    })
-    .join('\n');
+    }),
+  );
+
+  const items = itemsHtml.join('\n');
 
   // Omit <lastBuildDate> when there are no articles — a feed with no items
   // has no meaningful build date, and including new Date() would produce
@@ -47,12 +59,16 @@ export function GET(): Response {
     : '';
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>André Silva — Articles</title>
     <link>${SITE_ORIGIN}/articles</link>
     <description>Articles by André Silva — software engineering, web performance, and developer tooling.</description>
     <language>en</language>
+    <dc:creator>André Silva</dc:creator>
     <atom:link rel="self" type="application/rss+xml" href="${FEED_URL}" />${lastBuildDateTag}
 ${items}
   </channel>

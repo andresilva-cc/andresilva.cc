@@ -93,7 +93,13 @@ andresilva.cc/
 │   │       ├── figure-caption.tsx # shared caption renderer for Figure + YouTube
 │   │       ├── image-mdx.tsx      # bare flush image for the ![]() MDX path
 │   │       ├── pre-shiki.tsx      # styled <pre> wrapper around rehype-pretty-code output
-│   │       └── copy-button.tsx    # 'use client' island — code-block copy button
+│   │       ├── copy-button.tsx    # 'use client' island — code-block copy button
+│   │       └── rss/               # HTML-only mirrors used solely by the RSS renderer (no client JS)
+│   │           ├── youtube.tsx
+│   │           ├── figure.tsx
+│   │           ├── image-mdx.tsx
+│   │           ├── inline-link.tsx
+│   │           └── pre-shiki.tsx
 │   ├── content/
 │   │   └── articles/              # authored MDX, one folder per article (slug = folder)
 │   │       └── <slug>/
@@ -103,7 +109,10 @@ andresilva.cc/
 │   │   ├── safe-href.ts           # URL allowlist guard (http/https/relative/fragment/mailto/tel)
 │   │   ├── format-date.ts         # formatMonthYear / formatDateRange / formatArticleDate
 │   │   ├── reading-time.ts        # word count + reading-time estimator (220 WPM)
-│   │   └── config.ts              # SITE_ORIGIN — canonical origin for absolute URLs
+│   │   ├── config.ts              # SITE_ORIGIN — canonical origin for absolute URLs
+│   │   ├── mdx-jsx-allowlist.ts   # MDX_JSX_ALLOWLIST — single source of truth for permitted MDX JSX components
+│   │   ├── rss-url.ts             # absolutize(url, slug) — URL absolutization helper for RSS HTML output
+│   │   └── rss-renderer.tsx       # renderArticleHtml(article) — build-time MDX→HTML renderer for the RSS feed
 │   ├── repositories/
 │   │   ├── index.ts               # getRepositories() — factory for all repositories
 │   │   ├── *.ts                   # interfaces (ArticlesRepository, ...)
@@ -137,9 +146,9 @@ Path alias: `@/*` resolves to `src/*`.
 ### Role of each top-level `src/` directory
 
 - **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` is a static Route Handler that lives outside the `(site)` group because it returns XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
-- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`).
+- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`). The nested `mdx/rss/` subdirectory holds HTML-only React mirrors of the page-side MDX components (`youtube`, `figure`, `image-mdx`, `inline-link`, `pre-shiki`) — no client JS, used solely by the RSS renderer to produce inert markup for feed readers.
 - **`src/content/`** — Authored content. Today, only `articles/<slug>/index.mdx` — one folder per article, with optional co-located `images/`. Velite reads this tree at build time. See §7.
-- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency. Four modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatArticleDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), and `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta).
+- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency (the one exception being `rss-renderer.tsx`, which uses React only at build time to stringify HTML). Seven modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatArticleDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta), `mdx-jsx-allowlist.ts` (exports `MDX_JSX_ALLOWLIST` — the single source of truth for which MDX JSX components are permitted; enforced at Velite build time, mirrored in the RSS component map), `rss-url.ts` (exports `absolutize(url, slug)` — the URL absolutization helper for RSS HTML output, handling `http(s):`, protocol-relative `//`, `mailto:` / `tel:`, absolute `/path`, fragment `#hash`, and relative `./` forms), and `rss-renderer.tsx` (exports `renderArticleHtml(article)` — the build-time MDX→HTML renderer used by the RSS feed; runs the compiled MDX body through `@mdx-js/mdx`'s `run()` with an RSS-specific component map and stringifies via `react-dom/server.edge.renderToStaticMarkup`).
 - **`src/repositories/`** — Data-access seam. `index.ts` exports the `getRepositories()` factory; interfaces at the top level; concrete implementations under `implementations/`. See §7.
 - **`src/styles/`** — `globals.css` (Tailwind import + `@theme inline` token block) plus `shiki/brutalist-mono.json` (the custom Shiki theme loaded by `rehype-pretty-code`). There are no other CSS files in `src/` after the redesign — the multi-theme `themes/*.css` system has been removed.
 
@@ -155,7 +164,7 @@ App Router. One dynamic segment (`/articles/[slug]`), one Route Handler (`/artic
 | `/about`              | `src/app/(site)/about/page.tsx`               | Server (static)                                          |
 | `/articles`           | `src/app/(site)/articles/page.tsx`            | Server (static) — reads `LocalArticlesRepository`        |
 | `/articles/[slug]`    | `src/app/(site)/articles/[slug]/page.tsx`     | Server (static) — SSG via `generateStaticParams`         |
-| `/articles/rss.xml`   | `src/app/articles/rss.xml/route.ts`           | Static Route Handler (`export const dynamic = 'force-static'`) |
+| `/articles/rss.xml`   | `src/app/articles/rss.xml/route.ts`           | Static Route Handler (`export const dynamic = 'force-static'`) — full-content feed (`<content:encoded>` alongside summary `<description>`); body rendering via `src/lib/rss-renderer.tsx` |
 | `/career`             | `src/app/(site)/career/page.tsx`              | Server (static)                                          |
 | `/projects`           | `src/app/(site)/projects/page.tsx`            | Server (static)                                          |
 | `/design-system`      | `src/app/design-system/page.tsx`              | Server (static)                                          |
