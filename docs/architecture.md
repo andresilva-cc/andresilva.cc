@@ -33,7 +33,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Content pipeline        | **Velite** + **@mdx-js/mdx** + **rehype-pretty-code** + **shiki** (+ Velite's built-in GFM via `remark-gfm`) — MDX collections under `src/content/`, emitted to `.velite/` (devDeps) |
 | OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/`. Playwright/WebKit ships as a transitive dep of grafex. |
 | Class utilities         | `clsx`                                                                                     |
-| Analytics               | Google Analytics via `@next/third-parties/google` (gaId `G-TLHZYGS1SJ`)                    |
+| Analytics               | Vercel Analytics via `@vercel/analytics/next` — `<Analytics />` in root layout             |
 | Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`     |
 | Package manager         | pnpm **10.27.0**                                                                           |
 | Lint                    | ESLint **9** flat config: `eslint-config-next/core-web-vitals` + `@stylistic/eslint-plugin`, airbnb base |
@@ -165,7 +165,7 @@ App Router. One dynamic segment (`/articles/[slug]`), one Route Handler (`/artic
 
 ### Layout arrangement
 
-The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `GoogleAnalytics`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the content routes inside the `(site)` group. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
+The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `<Analytics />`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the content routes inside the `(site)` group. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
 
 ### Server-first, client where needed
 
@@ -334,7 +334,7 @@ Both CSS variables are forwarded to the Tailwind `@theme` block so any `font-mon
 
 | Service              | How it's used                                                        | Configuration                                  |
 | -------------------- | -------------------------------------------------------------------- | ---------------------------------------------- |
-| **Google Analytics** | Page-view tracking via `@next/third-parties/google` in root layout   | Hardcoded gaId `G-TLHZYGS1SJ`                  |
+| **Vercel Analytics** | Page-view and Web Vitals tracking via `@vercel/analytics/next`       | No configuration — Vercel project auto-detects  |
 | **Google Fonts**     | JetBrains Mono + VT323, self-hosted by Next through `next/font`      | `src/app/fonts.ts`                             |
 | **YouTube**          | Click-to-load embed for in-prose `<YouTube />`; thumbnails from `i.ytimg.com`, iframe from `youtube.com/embed/<id>` only after click | No keys, no SDK                                |
 

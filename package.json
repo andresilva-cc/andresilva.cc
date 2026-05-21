@@ -10,12 +10,12 @@
     "og:generate": "node scripts/og/generate.mjs"
   },
   "dependencies": {
-    "@next/third-parties": "16.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "25.7.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "eslint-config-next": "16.2.6",
     "next": "16.2.6",
@@ -52,6 +52,9 @@
     "jackspeak": "2.1.1",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@playwright/test", "playwright"]
   },
   "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
 }

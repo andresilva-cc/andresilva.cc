@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { Analytics } from '@vercel/analytics/next';
 import clsx from 'clsx';
 
 import '@/styles/globals.css';
@@ -65,8 +65,8 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <Analytics />
       </body>
-      <GoogleAnalytics gaId="G-TLHZYGS1SJ" />
     </html>
   );
 }
