@@ -336,36 +336,37 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 The single rendering unit, shared verbatim with the detail page. Layout is a vertical stack, no grid, full prose-wide column (`max-w-prose-wide` / 68ch); the wider 80ch `max-w-prose-figure` is still available to in-body figures via the existing MDX components.
 
 - **Wrapping element**: `<article id="{slug}">` so `/notes#{slug}` deep-links into the block on the index. The `id` is `{slug}`, not `note-{slug}`, to keep permalink URLs short.
-- **Meta line** — a single row, mono `text-micro` 600 lowercase, color `--lo`, in the existing comment-tag eyebrow register (the same one used for `// 01 / current focus`-style eyebrows elsewhere, minus the `//` prefix). Format: `{ISO date} · {kind}` where date is `YYYY.MM.DD` (e.g., `2026.05.21`) and `kind` is one of `til | take | snippet | aside` rendered lowercase. The separator is a `·` middle-dot with a single space on each side. The `<time dateTime>` carries the ISO date for machine readability; the visible string is dot-separated for the brutalist register. A trailing `<ArrowLink href="/notes/{slug}">permalink</ArrowLink>` sits on the same line at the right edge (push the arrow link to the right with `ml-auto` or a flex justify-between). The permalink arrow uses the standard link-arrow nudge; at rest it is `--lo` `text-micro`, on hover it lifts to `--accent` with the 2px arrow nudge.
-- **Title** — `<h3>` in `text-h3` (mono 600, 16px, line-height 1.3), color `--fg`. Sentence case, no terminal period. The title is **not** a link in the index — the permalink affordance on the meta line carries that role, and the title visually is the block's own headline, not a CTA. (On the detail page, the title is also `<h3>` — see "On the detail page" below for why h1 is not used.)
+- **Meta line** — a single row using `<Text variant="meta">`, matching `ArticleCard` exactly (no `<Eyebrow>` wrapper, no comment-tag register, no `//` prefix, no accent color). Format: `{ISO date} · {kind}` where the `<time dateTime>` carries the machine-readable ISO date and the visible string is `YYYY.MM.DD` (e.g., `2026.05.21`) in `text-fg-muted`, followed by a `·` middle-dot with a single space on each side, followed by `kind` (one of `til | take | snippet | aside`, lowercase) in `text-fg-subtle`. The two-tone treatment mirrors `ArticleCard`'s `{date} · {readingTime} min` row: date is the primary metadata, the secondary value sits one step quieter. **Nothing else sits on this row** — the permalink lives at the foot of the block (see below). No right-floated affordances.
+- **Title** — a `<p>` element rendered in the `h3` visual variant (`text-h3` — mono 600, 16px, line-height 1.3), color `--fg`. Sentence case, no terminal period. The title is **plain text, not a link** — the trailing permalink ArrowLink is the only navigation affordance on the block, and the title is the block's own headline, not a CTA. Standing rule 03 governs: card-list and list-item titles are non-heading elements. (On the detail page the title becomes a real `<h2>` in the same `h3` visual variant — see the `/notes/[slug]` spec below for the semantic upgrade rationale.)
 - **Body** — the compiled MDX, styled by the same `.article-prose` rules as `/articles/[slug]`: paragraphs, headings (`h4`+ inside the note body — `h2`/`h3` are reserved for structure outside the body to keep the outline clean), code blocks (Shiki-themed via `PreShiki` with `CopyButton`), inline code, blockquotes, lists, tables, `<Figure>`, `<YouTube>`, `<ImageMdx>`. No restrictions. The body sits at `max-w-prose-wide` to match prose elsewhere.
-- **No cover art, no tags, no reading time, no card border, no numeric badge.** The hairline rule between sibling blocks is the only separator.
+- **Trailing permalink** (index only) — a single `<ArrowLink href="/notes/{slug}">permalink</ArrowLink>` sitting **directly below the MDX body**, left-aligned, separated from the body by `mt-4`. This mirrors the `read article` ArrowLink at the foot of `ArticleCard` — same component, same accent-at-rest treatment, same 2px arrow-nudge on hover. The label is `permalink` lowercase (per `copy-guide.md` §7); `aria-label` is `permalink to {note title}`. **Only rendered on the `/notes` index** — the detail page suppresses it (the reader is already at the canonical URL; an affordance pointing to the page they're on is noise). The block receives a `showPermalink` prop, default `true`; the detail page passes `false`.
+- **No cover art, no tags, no reading time, no card border, no numeric badge.** The hairline rule between sibling blocks is the only separator. No element is ever right-floated on the block — top-down, left-aligned rhythm only.
 
 ### Heading-outline note
 
-The document outline on `/notes` is `page-h1 (NOTES) → h3 per note`. The h2 level is intentionally skipped: per standing rule 16, single-section pages do not carry a `SectionHead`, and per standing rule 20 each note is genuinely a sub-article, not a card. The skipped level is a deliberate signal that there is no page-internal subdivision; the AT-announced structure is "page heading → list of articles," which matches how the reader consumes it.
+The document outline on `/notes` is `page-h1 (NOTES)` — and nothing else. Each note's title is a `<p>` visually styled as `h3`, not a semantic heading, per standing rule 03 (card-list and list-item titles are non-heading elements). Per standing rule 16, single-section pages do not carry a `SectionHead`, so there is no page-internal h2 either. The AT-announced structure is "page heading → list of items," which matches how the reader consumes the feed.
 
 ### Key interactions
 
-- **Permalink arrow** — standard link-arrow nudge on hover. Whole row is not the click target — only the arrow link is interactive on each block. The block intentionally has no hover surface; it is read, not clicked.
+- **Permalink arrow** — sits at the foot of the block, accent at rest, standard 2px arrow nudge on hover. The block itself has no hover surface; only the permalink (and any in-body links) are interactive. The block is read, not clicked.
 - **In-body affordances** — `InlineLink` (color lift + underline), `PreShiki` `CopyButton` (revealed on `group-hover/pre`), `YouTube` click-to-load — all behave identically to the article surface. The MDX components map is the same one used by `/articles/[slug]` (`YouTube`, `Figure`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`).
 - **Pagination links** — standard link-arrow nudge on hover.
 - **Reduced motion** — honored by every island the body may carry (`YouTube` façade, `StippleArt` if a note ever ships one). The block itself has no animation.
 
 ### Mobile
 
-- ≤ 760px: layout is unchanged — the column was already a single-column prose stack. Meta line wraps if needed (date+kind stays together; permalink wraps to a second line at the right edge if the title plus date overflows). Code blocks scroll horizontally inside their MDX block; tables become scrollable in their wrapping container.
+- ≤ 760px: layout is unchanged — the column was already a single-column prose stack. The meta line carries only date + kind and does not need to wrap; the permalink sits below the body regardless of viewport. Code blocks scroll horizontally inside their MDX block; tables become scrollable in their wrapping container.
 - ≤ 480px: header stacks per the shared shell.
 
 ### Accessibility
 
 - Skip link target: `#main`.
 - `<ul>/<li>` for the list — screen readers announce item count for the current page (e.g., "50 items," "8 items" on the last page).
-- Each note is wrapped in `<article id="{slug}">` so AT announces a navigable landmark per block; the `<h3>` inside is the article's heading.
+- Each note is wrapped in `<article id="{slug}">` so AT announces a navigable landmark per block; the title inside is a `<p>` rendered in the `h3` visual variant (not a semantic heading — see "Heading-outline note" above and standing rule 03).
 - Permalink `<ArrowLink>` carries the accessible name `permalink to {note title}` (`aria-label`), not just the visible `permalink` text — the visible text is too generic for an out-of-context AT readout.
 - `<time dateTime="{ISO}">` provides machine-readable date; visible string is the brutalist `YYYY.MM.DD` form.
 - Code-block `CopyButton` and `YouTube` swap follow their existing accessibility contracts.
-- Focus order on page 1: skip-link → wordmark → 6 nav links → each note's permalink arrow + any in-body links + any in-body copy buttons + any `YouTube` façades in DOM order → paginator (when present: older link → newer link in DOM order; absent links skipped) → footer links.
+- Focus order on page 1: skip-link → wordmark → 6 nav links → each note's in-body links + in-body copy buttons + `YouTube` façades in DOM order, then the trailing permalink arrow (the permalink follows the body in DOM order) → paginator (when present: older link → newer link in DOM order; absent links skipped) → footer links.
 
 ### Sources
 
@@ -377,53 +378,45 @@ The document outline on `/notes` is `page-h1 (NOTES) → h3 per note`. The h2 le
 
 ## Page: Note detail (`/notes/[slug]`)
 
-**Purpose** — Canonical permalink for a single note. Same `<NoteBlock>` rendering as on the index, plus chronological prev/next nav and a "back to notes" affordance. This is the page search engines and social previews land on; the index hash anchor (`/notes#{slug}`) is a convenience, not a canonical target.
+**Purpose** — Canonical permalink for a single note. Same `<NoteBlock>` rendering as on the index (with `showPermalink={false}`) plus top and bottom "back to notes" affordances. This is the page search engines and social previews land on; the index hash anchor (`/notes#{slug}`) is a convenience, not a canonical target.
 
-**Audience moment** — Someone who followed a shared permalink, a search-engine result, or a syndicated link. They land mid-stream and want to read the one note, optionally step to the next or previous in the chronological feed, and return to the full index.
+**Audience moment** — Someone who followed a shared permalink, a search-engine result, or a syndicated link. They land mid-stream, read the one note, and return to the full index.
 
 ### Sections (in order)
 
-1. **Top return** — `<ArrowLink direction="back">back to notes</ArrowLink>` pointing to `/notes`, sitting above the note block (`pt-8`). Mirrors the article-detail pattern; gives keyboard and mouse users a one-tab exit before they commit to reading.
-2. **Note block** — a single `<NoteBlock>` rendered identically to its index appearance: meta line (`{ISO date} · {kind}` + permalink arrow), `<h3>` title, MDX body. The permalink arrow on the detail page is present and still points to `/notes/{slug}` (so it's a self-link); keeping it preserves visual parity with the index and gives readers a one-click "copy this URL" anchor.
-3. **Prev/next chronological nav** — a single row below the block, separated from it by an `<hr class="border-rule" />` (the same hairline used between sibling blocks on the index, so the detail page reads as one entry plucked from the feed with the rule still in place above and below it). The row carries two `<ArrowLink>` instances on a flex row with `justify-between`:
-   - **Left** — `<ArrowLink direction="back" href="/notes/{older.slug}">older · {older.title}</ArrowLink>` (chronologically older — earlier `publishedAt`). The title is truncated with CSS `text-overflow: ellipsis` if longer than ~40ch so the row never wraps to two lines.
-   - **Right** — `<ArrowLink href="/notes/{newer.slug}">{newer.title} · newer →</ArrowLink>` (chronologically newer — later `publishedAt`).
-   - Each is omitted entirely at the chronological boundaries (first or last note) — no disabled state, same brutalist absent-affordance pattern as the index paginator. Both labels carry the `·` middle-dot as the conjunction between the role word (`older`/`newer`) and the title.
-4. **Bottom return** — `<ArrowLink direction="back">back to notes</ArrowLink>` again, sitting in a `pb-12` block so the last interactive element clears the footer border by a comfortable margin. Duplicating the top return is the same convention used on `/articles/[slug]` — top for short-attention exit, bottom for end-of-read return.
-5. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the page. Carries `headline` (note title), `datePublished` (note `publishedAt`), `author`, `url` (canonical `/notes/{slug}`), `image` (absolute `/og/notes/default.png` — the single shared notes OG card, see `architecture.md` §7), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/notes`). No `description` (notes have no `summary`), no `wordCount` / `timeRequired` (notes have no reading-time metadata), no `keywords` (notes have no tags), no `dateModified` (notes have no `updatedAt`). Server Component, no client overhead.
+1. **Top return** — `<ArrowLink direction="back">back to notes</ArrowLink>` pointing to `/notes`, sitting above the note block (`pt-8`). Mirrors the article-detail pattern; gives keyboard and mouse users a one-tab exit before they commit to reading. **No `<Eyebrow>` above it.** Unlike `/articles/[slug]`, which carries `<Eyebrow>// article</Eyebrow>` because articles have no kind taxonomy and `// article` is the only type marker, notes already carry `til | take | snippet | aside` in the meta line — strictly more specific than `// note` would ever be. Adding `// note` would stutter against the kind. The asymmetry is intentional and locked.
+2. **Note block** — a single `<NoteBlock showPermalink={false} />`: meta line (`{ISO date} · {kind}` via `<Text variant="meta">`, identical to the index), title as a real `<h2>` rendered in the `h3` visual variant (semantic upgrade from the `<p>` used on the index — the note is the dominant subsection of this page, and skipping a level from the implied page-h1 to a non-heading element is incorrect; the visual treatment matches the index, only the element changes), and MDX body. **No trailing permalink ArrowLink** — the reader is already at the canonical URL, so an affordance pointing to the page they're on is noise. The shared component contract is preserved by gating the permalink and the title element on props rather than duplicating the block.
+3. **Bottom return** — `<ArrowLink direction="back">back to notes</ArrowLink>` again, sitting in a `pb-12` block so the last interactive element clears the footer border by a comfortable margin. Duplicating the top return is the same convention used on `/articles/[slug]` — top for short-attention exit, bottom for end-of-read return.
+4. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the page. Carries `headline` (note title), `datePublished` (note `publishedAt`), `author`, `url` (canonical `/notes/{slug}`), `image` (absolute `/og/notes/default.png` — the single shared notes OG card, see `architecture.md` §7), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/notes`). No `description` (notes have no `summary`), no `wordCount` / `timeRequired` (notes have no reading-time metadata), no `keywords` (notes have no tags), no `dateModified` (notes have no `updatedAt`). Server Component, no client overhead.
+
+**No prev/next chronological nav.** The detail page does not surface older/newer affordances — the back-link to `/notes` is the only navigation off the page. This matches `/articles/[slug]`, which also has no inter-article nav. Readers traverse the feed from the index, not laterally between detail pages.
 
 ### Heading note
 
-The page's `<h3>` is the only heading on the surface — there is no page-head brace title (no `<NOTE_TITLE />` equivalent) because the note's own title carries the identity gesture and the brace pattern is reserved for **page** identity, not **content** identity. The document outline therefore is `h3 (note title) → in-body headings h4+`. This is an intentional outline shape: from an AT perspective the page is a single short article, not a structured page.
-
-If the heading-skip from page-`<h1>`-implied to `<h3>` becomes a real concern (e.g., a third-party linter flags the outline), the alternative is to render the note's title as `<h1>` on the detail page only — but doing so means `<NoteBlock>` no longer renders identically on both surfaces, and the shared-component contract is the load-bearing decision. Status: documented and accepted.
+The note's title is a real `<h2>` rendered in the `h3` visual variant. The document outline is `h2 (note title) → h4+ in-body headings` (note bodies use `h4` and below — `h2`/`h3` are reserved for structure outside the body). There is no page-head brace title (no `<NOTE_TITLE />` equivalent) because the note's own title carries the identity gesture and the brace pattern is reserved for **page** identity, not **content** identity. The implied page-h1 in the document outline comes from the `<title>` element and the page-level header chrome; the `<h2>` is the first visible heading on the surface, mirroring how `/articles/[slug]` treats the article title as a real heading element.
 
 ### Key interactions
 
 - **Both back-link ArrowLinks** carry the standard `direction="back"` chevron-nudge on hover.
-- **Prev/next nav** — both arrows nudge on hover (chevron-left on older, chevron-right on newer). The truncation ellipsis on the title text is purely visual; the full title is available to AT via the link's accessible name.
-- **Permalink self-link on the block** — same nudge; clicking it loads the same URL (effectively a no-op for the reader, but copy-link UI in most browsers shows the full URL on hover/focus).
-- **In-body affordances** — identical to the index (`InlineLink`, `PreShiki` `CopyButton`, `YouTube` swap).
-- **No related-notes section, no recommended-reading, no syndication block** (notes are not crossposted, per `architecture.md` §14).
+- **In-body affordances** — identical to the index (`InlineLink`, `PreShiki` `CopyButton`, `YouTube` swap). The detail page has no permalink ArrowLink on the block (`showPermalink={false}`); readers wanting to copy the canonical URL use the browser's URL bar.
+- **No related-notes section, no recommended-reading, no syndication block, no prev/next nav** (notes are not crossposted, per `architecture.md` §14).
 
 ### Mobile
 
-- ≤ 760px: prev/next row stacks to two lines if either title's truncated length still overflows — older above, newer below, both still full-width. Otherwise unchanged from desktop. Code blocks and tables scroll horizontally per the article-detail rules.
+- ≤ 760px: layout unchanged from desktop — the surface is already a single-column prose stack. Code blocks and tables scroll horizontally per the article-detail rules.
 - ≤ 480px: header stacks per the shared shell. Body prose stays at `max-w-prose-wide`.
 
 ### Accessibility
 
 - `<link rel="canonical" href="{absolute /notes/{slug} URL}" />` in `<head>` so search engines treat the detail page as canonical and the index hash anchor as a navigational alias.
 - `<title>` is `{note title} | André Silva`. Browser tab and back-button history label both communicate which note is open.
-- Document outline: `h3 (note title) → h4+ in-body`. Detailed rationale above; no `aria-labelledby` is set on the body landmark (the `<article>` wrapper inside `<NoteBlock>` already exposes the heading).
+- Document outline: `h2 (note title) → h4+ in-body`. The `<h2>` is semantic on the detail page (unlike the `<p>`-as-h3 used on the index) because the note is the dominant subsection of the page and the outline must not skip a level.
 - The two top/bottom back-links are both reachable in tab order — duplication is intentional, mirroring `/articles/[slug]`.
-- Prev/next arrows: each carries an `aria-label` of `older note: {title}` and `newer note: {title}` so the AT readout includes the relationship even when the visible label is truncated.
-- Focus order: skip-link → wordmark → 6 nav links → top back-link → permalink arrow on the block → any in-prose links + code-block copy buttons + YouTube façades in DOM order → older arrow (if present) → newer arrow (if present) → bottom back-link → footer links.
+- Focus order: skip-link → wordmark → 6 nav links → top back-link → any in-prose links + code-block copy buttons + YouTube façades in DOM order → bottom back-link → footer links. The detail page does not render the block's permalink ArrowLink (per `showPermalink={false}`), so it is absent from this order. No prev/next arrows exist on this surface.
 
 ### Sources
 
 - Note record: `notesRepository.getBySlug(slug)` (Velite-compiled MDX from `src/content/notes/*.mdx`).
-- Prev/next: derived from `notesRepository.getAll()` (already sorted by `publishedAt` descending) — older = next index in the sorted array, newer = previous index. Computed in the page component, not a separate repository method.
 - Compiled MDX body: `note.body` is `run()` through `@mdx-js/mdx` at request time.
 
 ---

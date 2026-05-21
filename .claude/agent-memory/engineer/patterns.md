@@ -70,6 +70,12 @@ type: project
 - `RedirectType.permanent` does NOT exist in Next.js 16 — use `permanentRedirect(url)` from `next/navigation` instead
 - `/notes/page/1` redirect: `import { permanentRedirect } from 'next/navigation'` then `permanentRedirect('/notes')`
 
+## NoteBlock semantic element override pattern
+- `NoteBlock` accepts a `titleAs?: 'p' | 'h2'` prop (default `'p'`) to control the title's HTML element while keeping the `h3` visual variant on both.
+- Index pages pass nothing (defaults to `<p>`); detail page passes `titleAs="h2"` for a correct heading outline.
+- This pattern is the canonical way to vary semantic element without duplicating the component.
+- Meta line uses `<Text variant="meta">` with `inline-flex items-baseline gap-2 text-fg-subtle` container; date `<time>` gets `text-fg-muted`, kind `<span>` inherits `text-fg-subtle` from the wrapper — matches `ArticleCard`'s two-tone treatment exactly.
+
 ## Design-system living reference conventions (`/design-system`)
 - Every production component must appear in `/design-system` (architecture §6)
 - Component entries live in `src/app/design-system/_components/components-band.tsx`

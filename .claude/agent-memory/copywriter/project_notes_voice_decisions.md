@@ -44,8 +44,14 @@ Example: `2026.05.21 · til`
 
 `No notes yet.` — exact match for articles empty-state pattern.
 
-## Detail-page `<title>` divergence from ui-spec
+## Page titles
 
-ui-spec.md §Note detail wrote `{note title} | André Silva` (pipe, title-first). I encoded the site-wide convention instead: `André Silva · {note title}` (middle dot, brand-first) per copy-guide §3/§7. If this needs to flip, update both docs together.
+- Index `<title>`: `André Silva · Notes` (brand-first, middle dot — index convention).
+- Detail `<title>`: `{Note Title} | André Silva` (title-first, pipe — detail convention, matches what article detail ships).
+
+## Detail page has NO eyebrow and NO prev/next
+
+- Unlike articles, `/notes/[slug]` does NOT carry an `<Eyebrow>// {kind}</Eyebrow>` or any eyebrow. The badge in the meta line carries the kind.
+- Detail page has back-link only (top + bottom: `back to notes`). No prev/next labels at the bottom — removed 2026-05-21.
 
 Related: [[project_hero_pitch_rule]] (sibling content-surface copy lock).

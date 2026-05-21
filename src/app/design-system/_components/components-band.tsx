@@ -472,8 +472,22 @@ export function ComponentsBand() {
             {' '}
             <code className="text-accent">id=&#x22;&#x7b;slug&#x7d;&#x22;</code>
             {', '}
-            eyebrow meta line (date · kind), h3 title, MDX body styled by
+            meta line (
+            <code className="text-accent">Text variant=&quot;meta&quot;</code>
+            {' — '}
+            date in
             {' '}
+            <code className="text-accent">text-fg-muted</code>
+            {', kind in '}
+            <code className="text-accent">text-fg-subtle</code>
+            ), title as
+            {' '}
+            <code className="text-accent">&lt;p&gt;</code>
+            {' in the '}
+            <code className="text-accent">h3</code>
+            {' visual variant (index form — detail page passes '}
+            <code className="text-accent">titleAs=&quot;h2&quot;</code>
+            {'), MDX body styled by '}
             <code className="text-accent">.article-prose</code>
             . Used verbatim on
             {' '}

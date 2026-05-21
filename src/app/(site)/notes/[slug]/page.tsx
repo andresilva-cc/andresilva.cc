@@ -50,14 +50,6 @@ export default async function NotePage({
   const note = notesRepository.getBySlug(slug);
   if (!note) notFound();
 
-  // Derive prev/next from the sorted list (descending publishedAt).
-  // older = next index in sorted array (earlier publishedAt)
-  // newer = previous index in sorted array (later publishedAt)
-  const allNotes = notesRepository.getAll();
-  const idx = allNotes.findIndex((n) => n.slug === slug);
-  const older = idx < allNotes.length - 1 ? allNotes[idx + 1] : null;
-  const newer = idx > 0 ? allNotes[idx - 1] : null;
-
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -77,34 +69,8 @@ export default async function NotePage({
       </div>
 
       <div className="mt-8">
-        <NoteBlock note={note} />
+        <NoteBlock note={note} showPermalink={false} titleAs="h2" />
       </div>
-
-      <hr className="mt-8 border-0 border-t border-rule" aria-hidden="true" />
-
-      { (older || newer) && (
-        <div className="mt-6 flex items-baseline justify-between gap-4">
-          { older && (
-            <ArrowLink
-              href={`/notes/${older.slug}`}
-              direction="back"
-              aria-label={`older note: ${older.title}`}
-              className="min-w-0 truncate"
-            >
-              {`older · ${older.title}`}
-            </ArrowLink>
-          ) }
-          { newer && (
-            <ArrowLink
-              href={`/notes/${newer.slug}`}
-              aria-label={`newer note: ${newer.title}`}
-              className="min-w-0 truncate ml-auto"
-            >
-              {`${newer.title} · newer`}
-            </ArrowLink>
-          ) }
-        </div>
-      ) }
 
       <div className="mt-8 pb-12">
         <ArrowLink href="/notes" direction="back">back to notes</ArrowLink>

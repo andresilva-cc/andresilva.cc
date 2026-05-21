@@ -353,7 +353,6 @@ The middle dot `·` separates items in a single value.
   - Example: `2026.05.21 · til`
 - Permalink affordance on each block: `permalink` (lowercase, no period, arrow follows). ARIA label: `permalink to {note title}` — the visible word is too generic out of context.
 - Detail-page back-links (top + bottom): `back to notes`.
-- Detail-page prev/next labels: `older · {title}` (left, points to chronologically older note) and `{title} · newer` (right, points to chronologically newer note). Middle dot is the conjunction; the role word stays adjacent to its arrow.
 - Index paginator: `← older notes` / `newer notes →`, separated from a `page {n} of {total}` label by middle dots. Absent at boundaries — no disabled state.
 - Empty state (`/notes` when zero notes): `No notes yet.` — exact match for the articles empty-state pattern.
 - Page title `<title>` (index): `André Silva · Notes` — index convention, brand-first middle-dot, same as Articles.
