@@ -145,7 +145,7 @@ When adding new copy, ask: what is this surface’s primary noun? Tint that, not
 | Row badge (home Latest) | Title case (`Career`) | UPPERCASE |
 | Featured badge (projects) | Title case (`Featured`) | UPPERCASE |
 | Tech-stack chips | **canonical brand case** (`TypeScript`, `Vue.js`, `Node.js`, `Tailwind CSS`, `Next.js`) | as written |
-| Article tags | **lowercase from dev.to** (`vue`, `nuxt`, `webperf`, `frontend`, `javascript`) | as written |
+| Article tags | **canonical brand case, rendered verbatim** (`Vue.js`, `Nuxt`, `LLMs`, `Next.js`, `SSR`, `Performance`) | as written |
 | Career dates | lowercase mono (`apr 2025 — now`) | as written |
 | Career role title | Title case (`Senior Front-end Engineer`) | as written |
 | Footer links | lowercase (`github`, `linkedin`, `dev.to`, `x`, `instagram`, `email`) | as written |
@@ -156,9 +156,21 @@ When adding new copy, ask: what is this surface’s primary noun? Tint that, not
 
 These are brand names. Use the vendor’s preferred form: `TypeScript`, `JavaScript`, `Vue.js`, `Nuxt`, `React`, `Node.js`, `Tailwind CSS`, `Next.js`, `Pinia`, `Vuex`, `Vuetify`, `Vuesax`, `Jest`, `Vitest`, `Storybook`, `NativeScript`, `Drupal`, `Sequelize`, `Express`, `Konva`, `Sass`, `Shell Script`, `Linux`, `Windows Server`, `Adobe XD`, `Laravel`, `Lerna`, `TanStack`, `AI SDK`, `WebSocket`, `Pug.js`, `SEO`.
 
-### Article tags — lowercase
+### Article tags — brand case and selection
 
-Tags come from the dev.to / forem API and render lowercase by data, not by editorial choice. Don’t title-case them, don’t pluralize them, don’t edit them. `vue`, `nuxt`, `webperf`, `frontend`, `javascript`, `webdev`, `performance`.
+Tags are chosen editorially and rendered **verbatim** — the Tag component does not transform case. Write `Vue.js`, `Nuxt`, `LLMs`, `Next.js`, `SSR`, `Performance` exactly as the brand does. See `articles-decision-log.md §4.1` for the schema-level convention.
+
+**Selection rules:**
+
+1. **Generic tags are noise.** `Frontend`, `Web Development`, `JavaScript` describe the whole site, not the article — cut them. `JavaScript` earns a slot only when the article is *about* the language (closures, runtimes, spec quirks), not when it merely uses JS.
+
+2. **Stack tags earn their place only when swapping them invalidates the article.** A Nuxt-specific war story keeps `Nuxt` + `Vue.js`. An article that uses Nuxt as a demo vehicle for a conceptual topic keeps `Nuxt` and drops `Vue.js`.
+
+3. **Default = 3 tags; 2–4 is the sweet spot.** One under-specifies; five or more reads as SEO panic.
+
+4. **Tag ≠ subtitle.** `Rendering` (the category), not `Rendering Modes` (echoes the title). Shorter is honest.
+
+5. **Lead chip = most specific.** Array order drives render order; sort specific → general.
 
 ---
 
@@ -369,7 +381,7 @@ Quick pattern matches for the most common slips:
 | `Résumé` / `Get the PDF` (button) | `Download resume` | Plain spelling matches `resume.pdf`; verb-first label removes any noun/verb ambiguity. |
 | `Tailwind` (chip) | `Tailwind CSS` | Brand name. |
 | `Vue` (chip) | `Vue.js` | Brand name. |
-| `Webperf` (article tag) | `webperf` | Article tags are lowercase from the data source. |
+| `webperf` (article tag) | `Performance` | Article tags are brand-cased, chosen editorially. |
 | `Game-changing performance work` | `Achieved a 74% increase in the performance of a key page` | Numbers over adjectives. |
 | `Passionate about building great software` | `Works end-to-end — from architecture and infrastructure to product features and integrations.` | Subject-less, concrete, em-dash aside. |
 | `Click here →` | `site →` / `github →` / `Full bio →` | Link label names the destination, not the action. |
