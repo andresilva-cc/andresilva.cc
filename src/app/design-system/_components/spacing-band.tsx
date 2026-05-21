@@ -36,6 +36,11 @@ const proseWidths = [
     value: '38ch',
     label: 'Project card descriptions — narrower because three cards share a row.',
   },
+  {
+    token: 'max-w-prose-figure',
+    value: '80ch',
+    label: 'Article figures (<Figure>, <YouTube>) — wider than prose-wide so diagrams have room; frameless, so width is the only boundary signal.',
+  },
 ];
 
 const componentSizing = [
@@ -165,7 +170,7 @@ export function SpacingBand() {
 
       <Text variant="h3" as="h3" className="mt-8 mb-3 text-fg">Prose widths</Text>
       <Text variant="body" className="text-fg-muted max-w-prose-wide mt-2">
-        Four character-based widths cap the readable column without imposing a pixel measurement
+        Five character-based widths cap the readable column without imposing a pixel measurement
         that breaks under user font-size overrides.
       </Text>
       <div className="mt-4 border border-rule p-4 flex flex-col gap-3">

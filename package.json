@@ -3,9 +3,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/og/generate.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "og:generate": "node scripts/og/generate.mjs",
+    "postinstall": "playwright install webkit"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -14,7 +17,6 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vercel/analytics": "^2.0.1",
-    "axios": "^1.16.0",
     "clsx": "^2.1.1",
     "eslint-config-next": "16.2.6",
     "next": "16.2.6",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@mdx-js/mdx": "^3.1.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
@@ -39,12 +42,25 @@
     "globals": "^17.6.0",
     "grafex": "^1.3.0",
     "jiti": "^2.7.0",
-    "typescript-eslint": "^8.59.3"
+    "playwright": "^1.60.0",
+    "rehype-pretty-code": "^0.14.3",
+    "rehype-unwrap-images": "^1.0.0",
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.1.0",
+    "typescript-eslint": "^8.59.3",
+    "velite": "^0.3.1"
   },
   "resolutions": {
     "jackspeak": "2.1.1",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "grafex",
+      "@playwright/test",
+      "playwright"
+    ]
   },
   "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
 }

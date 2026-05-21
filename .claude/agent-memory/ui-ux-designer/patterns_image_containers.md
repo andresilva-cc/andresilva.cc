@@ -33,3 +33,21 @@ should be `bg-canvas`).
 generative art or opaque media and apply the matching treatment. `docs/ui-spec.md`
 (article-illustration section, ~line 216) describes the article thumbnail as stipple art,
 matching the shipped implementation.
+
+## Border vs frameless (orthogonal axis — added 2026-05-20)
+
+Whether a surface carries `border border-rule` depends on whether prose introduces it:
+
+- **Identity surfaces (bordered):** hero art on `/`, stipple article cover, stipple card
+  thumbnails, About profile picture. No surrounding prose explains them — they sit in
+  page-level regions (above `<hr>`, inside a card grid, beside a bio section). The
+  hairline says "deliberate object, not stray asset."
+- **Referential surfaces (frameless):** `<Figure>`, `<YouTube>`, `ImageMdx` inside MDX
+  prose. The paragraph before and the caption row already supply the boundary; a frame
+  would double it and read as editorial-magazine content card — the register this site
+  rejects.
+
+**The test:** does running prose introduce this image? Yes → frameless. No → hairline.
+
+This is consistent with the [[no-object-impersonation]] / editorial-magazine veto: framing
+prose-embedded figures is the failure mode; framing standalone identity art is not.

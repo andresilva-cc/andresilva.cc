@@ -48,6 +48,7 @@
   --max-width-prose-narrow: 56ch;
   --max-width-prose-bio: 60ch;
   --max-width-prose-wide: 68ch;
+  --max-width-prose-figure: 80ch;
   --max-width-prose-card: 38ch;
 
   /* Shell width — 1240px max-width container that wraps every page */
@@ -107,7 +108,8 @@ body {
 }
 
 @layer base {
-  strong {
+  strong,
+  b {
     color: var(--color-fg);
     font-weight: 600;
   }
@@ -271,5 +273,206 @@ pre {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   Article prose — scoped styles for MDX-rendered article bodies.
+   Applied via the .article-prose wrapper div in /articles/[slug].
+   Tailwind's prose plugin is NOT used — bespoke per design spec §4.
+   ============================================================ */
+
+/* Headings */
+.article-prose h2 {
+  font-size: var(--text-h2);
+  line-height: var(--text-h2--line-height);
+  font-weight: 600;
+  color: var(--color-fg);
+  margin-top: 3rem;    /* mt-12 */
+  margin-bottom: 0;
+  text-wrap: balance;
+}
+.article-prose h2 + * {
+  margin-top: 1rem;    /* mt-4 before next block */
+}
+.article-prose h3 {
+  font-size: var(--text-h3);
+  line-height: var(--text-h3--line-height);
+  font-weight: 600;
+  color: var(--color-fg);
+  margin-top: 2rem;    /* mt-8 */
+  margin-bottom: 0;
+}
+.article-prose h3 + * {
+  margin-top: 0.75rem; /* mt-3 */
+}
+.article-prose h4 {
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 600;
+  color: var(--color-fg);
+  margin-top: 1.5rem;  /* mt-6 */
+  margin-bottom: 0;
+}
+.article-prose h4 + * {
+  margin-top: 0.5rem;  /* mt-2 */
+}
+
+/* Paragraphs */
+.article-prose p {
+  color: var(--color-fg-muted);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  margin-top: 1rem;    /* mt-4 */
+  margin-bottom: 0;
+}
+.article-prose > *:first-child {
+  margin-top: 0;
+}
+
+/* Inline code */
+.article-prose :not(pre) > code {
+  font-family: var(--font-mono);
+  color: var(--color-fg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-rule);
+  padding: 0 4px;
+  font-size: var(--text-meta);
+}
+
+/* Lists — both markers render in --accent: UL uses '+', OL uses '01.' (decimal-leading-zero) */
+.article-prose ul,
+.article-prose ol {
+  list-style: none;
+  padding-left: 2rem;  /* pl-8 */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.article-prose li {
+  margin-top: 0.5rem;  /* mt-2 */
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  color: var(--color-fg-muted);
+  position: relative;
+}
+.article-prose ul > li::before {
+  content: '+';
+  position: absolute;
+  left: -1.5rem;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.article-prose ol {
+  counter-reset: ol-counter;
+}
+.article-prose ol > li {
+  counter-increment: ol-counter;
+}
+.article-prose ol > li::before {
+  content: counter(ol-counter, decimal-leading-zero) '.';
+  position: absolute;
+  left: -2rem;
+  color: var(--color-accent);
+}
+/* Nested lists */
+.article-prose ul ul,
+.article-prose ol ol,
+.article-prose ul ol,
+.article-prose ol ul {
+  padding-left: 1.5rem; /* pl-6 */
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Blockquotes */
+.article-prose blockquote {
+  /* --color-rule: canonical 1px-divider token, correct for structural borders.
+     --color-accent-muted is DS-reserved for chip/badge borders only. */
+  border-left: 2px solid var(--color-rule);
+  padding-left: 1rem;  /* pl-4 */
+  margin-top: 1.5rem;  /* my-6 */
+  margin-bottom: 1.5rem;
+  color: var(--color-fg-muted);
+  font-style: italic;
+}
+.article-prose blockquote cite {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--color-fg-subtle);
+  font-style: normal;
+}
+
+/* Horizontal rules */
+.article-prose hr {
+  border: 0;
+  border-top: 1px solid var(--color-rule);
+  margin-top: 2rem;    /* my-8 */
+  margin-bottom: 2rem;
+}
+
+/* Tables */
+.article-prose table {
+  width: 100%;
+  max-width: var(--max-width-prose-wide);
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: block;
+  overflow-x: auto;
+  font-feature-settings: "tnum", "zero";
+}
+.article-prose thead {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-rule);
+  border-bottom: 1px solid var(--color-rule);
+}
+.article-prose th {
+  text-align: left;
+  padding: 0.5rem 1rem;
+  font-size: var(--text-meta);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--color-fg-subtle);
+}
+.article-prose td {
+  padding: 0.5rem 1rem;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  color: var(--color-fg-muted);
+  vertical-align: top;
+}
+.article-prose tbody tr {
+  border-bottom: 1px solid var(--color-rule);
+}
+.article-prose tbody tr:last-child {
+  border-bottom: 0;
+}
+.article-prose > p:last-of-type,
+.article-prose > p:has(+ h2),
+.article-prose > p:has(+ h3) {
+  text-wrap: pretty;
+}
+
+/* Rehype-pretty-code: strip the wrapping <figure> styles if any */
+.article-prose [data-rehype-pretty-code-figure] {
+  margin: 0;
+}
+
+/* Highlighted lines — rehype-pretty-code adds data-highlighted-line to <span> */
+.article-prose [data-highlighted-line] {
+  display: block;
+  background-color: var(--color-accent-tint);
+  border-left: 2px solid var(--color-accent);
+  padding-left: calc(1.25rem - 2px); /* px-5 minus the 2px border */
+  margin-left: -1.25rem;
+  padding-right: 1.25rem;
+  margin-right: -1.25rem;
+}
+
+/* Cover art — responsive aspect-ratio swap at mobile */
+@media (max-width: 640px) {
+  .article-cover-art {
+    aspect-ratio: 4 / 3;
   }
 }

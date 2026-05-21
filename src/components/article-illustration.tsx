@@ -1,7 +1,9 @@
+import Link from 'next/link';
+
 import { StippleArt } from '@/components/stipple-art';
-import { safeHref } from '@/lib/safe-href';
 
 interface ArticleIllustrationProps {
+  /** Internal URL — `/articles/<slug>`. */
   url: string;
   config: string;
   title: string;
@@ -12,7 +14,7 @@ interface ArticleIllustrationProps {
  *
  * The anchor is taken out of the accessibility tree (tabIndex={-1},
  * aria-hidden="true") because the card already exposes two announced
- * links to the same URL: the title InlineLink and the "read on dev.to"
+ * links to the same URL: the title InlineLink and the "read article"
  * ArrowLink. A third announced link would be a redundant duplicate for
  * screen-reader users. The illustration remains mouse-clickable.
  *
@@ -23,10 +25,8 @@ interface ArticleIllustrationProps {
  */
 export function ArticleIllustration({ url, config, title }: ArticleIllustrationProps) {
   return (
-    <a
-      href={safeHref(url)}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={url}
       aria-label={title}
       className="absolute inset-0"
       tabIndex={-1}
@@ -40,6 +40,6 @@ export function ArticleIllustration({ url, config, title }: ArticleIllustrationP
         className="font-mono text-fg-muted m-0 p-0 select-none block overflow-hidden w-full h-full"
         style={{ fontSize: '6px', lineHeight: 1 }}
       />
-    </a>
+    </Link>
   );
 }

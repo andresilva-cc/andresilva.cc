@@ -25,12 +25,12 @@ export function formatDateRange(start: Date, end?: Date): string {
 }
 
 /*
- * Formats a Forem ISO timestamp into the canonical `YYYY.MM.DD` lowercase
+ * Formats an ISO date string into the canonical `YYYY.MM.DD` lowercase
  * date used across the redesign for article metadata. Returns an empty
  * string for invalid or missing timestamps.
  *
  * Reads UTC accessors so the rendered date doesn't shift with the
- * server's local timezone — Forem returns UTC ISO strings.
+ * server's local timezone.
  */
 export function formatArticleDate(isoString: string | null | undefined): string {
   if (!isoString) return '';

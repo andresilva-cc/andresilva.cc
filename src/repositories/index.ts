@@ -1,4 +1,4 @@
-import { ForemArticlesRepository } from '@/repositories/implementations/forem-articles-repository';
+import { LocalArticlesRepository } from '@/repositories/implementations/local-articles-repository';
 import { StaticFooterRepository } from '@/repositories/implementations/static-footer-repository';
 import { StaticJobsRepository } from '@/repositories/implementations/static-jobs-repository';
 import { StaticMenuRepository } from '@/repositories/implementations/static-menu-repository';
@@ -13,7 +13,7 @@ import { StaticProjectsRepository } from '@/repositories/implementations/static-
  */
 export function getRepositories() {
   return {
-    articlesRepository: new ForemArticlesRepository(),
+    articlesRepository: new LocalArticlesRepository(),
     footerRepository: new StaticFooterRepository(),
     jobsRepository: new StaticJobsRepository(),
     menuRepository: new StaticMenuRepository(),
