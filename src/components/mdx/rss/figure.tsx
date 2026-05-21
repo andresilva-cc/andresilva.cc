@@ -7,9 +7,9 @@ export interface FigureRssProps {
   alt?: string;
 }
 
-export function makeFigureRss(slug: string) {
+export function makeFigureRss(basePath: string) {
   return function FigureRss({ caption, number, src, alt = '' }: FigureRssProps) {
-    const absoluteSrc = absolutize(src, slug);
+    const absoluteSrc = absolutize(src, basePath);
     return (
       <figure>
         {/* eslint-disable-next-line @next/next/no-img-element */}

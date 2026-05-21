@@ -71,7 +71,9 @@ andresilva.cc/
 │   │   ├── sitemap.ts             # dynamic sitemap: static routes + one entry per article + one entry per note
 │   │   ├── favicon.ico
 │   │   ├── articles/rss.xml/
-│   │   │   └── route.ts           # RSS feed Route Handler (force-static)
+│   │   │   └── route.ts           # articles RSS feed Route Handler (force-static)
+│   │   ├── notes/rss.xml/
+│   │   │   └── route.ts           # notes RSS feed Route Handler (force-static)
 │   │   ├── (site)/                # route group — shared shell layout
 │   │   │   ├── layout.tsx         # the shell: SkipLink + Header + main + Footer
 │   │   │   ├── page.tsx           # / (home)
@@ -119,8 +121,9 @@ andresilva.cc/
 │   │   ├── reading-time.ts        # word count + reading-time estimator (220 WPM)
 │   │   ├── config.ts              # SITE_ORIGIN — canonical origin for absolute URLs
 │   │   ├── mdx-jsx-allowlist.ts   # MDX_JSX_ALLOWLIST — single source of truth for permitted MDX JSX components
-│   │   ├── rss-url.ts             # absolutize(url, slug) — URL absolutization helper for RSS HTML output
-│   │   └── rss-renderer.tsx       # renderArticleHtml(article) — build-time MDX→HTML renderer for the RSS feed
+│   │   ├── rss-url.ts             # absolutize(url, basePath) — URL absolutization helper for RSS HTML output
+│   │   ├── rss-helpers.ts         # escapeXml / toRfc822 / escapeCdata — shared RSS feed serialization helpers
+│   │   └── rss-renderer.tsx       # renderEntryHtml core + renderArticleHtml(article) / renderNoteHtml(note) wrappers — build-time MDX→HTML renderer for the RSS feeds
 │   ├── repositories/
 │   │   ├── index.ts               # getRepositories() — factory for all repositories
 │   │   ├── *.ts                   # interfaces (ArticlesRepository, ...)
@@ -154,10 +157,10 @@ Path alias: `@/*` resolves to `src/*`.
 
 ### Role of each top-level `src/` directory
 
-- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` is a static Route Handler that lives outside the `(site)` group because it returns XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
+- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` and `notes/rss.xml/route.ts` are static Route Handlers that live outside the `(site)` group because they return XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
 - **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card, note-block). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article and note prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`). The nested `mdx/rss/` subdirectory holds HTML-only React mirrors of the page-side MDX components (`youtube`, `figure`, `image-mdx`, `inline-link`, `pre-shiki`) — no client JS, used solely by the RSS renderer to produce inert markup for feed readers.
 - **`src/content/`** — Authored content. Two collections: `articles/<slug>/index.mdx` (one folder per article, with optional co-located `images/`) and `notes/<slug>.mdx` (flat — one file per note; rare local media goes in `notes/_assets/<slug>/`). Velite reads both trees at build time. See §7.
-- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency (the one exception being `rss-renderer.tsx`, which uses React only at build time to stringify HTML). Seven modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta), `mdx-jsx-allowlist.ts` (exports `MDX_JSX_ALLOWLIST` — the single source of truth for which MDX JSX components are permitted; enforced at Velite build time, mirrored in the RSS component map), `rss-url.ts` (exports `absolutize(url, slug)` — the URL absolutization helper for RSS HTML output, handling `http(s):`, protocol-relative `//`, `mailto:` / `tel:`, absolute `/path`, fragment `#hash`, and relative `./` forms), and `rss-renderer.tsx` (exports `renderArticleHtml(article)` — the build-time MDX→HTML renderer used by the RSS feed; runs the compiled MDX body through `@mdx-js/mdx`'s `run()` with an RSS-specific component map and stringifies via `react-dom/server.edge.renderToStaticMarkup`).
+- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency (the one exception being `rss-renderer.tsx`, which uses React only at build time to stringify HTML). Eight modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta), `mdx-jsx-allowlist.ts` (exports `MDX_JSX_ALLOWLIST` — the single source of truth for which MDX JSX components are permitted; enforced at Velite build time, mirrored in the RSS component map), `rss-url.ts` (exports `absolutize(url, basePath)` — the URL absolutization helper for RSS HTML output, where `basePath` is the full path segment `articles/<slug>` or `notes/<slug>`; handles `http(s):`, protocol-relative `//`, `mailto:` / `tel:`, absolute `/path`, fragment `#hash`, and relative `./` forms), `rss-helpers.ts` (exports `escapeXml` / `toRfc822` / `escapeCdata` — the shared serialization helpers used by both RSS Route Handlers), and `rss-renderer.tsx` (exports a shared `renderEntryHtml(body, basePath)` core plus two thin wrappers, `renderArticleHtml(article)` and `renderNoteHtml(note)` — the build-time MDX→HTML renderer used by both the articles and notes RSS feeds; runs the compiled MDX body through `@mdx-js/mdx`'s `run()` with an RSS-specific component map and stringifies via `react-dom/server.edge.renderToStaticMarkup`).
 - **`src/repositories/`** — Data-access seam. `index.ts` exports the `getRepositories()` factory; interfaces at the top level; concrete implementations under `implementations/`. See §7.
 - **`src/styles/`** — `globals.css` (Tailwind import + `@theme inline` token block) plus `shiki/brutalist-mono.json` (the custom Shiki theme loaded by `rehype-pretty-code`). There are no other CSS files in `src/` after the redesign — the multi-theme `themes/*.css` system has been removed.
 
@@ -165,7 +168,7 @@ Path alias: `@/*` resolves to `src/*`.
 
 ## 4. Routing & Rendering
 
-App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes/page/[page]`), one Route Handler (`/articles/rss.xml`), no parallel/intercepting routes, no middleware. The `(site)` route group carries the content routes under a shared shell layout; `design-system` is a separate route outside that group with its own bare layout; the RSS Route Handler lives outside `(site)` because it returns XML rather than the HTML shell.
+App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes/page/[page]`), two Route Handlers (`/articles/rss.xml` and `/notes/rss.xml`), no parallel/intercepting routes, no middleware. The `(site)` route group carries the content routes under a shared shell layout; `design-system` is a separate route outside that group with its own bare layout; the RSS Route Handlers live outside `(site)` because they return XML rather than the HTML shell.
 
 | Path                  | File                                          | Rendering                                                |
 | --------------------- | --------------------------------------------- | -------------------------------------------------------- |
@@ -177,6 +180,7 @@ App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes
 | `/notes`              | `src/app/(site)/notes/page.tsx`               | Server (static) — reads `LocalNotesRepository` (page 1)  |
 | `/notes/page/[page]`  | `src/app/(site)/notes/page/[page]/page.tsx`   | Server (static) — SSG via `generateStaticParams` (pages 2..N) |
 | `/notes/[slug]`       | `src/app/(site)/notes/[slug]/page.tsx`        | Server (static) — SSG via `generateStaticParams`         |
+| `/notes/rss.xml`      | `src/app/notes/rss.xml/route.ts`              | Static Route Handler (`export const dynamic = 'force-static'`) — full-content feed (`<content:encoded>` alongside summary `<description>`); body rendering via `src/lib/rss-renderer.tsx` |
 | `/career`             | `src/app/(site)/career/page.tsx`              | Server (static)                                          |
 | `/projects`           | `src/app/(site)/projects/page.tsx`            | Server (static)                                          |
 | `/design-system`      | `src/app/design-system/page.tsx`              | Server (static)                                          |
@@ -345,7 +349,7 @@ src/content/notes/<slug>.mdx        (authored source — flat, one file per note
        velite build  ──▶  .velite/note.json + note.d.ts   (typed array)
             │
             ▼
-LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, sitemap
+LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, /notes/rss.xml, sitemap
 ```
 
 - **Collection**: a second Velite collection in `velite.config.ts` — `note` with `pattern: 'notes/*.mdx'` (flat, not folder-per-slug). The `_assets/` subdirectory is excluded from the pattern.
@@ -354,7 +358,8 @@ LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, 
   - `publishedAt: ISO date` — required.
   - `kind: 'til' | 'take' | 'snippet' | 'aside'` — required, closed enum (`z.enum([...])`).
   - No `updatedAt`, no `tags`, no `coverArt`, no `summary`, no reading time.
-- **Derived fields in `transform()`**: `slug` (from filename via `s.path()`, validated against the same lowercase kebab-case `SLUG_RE` and `SLUG_MAX_LEN = 60` constants reused from the article collection), and `ogImage` (constant `/og/notes/default.png` — see below). No `wordCount` / `readingTime`.
+  - `raw: s.raw()` — the unprocessed body text, read in-transform (for the JSX-allowlist check and `excerpt` derivation) and destructured out, so it is **not** present on the emitted type.
+- **Derived fields in `transform()`**: `slug` (from filename via `s.path()`, validated against the same lowercase kebab-case `SLUG_RE` and `SLUG_MAX_LEN = 60` constants reused from the article collection), `excerpt` (a plaintext, markdown-stripped ~140-char preview of the body, used as the `<description>` in the notes RSS feed — falls back to the title when the body is code-only), and `ogImage` (constant `/og/notes/default.png` — see below). No `wordCount` / `readingTime`.
 - **Body compilation**: same MDX pipeline as articles — `@mdx-js/mdx` compile to function-body string; same rehype stack (`rehype-unwrap-images` first, then `rehype-pretty-code` with the `brutalist-mono` Shiki theme); GFM via Velite's built-in default. No component restrictions in the page-level MDX components map.
 - **Assets**: rare per-note media lives in `src/content/notes/_assets/<slug>/`, picked up by Velite's asset handler and emitted under `public/static/` with content hashing (same path as article images).
 - **OG image**: a single shared static `/og/notes/default.png`, generated **once manually** via the existing grafex pipeline against a notes OG template (visual language: same brutalist-mono palette as articles). It is **not** wired into `scripts/og/generate.mjs` — the asymmetry mirrors the home/site-wide OG card decision in §7 above. Per-note OG generation was rejected as not worth the build cost given the small share traffic notes are expected to attract.
@@ -363,7 +368,7 @@ LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, 
 ### Data fetching
 
 - All article routes (`/articles`, `/articles/[slug]`, `/articles/rss.xml`) are statically generated at build time. `[slug]/page.tsx` uses `generateStaticParams` to pre-render every article. The RSS route handler sets `export const dynamic = 'force-static'`.
-- All note routes (`/notes`, `/notes/page/[page]`, `/notes/[slug]`) are statically generated at build time. `[slug]/page.tsx` and `page/[page]/page.tsx` both use `generateStaticParams` (enumerating slugs and page numbers respectively from the `LocalNotesRepository`).
+- All note routes (`/notes`, `/notes/page/[page]`, `/notes/[slug]`, `/notes/rss.xml`) are statically generated at build time. `[slug]/page.tsx` and `page/[page]/page.tsx` both use `generateStaticParams` (enumerating slugs and page numbers respectively from the `LocalNotesRepository`); the RSS route handler sets `export const dynamic = 'force-static'`.
 - All other pages are fully static.
 - **There is no runtime data fetching anywhere in the application.**
 
@@ -485,7 +490,7 @@ Noting these so nobody goes hunting:
 
 - No authentication, no user accounts, no sessions.
 - No database, no ORM, no migrations.
-- No API routes (`app/api/*`) and no server actions. The only Route Handler in the app is `/articles/rss.xml` (`force-static`), which exists because the RSS feed must serve XML rather than the HTML shell — it is otherwise identical in spirit to a static page.
+- No API routes (`app/api/*`) and no server actions. The only Route Handlers in the app are `/articles/rss.xml` and `/notes/rss.xml` (both `force-static`), which exist because the RSS feeds must serve XML rather than the HTML shell — they are otherwise identical in spirit to static pages.
 - No middleware.
 - No multi-theme system, no theme selector, no theme cookie. The site is single-palette.
 - No `tailwind.config.*` — Tailwind 4 is configured entirely via the `@theme inline` block in `globals.css`.
@@ -494,5 +499,5 @@ Noting these so nobody goes hunting:
 - No CMS — content is either code-hard-coded or authored as MDX in `src/content/`.
 - No image pipeline beyond Next's default `<Image>` optimizer (consumed through `ImageMdx` for in-article images) and Velite's build-time copy-and-hash of MDX-referenced assets into `public/static/`. Runtime image surface is `/me.jpg`, the per-article OG PNGs in `public/og/articles/`, and the Velite-emitted MDX images in `public/static/`.
 - No error-tracking/observability service — Vercel logs only.
-- **No `/notes/rss.xml`.** Notes intentionally ship without an RSS feed in this iteration. The full-content RSS work for articles is on a separate branch; once it lands, a notes feed (or a combined feed) can be evaluated then. Notes are also **not** syndicated to dev.to.
+- **No merged `/feed.xml`.** Articles and notes ship as two separate full-content feeds (`/articles/rss.xml`, `/notes/rss.xml`) rather than one combined feed — notes are own-site-only while articles syndicate to dev.to, so the two surfaces have different audiences. A merged feed can be added later if readers request it. Notes are **not** syndicated to dev.to.
 - **No per-note OG generation.** Notes share a single static `/og/notes/default.png`; the per-article grafex pipeline is not extended to notes (see §7).

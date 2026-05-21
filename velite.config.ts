@@ -5,6 +5,33 @@ import { countWords, readingTime } from './src/lib/reading-time';
 import { MDX_JSX_ALLOWLIST } from './src/lib/mdx-jsx-allowlist';
 import brutalistMono from './src/styles/shiki/brutalist-mono.json';
 
+const EXCERPT_MAX = 140;
+
+function stripMarkdown(raw: string): string {
+  return raw
+    .replace(/^---[\s\S]*?---\n?/, '') // strip frontmatter — s.raw() includes it
+    .replace(/```[\s\S]*?```/g, '') // fenced code blocks
+    .replace(/`([^`\n]*)`/g, '$1') // inline code → its text
+    .replace(/^#{1,6}\s+/gm, '') // headings
+    .replace(/!\[.*?\]\(.*?\)/g, '') // images
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links → text
+    .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
+    .replace(/([*_])(.*?)\1/g, '$2') // italic
+    .replace(/^>\s+/gm, '') // blockquotes
+    .replace(/^[-*+]\s+/gm, '') // unordered list markers
+    .replace(/^\d+\.\s+/gm, '') // ordered list markers
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function excerptFromRaw(raw: string): string {
+  const text = stripMarkdown(raw);
+  if (text.length <= EXCERPT_MAX) return text;
+  const cut = text.lastIndexOf(' ', EXCERPT_MAX);
+  const boundary = cut > 0 ? cut : EXCERPT_MAX;
+  return text.slice(0, boundary) + '…';
+}
+
 // Regex-based fallback: matches opening tags for PascalCase JSX components.
 // Does not parse MDX AST — misses components in comments or code fences, but
 // catches real author mistakes cleanly enough for a single-author trust model.
@@ -105,6 +132,8 @@ const note = defineCollection({
       kind: s.enum(['til', 'take', 'snippet', 'aside']),
       // derived from the file path — filename becomes the slug
       slug: s.path(),
+      // raw markdown source for JSX allowlist check
+      raw: s.raw(),
       // compiled MDX function-body string — same pipeline as articles
       body: s.mdx({
         rehypePlugins: [
@@ -122,6 +151,28 @@ const note = defineCollection({
     .transform((data) => {
       // s.path() returns 'notes/<filename>' — extract only the leaf segment
       const slug = data.slug.split('/').pop() ?? data.slug;
+
+      // Verify all PascalCase JSX components in the raw source are on the allowlist.
+      // Fails the build early rather than silently omitting components from the RSS feed.
+      // Code-fenced and inline-code JSX is ignored — strip both before scanning.
+      const rawNoCode = data.raw
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/`[^`\n]*`/g, '');
+      const seen = new Set<string>();
+      let match: RegExpExecArray | null;
+      JSX_COMPONENT_RE.lastIndex = 0;
+      while ((match = JSX_COMPONENT_RE.exec(rawNoCode)) !== null) {
+        const name = match[1];
+        if (!seen.has(name)) {
+          seen.add(name);
+          if (!(MDX_JSX_ALLOWLIST as readonly string[]).includes(name)) {
+            throw new Error(
+              `Disallowed MDX JSX <${name}> in ${slug} — add to MDX_JSX_ALLOWLIST and provide an RSS mapping in src/lib/rss-renderer.tsx`,
+            );
+          }
+        }
+      }
+
       if (!SLUG_RE.test(slug)) {
         throw new Error(`Invalid note slug "${slug}" — must be lowercase kebab-case`);
       }
@@ -130,9 +181,12 @@ const note = defineCollection({
           `Note slug "${slug}" exceeds ${SLUG_MAX_LEN} chars — slugs are keyword-focused, not title-mirrors`,
         );
       }
+      // Destructure raw out so it does not appear in the emitted Note type
+      const { raw: _raw, ...rest } = data;
       return {
-        ...data,
+        ...rest,
         slug,
+        excerpt: excerptFromRaw(data.raw) || data.title,
         ogImage: '/og/notes/default.png',
       };
     }),

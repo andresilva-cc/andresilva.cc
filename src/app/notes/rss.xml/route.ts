@@ -1,42 +1,40 @@
 import { getRepositories } from '@/repositories';
 import { SITE_ORIGIN } from '@/lib/config';
-import { renderArticleHtml } from '@/lib/rss-renderer';
+import { renderNoteHtml } from '@/lib/rss-renderer';
 import { escapeXml, toRfc822, escapeCdata } from '@/lib/rss-helpers';
 
 export const dynamic = 'force-static';
 
-const FEED_URL = `${SITE_ORIGIN}/articles/rss.xml`;
+const FEED_URL = `${SITE_ORIGIN}/notes/rss.xml`;
 
 export async function GET(): Promise<Response> {
-  const { articlesRepository } = getRepositories();
-  const articles = articlesRepository.getAll();
+  const { notesRepository } = getRepositories();
+  const notes = notesRepository.getAll();
 
   const itemsHtml = await Promise.all(
-    articles.map(async (a) => {
-      const link = `${SITE_ORIGIN}/articles/${a.slug}`;
-      const contentHtml = await renderArticleHtml(a);
-      const categories = a.tags
-        .map((tag) => `\n      <category>${escapeXml(tag)}</category>`)
-        .join('');
+    notes.map(async (n) => {
+      const link = `${SITE_ORIGIN}/notes/${n.slug}`;
+      const contentHtml = await renderNoteHtml(n);
       return `    <item>
-      <title>${escapeXml(a.title)}</title>
+      <title>${escapeXml(n.title)}</title>
       <link>${link}</link>
       <guid isPermaLink="true">${link}</guid>
-      <pubDate>${toRfc822(a.publishedAt)}</pubDate>
+      <pubDate>${toRfc822(n.publishedAt)}</pubDate>
       <dc:creator>André Silva</dc:creator>
-      <description>${escapeXml(a.summary)}</description>
-      <content:encoded><![CDATA[${escapeCdata(contentHtml)}]]></content:encoded>${categories}
+      <description>${escapeXml(n.excerpt)}</description>
+      <content:encoded><![CDATA[${escapeCdata(contentHtml)}]]></content:encoded>
+      <category>${escapeXml(n.kind)}</category>
     </item>`;
     }),
   );
 
   const items = itemsHtml.join('\n');
 
-  // Omit <lastBuildDate> when there are no articles — a feed with no items
+  // Omit <lastBuildDate> when there are no notes — a feed with no items
   // has no meaningful build date, and including new Date() would produce
   // non-deterministic output that invalidates CDN caches needlessly.
-  const lastBuildDateTag = articles.length > 0
-    ? `\n    <lastBuildDate>${toRfc822(articles[0].publishedAt)}</lastBuildDate>`
+  const lastBuildDateTag = notes.length > 0
+    ? `\n    <lastBuildDate>${toRfc822(notes[0].publishedAt)}</lastBuildDate>`
     : '';
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -45,9 +43,9 @@ export async function GET(): Promise<Response> {
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>André Silva — Articles</title>
-    <link>${SITE_ORIGIN}/articles</link>
-    <description>Articles by André Silva — software engineering, web performance, and developer tooling.</description>
+    <title>André Silva — Notes</title>
+    <link>${SITE_ORIGIN}/notes</link>
+    <description>Short notes, TILs, takes, and code snippets from André Silva.</description>
     <language>en</language>
     <dc:creator>André Silva</dc:creator>
     <atom:link rel="self" type="application/rss+xml" href="${FEED_URL}" />${lastBuildDateTag}

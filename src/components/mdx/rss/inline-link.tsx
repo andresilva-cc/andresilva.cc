@@ -6,9 +6,9 @@ export interface InlineLinkRssProps {
   children: ReactNode;
 }
 
-export function makeInlineLinkRss(slug: string) {
+export function makeInlineLinkRss(basePath: string) {
   return function InlineLinkRss({ href, children }: InlineLinkRssProps) {
-    const absoluteHref = absolutize(href, slug);
+    const absoluteHref = absolutize(href, basePath);
     const isExternal = /^https?:\/\//i.test(absoluteHref);
     return (
       <a
