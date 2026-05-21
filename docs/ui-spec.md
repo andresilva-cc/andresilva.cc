@@ -9,12 +9,13 @@
 Five pages, flat hierarchy, plus a 404 fallback:
 
 ```
-/             Home       — orienting page
-/about        About      — full bio, education, facts, résumé
-/career       Career     — full work history
-/projects     Projects   — featured + all projects
-/articles     Articles   — dev.to feed
-*             404        — fallback for any unmatched URL
+/                       Home              — orienting page
+/about                  About             — full bio, education, facts, résumé
+/career                 Career            — full work history
+/projects               Projects          — featured + all projects
+/articles               Articles          — local article feed
+/articles/[slug]        Article (detail)  — single article reading surface
+*                       404               — fallback for any unmatched URL
 ```
 
 Primary nav lives in the header and is identical on every page. The wordmark in the header always links to `/`. Active page wears literal `[brackets]` in the label string AND `aria-current="page"` (which colors it `--accent`). Nav order: `[home] · about · career · projects · articles`.
@@ -36,7 +37,7 @@ Every page follows the same outer structure:
 </div>
 ```
 
-Footer is verbatim across all pages: `github · linkedin · dev.to · x · instagram · email` as lowercase text links separated by `·` (U+00B7) dots. The five external links carry `target="_blank" rel="noopener noreferrer"`. Email link is `mailto:hello@andresilva.cc`.
+Footer is verbatim across all pages: a centered, wrapping row of lowercase social text links (`github · linkedin · dev.to · x · instagram · email`) separated by spacing only — no inline `·` glyph between siblings (the dot belongs to within-a-value lists, not between sibling links). At rest, each link is `--fg-subtle`; on hover/focus it lifts to `text-accent` with a 1px underline (same prose-link treatment as `InlineLink`, *not* the `text-accent-strong` brand-emphasis tone). The five external links carry `target="_blank" rel="noopener noreferrer"`. Email link is `mailto:hello@andresilva.cc`.
 
 ---
 
@@ -57,9 +58,9 @@ Footer is verbatim across all pages: `github · linkedin · dev.to · x · insta
    - One paragraph about André's current parallel builds — three projects in flight (`Calcloak`, `Infinity`, and the redesign of this site) plus a day-job framing (`MPA`, shipping features end-to-end with Claude Code). Two inline links (`InlineLink`) to `https://calcloak.com/` and `https://meet.agentairforce.com`; the project nouns inside those links are in `<strong>`, and `MPA` is in `<strong>` as a plain (non-link) noun.
 3. **Latest band** (`section`, `aria-labelledby="latest-h"`)
    - Eyebrow: `// 02 / recent activity`. H2: `Latest`.
-   - `<ul>` of up to three `<li>` items, one per category: a Career row (current role), a Project row (most recent featured project), an Article row (most recent dev.to post). The Article row is omitted entirely if the dev.to feed is unavailable at build time.
-   - Each row is a `LatestRow` (`<a>`) with a badge (`Career` / `Project` / `Article`), the noun, and a trailing link-arrow icon (no visible "Read more" text — the badge names the category, the arrow carries the affordance, the whole row is the link surface). Career/Project/Article rows link to `/career`, `/projects`, `/articles` respectively.
-   - Sources: jobs repo → first entry; projects repo → first `featured` entry; articles → first item from `https://dev.to/andresilva-cc` feed.
+   - `<ul>` of up to three `<li>` items, one per category: a Career row (current role), a Project row (most recent featured project), an Article row (most recent article). The Article row is omitted entirely when no articles are published.
+   - Each row is a `LatestRow` (`<a>`) with a badge (`Career` / `Project` / `Article`), the noun, and a trailing link-arrow icon (no visible "Read more" text — the badge names the category, the arrow carries the affordance, the whole row is the link surface). The Career and Project rows link to their list pages (`/career`, `/projects`); the Article row links straight to the article detail (`/articles/<slug>`), not the list — the latest article *is* the destination, the list is one click further on.
+   - Sources: jobs repo → first entry; projects repo → first `featured` entry; articles repo → first entry from the local MDX feed.
 
 ### Key interactions
 
@@ -213,45 +214,103 @@ Each `.role` is a 2-column grid: date gutter (left, 183px via Tailwind utility `
 
 ## Page: Articles (`/articles`)
 
-**Purpose** — Reader feed of dev.to posts. Each entry is a self-contained card with date, reading time, reactions, comments, a stipple-art thumbnail, description, tags, and a "read on dev.to" link.
+**Purpose** — Reader feed of André's self-hosted MDX posts. Each entry is a self-contained card with date, reading time, an optional stipple-art thumbnail, description, tags, and a "read article" link to the detail page.
 
 **Audience moment** — Someone deciding whether to invest time reading. They scan the title, glance at the illustration, check tags and length, then either click through or move on.
 
 ### Sections (in order)
 
 1. **Page-head** — `<ARTICLES />`.
-2. **Articles list** (`<section aria-label="Articles" className="py-8">` — the page's only content section, so no `SectionHead`) — `<ul class="list">` of `<li class="art">` items.
-   - Source: fetched from `https://dev.to/andresilva-cc`. Titles, dates, reading time, reactions, comments are **never invented** — if fetching fails at build time, fall back to a visible empty/error state, do not synthesize.
+2. **Articles list** (`<section aria-label="Articles" className="py-8">` — the page's only content section, so no `SectionHead`) — `<ul>` of `<ArticleCard>` items.
+   - Source: `LocalArticlesRepository` — Velite-compiled MDX files in `src/content/articles/*.mdx`. Titles, dates, reading time, tags come from frontmatter; nothing is fetched at runtime.
+   - Empty state: `<Text variant="body" className="text-fg-muted">No articles yet.</Text>` (rendered when `articles.length === 0`).
 
-### Article card anatomy (`.art`)
+### Article card anatomy (`ArticleCard`)
 
-A 2-column grid (`240px 1fr`):
+A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) **only when an illustration is present**; single column otherwise. List items are separated by `border-b border-rule` (no last-row border).
 
-- **Left (`.art__illo`)** — a `<stipple-art>` Web Component embed: generative ASCII art from André's [Stipple](https://github.com/andresilva-cc/stipple) project, configured per article via a stipple permalink hash (`config="..."`) so no two thumbnails repeat. Container is `border border-rule bg-canvas` — **canvas-coloured, never `bg-surface`**: stipple art is transparent ASCII glyphs, so the container fill *is* the art's perceived background and must match the page void for the dot field to read. The border stays — it is the system's structural-rule vocabulary and reserves the layout slot while the embed loads. The embed animates on a fixed loop and respects `prefers-reduced-motion`.
-- **Right (`.art__body`)**:
-  - `.art__meta` — date, reading time, reactions, comments separated by `·` dots. Mono 500 12px `--lo`, date elevated to `--mid`.
-  - `.art__title` — non-heading `<p>` containing the external `<a>` to dev.to (`target="_blank" rel="noopener noreferrer"`).
-  - `.art__desc` — body prose summary capped at `--prose-w`. Magnitude metrics in `<strong class="acc">`.
-  - `.art__tags` — wrapping chip strip.
-  - `.art__lnk` — trailing `link-arrow` reading `read on dev.to →`.
+- **Left (illustration)** — only when `article.coverArt` is set in frontmatter. Wraps an `<ArticleIllustration>` (which renders `<StippleArt>` configured via the `coverArt.params` permalink hash) in a `border border-rule bg-canvas overflow-hidden` frame, `aspect-video` on mobile and `md:aspect-auto md:min-h-44` (stretching to body height) on desktop. **Canvas-coloured, never `bg-surface`** — stipple art is transparent ASCII glyphs, so the container fill *is* the art's perceived background. The frame links to the article detail page. Honors `prefers-reduced-motion`.
+- **Right (body)**:
+  - **Meta line** — `Text variant="meta"`, inline-flex with `gap-2`. Date in `--fg-muted`, then `·`, then `${readingTime} min` in `--fg-subtle`. **No reactions, no comments** — those were Forem-only and dropped on migration. **No inline tags** — tags render as chips below (Q1 reversal, see `articles-decision-log.md` §16b).
+  - **Title** — non-heading `Text variant="h3" as="p"` wrapping an `<InlineLink>` to `/articles/[slug]` (internal route, not external).
+  - **Description** — `Text variant="body"` with `text-fg-muted max-w-prose-wide`, source is `article.summary` from frontmatter.
+  - **Tag chips** — wrapping flex row of `<Tag>` chips, brand-cased per `tag.tsx`. Chips are **non-interactive** — there is no filter UI and no list-by-tag page (`articles-decision-log.md` §2).
+  - **Trailing `ArrowLink`** — `read article` pointing to the same `/articles/[slug]`.
 
 ### Key interactions
 
-- Title link hover: color shifts `--hi → --accent`, underline appears with 3px offset.
-- Tail link-arrow nudge on hover.
-- Card itself is not the click target — the title and the trailing link-arrow both lead to the same URL; this is intentional so the illustration can be passive.
+- Title `InlineLink` uses the prose-link hover treatment (color lift + underline).
+- Tail `ArrowLink` carries the standard chevron-nudge on hover.
+- Card itself is not the click target — title, illustration frame, and trailing arrow all lead to the same URL; the description and meta strip stay passive.
 
 ### Mobile
 
-- ≤ 760px: 2-col `.art` collapses to single column. Illustration becomes full-width capped at 320px and goes above the body. Aspect ratio preserved at `240/144`.
+- ≤ 760px: 2-col layout collapses to single column. Illustration (when present) goes above the body at `aspect-video`.
 
 ### Accessibility
 
-- Illustrations are `aria-hidden="true"` — they're decorative anchors, the title carries the meaning.
-- `<ul>/<li>` for the list.
-- Each title `<a>` exposes the full headline as link text (no "click here" buttons).
-- Reaction/comment counts use `♥` and the word `comment` — meaning is not conveyed by an icon alone.
-- Focus order: skip-link → wordmark → 5 nav links → each article's title link + tail link in DOM order → footer.
+- `StippleArt` illustrations are decorative — the title carries the meaning. Wrapping link exposes the article title as accessible name (see `ArticleIllustration`).
+- `<ul>/<li>` for the list (standing rule 03).
+- Title `<a>` exposes the full headline as link text (no "click here" buttons).
+- Tags are rendered as plain `<span>` chips (non-interactive) — skipped in tab order.
+- Focus order: skip-link → wordmark → 5 nav links → each article's illustration link + title link + tail arrow in DOM order → footer.
+
+---
+
+## Page: Article detail (`/articles/[slug]`)
+
+**Purpose** — The reading surface for a single article. One MDX post rendered with the site's prose treatment, framed by an identity cluster (eyebrow / title / summary / meta) at the top and syndication + return affordances at the bottom.
+
+**Audience moment** — A reader who clicked through from the feed (or landed via search / external link) and wants to read end-to-end without friction. Long-form attention — the page should disappear, the prose should carry.
+
+### Sections (in order)
+
+1. **Top return** — `ArrowLink` `direction="back"` reading `back to articles`, sitting above the identity cluster (`pt-8`). Gives keyboard and mouse users a one-tab exit before they commit to scrolling.
+2. **Identity cluster** (page header)
+   - **Eyebrow** — `// article` (authored as a string variable to dodge the `react/jsx-no-comment-textnodes` lint; lowercase string, uppercased via CSS), `--accent`.
+   - **H1 title** — `Text variant="h1"` in `--fg`. **Not** `t-display` / VT323 — the display register is reserved for the Home identity moment (standing rule). Article titles get the standard h1 mono treatment so 50+ posts at varying lengths read consistently.
+   - **Summary** — `Text variant="body"`, `--fg-muted`, capped at `--prose-w-wide` (matches the body column below).
+   - **Meta strip** — single `<p>` with `<time dateTime>` (in `--fg-muted`) followed by `·` and `${readingTime} min` (in `--fg-subtle`). **No tags inline** (Q1 reversal — tags render as chips in the footer only). Optional second meta line `// last updated {date}` in italic `--fg-subtle` when `updatedAt` is set.
+3. **Cover art** (optional — only when `article.coverArt` is present in frontmatter)
+   - Preceded by a `<hr>` rule (8px top margin) to separate the identity cluster from the visual.
+   - `<section aria-label="Cover art">` containing a `.article-cover-art` frame: `border border-rule bg-canvas`, `overflow-hidden`, `max-w-prose-wide`, aspect ratio `16 / 7` on desktop and `4 / 3` on mobile (set in `globals.css`). Standing rule 19 — identity surface keeps the border even though the art is transparent.
+   - Inside the frame, `<StippleArt>` renders at its **native grid resolution** (no explicit `cols`/`rows`) so the cover gets stipple's signature fine grain (~180 × 46 cells at desktop). Configured via the `params` permalink hash from frontmatter. `mode="always"` (no scroll-gating on the detail page), `fit="cover"`, `link="none"`. Honors `prefers-reduced-motion`. Card thumbnails on `/articles` are a reduced preview, not a pixel-identical miniature (see `articles-decision-log.md` §16b).
+4. **Article body** — `<hr>` separator, then `<div class="article-prose max-w-prose-wide">` containing the compiled MDX (`<Content components={mdxComponents} />`).
+   - MDX component map: headings + paragraphs from `.article-prose` styles; `a` → `InlineLink`; `pre` → `PreShiki` (Shiki-highlighted code with a `CopyButton` action); `img` → `<ImageMdx>` for plain `![alt](src)`; `<Figure>` and `<YouTube>` for richer embeds (both wrap their content with `<FigureCaption>`).
+   - Tables, ordered/unordered lists, blockquotes, inline code, and horizontal rules all inherit from `article-prose` — see the design-system prose section.
+5. **Footer** (in DOM order)
+   - **Tag chips** — `<ul>` of `Tag` chips (brand-cased per `tag.tsx`), wrapping, when `article.tags.length > 0`. Chips are the **only** surface where tags appear on this page (Q1 reversal).
+   - **Syndication block** — when `article.devtoUrl` is present: `Eyebrow` reading `// elsewhere`, then an `ArrowLink` to the dev.to mirror reading `also on dev.to`. Omitted entirely for posts that never crossposted.
+   - **Bottom return** — `ArrowLink` `direction="back"` reading `back to articles`, sitting in a `pb-12` block so the last interactive element clears the footer border by a comfortable margin.
+6. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the `<article>` element. Carries `headline`, `description`, `datePublished`, `dateModified`, `author`, `url`, `image` (absolute `ogImage`), `keywords` (tags joined by `, `), `wordCount`, `timeRequired` (`PT{readingTime}M`), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/articles` Blog). The serialized JSON escapes any literal `</script>` substring (defensive — frontmatter strings can in principle contain it).
+
+### Key interactions
+
+- **Both return ArrowLinks** carry the standard `direction="back"` chevron-nudge on hover.
+- **Stipple cover** loops at the framerate configured in the permalink params and pauses under `prefers-reduced-motion: reduce` (the StippleArt component handles this internally).
+- **Code blocks** show a `CopyButton` on hover/focus that toasts on success — no separate visible toast tray, the button itself swaps label.
+- **InlineLink prose links** use the prose-link treatment (color lift + underline on hover/focus), not the brand-emphasis `text-accent-strong` tone.
+
+### Mobile
+
+- ≤ 760px: identity cluster stays full-width within `--prose-w-wide`; cover-art frame swaps to `4 / 3` aspect ratio (set in `globals.css`) so portrait-oriented phones don't get a sliver of dot field.
+- ≤ 480px: header stacks per the shared shell. Body prose stays at `max-w-prose-wide` (which naturally narrows to viewport width minus shell padding); code blocks scroll horizontally rather than wrapping; tables become scrollable in their wrapping container.
+
+### Accessibility
+
+- Document outline: `page-h1 (article title) → article-prose headings`. The eyebrow is a `<p>`, not a heading. The cover-art section is named with `aria-label`, never a visible h2.
+- Cover-art `<section aria-label="Cover art">` so screen readers can skip the stipple field; the `<StippleArt>` itself is decorative.
+- The two `ArrowLink direction="back"` instances are both reachable in the tab order — duplication is intentional (top for short-attention exit, bottom for end-of-read return).
+- Code-block `CopyButton` is a real `<button>` with `aria-live` feedback for the copy result, focusable from keyboard.
+- JSON-LD is invisible to AT (script-typed) but improves rich-result rendering and link previews — required by `architecture.md` §7.
+- `<time dateTime>` carries the machine-readable ISO date; the visible string is human-formatted (`formatArticleDate`).
+- Focus order: skip-link → wordmark → 5 nav links → top back-link → any cover-art links (none by default — `link="none"`) → in-prose links + code-block copy buttons in DOM order → tag chips (non-interactive, skipped) → syndication arrow → bottom back-link → footer links.
+
+### Sources
+
+- Article record: `articlesRepository.getBySlug(slug)` (Velite-compiled MDX from `content/articles/*.mdx`).
+- Compiled MDX body: `article.body` (function-body string) is `run()` through `@mdx-js/mdx` at request time — build-time-trusted input, not user input.
+- Frontmatter schema (title, summary, publishedAt, updatedAt, readingTime, wordCount, tags, devtoUrl, coverArt, ogImage): see `architecture.md` and `articles-decision-log.md` §4.
 
 ---
 

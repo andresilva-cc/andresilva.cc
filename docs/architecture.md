@@ -12,7 +12,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 - **Purpose**: Personal site — home, about, career, projects, and articles authored in the repo.
 - **Shape**: Next.js App Router app, Server Components by default, with four `'use client'` islands: `nav.tsx` (route-aware active highlighting), `stipple-art.tsx` (loads the external ASCII-art Web Component), `mdx/youtube-swap.tsx` (click-to-load YouTube embed inside article prose), and `mdx/copy-button.tsx` (code-block copy button with local clipboard state).
 - **Visual reference**: the shipped code is the source of truth — the token block in `src/styles/globals.css` and the components in `src/components/`, live-rendered at the `/design-system` route. `docs/redesign-log.md` is the decision log.
-- **Data**: Content is either hard-coded in "static" repositories or authored as MDX files in `src/content/articles/` and compiled at build time by Velite. The site is the canonical home for articles; dev.to is a syndicated mirror (with `canonical_url` pointing back here). There is no database, no auth, no backend of our own, and no user-generated content.
+- **Data**: Content is either hard-coded in "static" repositories or authored as MDX files in `src/content/articles/` and compiled at build time by Velite. The dev.to integration has been removed — `ForemArticlesRepository` and `axios` are no longer in the codebase. The site is the canonical home for articles; dev.to is a syndicated mirror (with `canonical_url` pointing back here). There is no database, no auth, no backend of our own, and no user-generated content.
 - **Deployment**: Vercel, auto-deploy from `main`.
 
 > Articles content pipeline: see `docs/articles-decision-log.md` for the rationale behind the MDX-in-repo design (collection schema, OG image generation, RSS, JSON-LD, content migration).
@@ -89,8 +89,11 @@ andresilva.cc/
 │   │   └── mdx/                   # custom MDX components used in article prose
 │   │       ├── youtube.tsx        # server component — façade + noscript iframe
 │   │       ├── youtube-swap.tsx   # 'use client' island — click-to-load swap
-│   │       ├── image-mdx.tsx      # wraps next/image with Velite-emitted width/height
-│   │       └── pre-shiki.tsx      # styled <pre> wrapper around rehype-pretty-code output
+│   │       ├── figure.tsx         # numbered figure (next/image + caption)
+│   │       ├── figure-caption.tsx # shared caption renderer for Figure + YouTube
+│   │       ├── image-mdx.tsx      # bare flush image for the ![]() MDX path
+│   │       ├── pre-shiki.tsx      # styled <pre> wrapper around rehype-pretty-code output
+│   │       └── copy-button.tsx    # 'use client' island — code-block copy button
 │   ├── content/
 │   │   └── articles/              # authored MDX, one folder per article (slug = folder)
 │   │       └── <slug>/
@@ -134,7 +137,7 @@ Path alias: `@/*` resolves to `src/*`.
 ### Role of each top-level `src/` directory
 
 - **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` is a static Route Handler that lives outside the `(site)` group because it returns XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
-- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article prose (`YouTube`, `ImageMdx`, `PreShiki`).
+- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`).
 - **`src/content/`** — Authored content. Today, only `articles/<slug>/index.mdx` — one folder per article, with optional co-located `images/`. Velite reads this tree at build time. See §7.
 - **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency. Four modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatArticleDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), and `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta).
 - **`src/repositories/`** — Data-access seam. `index.ts` exports the `getRepositories()` factory; interfaces at the top level; concrete implementations under `implementations/`. See §7.
@@ -173,11 +176,11 @@ Pages and structural components stay server-rendered. Exactly four files carry `
 - **`mdx/youtube-swap.tsx`** — the click-to-load swap for in-prose `<YouTube />` embeds. The outer `<YouTube />` component is a Server Component that renders a static thumbnail façade plus a `<noscript>` iframe fallback; this small island only owns the post-click state that swaps the façade for the live iframe. The YouTube embed JS itself is never loaded until the user clicks.
 - **`mdx/copy-button.tsx`** — code-block copy button; owns local `copied` state and the clipboard API call, revealed on `group-hover/pre`.
 
-Everything else — header, footer, page heads, section heads, project cards, role cards, article cards, tags, status dots, link arrows, and the `ImageMdx` / `PreShiki` / outer `YouTube` MDX components — is a Server Component.
+Everything else — header, footer, page heads, section heads, project cards, role cards, article cards, tags, status dots, link arrows, and the `ImageMdx` / `PreShiki` / outer `YouTube` / `Figure` / `FigureCaption` MDX components — is a Server Component.
 
 ### Article body rendering
 
-Article bodies are compiled to a function-body string by Velite at build time (via `@mdx-js/mdx`'s `compile`). At request time, `/articles/[slug]/page.tsx` calls `@mdx-js/mdx`'s `run()` against the string, with `react/jsx-runtime` passed in, and renders the resulting default export through the page's MDX components map (`YouTube`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`). Because the body string is build-time output — never runtime user input — `run()` is not dynamic code execution in the security sense; it is the standard MDX runtime pattern.
+Article bodies are compiled to a function-body string by Velite at build time (via `@mdx-js/mdx`'s `compile`). At request time, `/articles/[slug]/page.tsx` calls `@mdx-js/mdx`'s `run()` against the string, with `react/jsx-runtime` passed in, and renders the resulting default export through the page's MDX components map (`YouTube`, `Figure`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`). `PreShiki` mounts the `CopyButton` client island internally — the components map only allowlists the elements authors can name. Because the body string is build-time output — never runtime user input — `run()` is not dynamic code execution in the security sense; it is the standard MDX runtime pattern.
 
 The article page also embeds a `BlogPosting` JSON-LD `<script type="application/ld+json">` (headline, description, dates, author, URL, image, keywords, `wordCount`, `timeRequired`, `inLanguage`, `isPartOf`) — Server Component, no client overhead.
 
@@ -198,7 +201,7 @@ The token block is the canonical token contract and covers:
 - **Semantic colors** — `base` (background), `surface-2` (raised surface), `fg` family (`hi`, `mid`, `lo` for high/mid/low-emphasis text), `accent` family (`accent`, `accent-hi`, `accent-mute`, `accent-tint`), `rule` family (`rule`, `rule-2` for dividers).
 - **Type scale** — display, h1, h2, h3, body, meta, micro.
 - **Spacing scale** — Tailwind's default 4px-based scale (`p-1` through `p-20`) covers every spacing value the design uses, so no custom `--spacing-*` tokens are registered. Component-specific layout values that don't fit the global spacing scale live as bespoke `@theme` tokens — the fixed-column grid templates (`--grid-template-columns-role` at `183px 1fr` for career role date columns, plus `--grid-template-columns-article` and `--grid-template-columns-article-card`). The hero-art box dimensions are raw CSS variables in `:root` (`--hero-art-w` etc.), consumed via `var()` — the embed needs explicit sizing Tailwind has no clean namespace for. One-off per-component values (e.g. the 2px vertical padding on chips, the 88px right-padding clearance on featured project cards) are expressed inline with Tailwind utilities (`py-0.5`, `pr-22`) rather than promoted to tokens.
-- **Prose widths** — `--max-width-prose-narrow` (56ch), `--max-width-prose-bio` (60ch), `--max-width-prose-wide` (68ch), `--max-width-prose-card` (38ch).
+- **Prose widths** — `--max-width-prose-narrow` (56ch), `--max-width-prose-bio` (60ch), `--max-width-prose-wide` (68ch), `--max-width-prose-figure` (80ch — wider than body prose so diagrams can breathe past the text column), `--max-width-prose-card` (38ch).
 - **Photo filters** — `photo-filter` (primary) + `photo-filter-soft` (touch-device fallback for the about portrait).
 - **Motion** — `ease-out`, `ease-in`, `d-fast` (120ms), `d-mod` (200ms).
 - **Font families** — `ff-mono` (JetBrains Mono) and `ff-display` (VT323), wired into Tailwind's font family classes via the CSS variables exposed by `next/font`.
@@ -221,14 +224,14 @@ Tokens are documented (with names, intended use, and contrast notes) in `docs/de
 
 ## 6. Component Vocabulary
 
-The component layer is a vocabulary of roughly seventeen components, each a single visual concept:
+The component layer is a vocabulary of roughly 24 components, each a single visual concept:
 
 - **Layout chrome**: `header`, `footer`, `wordmark`, `nav` (route-aware client component), `skip-link`.
 - **Page structure**: `page-head`, `section-head`, `eyebrow`, `grid-frame`.
 - **Inline primitives**: `tag` / `badge`, `status-dot`, `link-arrow`, `button-cta`.
-- **Cards & rows**: `row` (home Latest), `project-card`, `role-card`, `article-entry`.
+- **Cards & rows**: `row` (home Latest), `project-card`, `role-card`, `article-card`.
 - **Media**: `photo-wrap` (about portrait with the filter token), `hero-art` / `stipple-art` (the ASCII-art embed — home hero + article thumbnails).
-- **MDX in-prose components** (live under `src/components/mdx/`, used only inside article bodies): `youtube` (server façade with `<noscript>` iframe) + `youtube-swap` ('use client' click-to-load island), `image-mdx` (wraps `next/image` with Velite-emitted width/height/blur), `pre-shiki` (styled `<pre>` wrapper around `rehype-pretty-code`'s output). The MDX components map in `[slug]/page.tsx` is the allowlist — authors can only use components named there.
+- **MDX in-prose components** (live under `src/components/mdx/`, used only inside article bodies): `youtube` (server façade with `<noscript>` iframe) + `youtube-swap` ('use client' click-to-load island), `figure` (numbered diagram — `next/image` + `FigureCaption`, falls back to a plain `<img>` when Velite emits no dimensions for an absolute-URL source), `figure-caption` (shared caption renderer powering both `<Figure>` and `<YouTube>`'s figure mode), `image-mdx` (bare flush image for the `![]()` markdown path — `next/image` with Velite-emitted dimensions, no caption; absolute-URL fallback as `<img>`), `pre-shiki` (styled `<pre>` wrapper around `rehype-pretty-code`'s output; mounts `CopyButton` internally), `copy-button` ('use client' code-block copy island, revealed on `group-hover/pre`). The MDX components map in `[slug]/page.tsx` is the allowlist (`YouTube`, `Figure`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`) — authors can only use components named there.
 
 The component file listing in `src/components/` is the authoritative inventory; the `/design-system` route renders each one live as its visual contract.
 
@@ -288,11 +291,12 @@ src/content/articles/<slug>/index.mdx       (authored source)
 LocalArticlesRepository (sync)  ──▶  /articles, /articles/[slug], /articles/rss.xml, sitemap
 ```
 
-- **Velite** runs at build time, driven by `velite.config.ts`. The `article` collection (`pattern: 'articles/**/index.mdx'`) validates frontmatter against a Zod schema (`title`, `summary`, `publishedAt`, optional `updatedAt`, `tags`, optional `devtoUrl`, optional `coverArt`), compiles the MDX body to a function-body string (via `@mdx-js/mdx`), runs `rehype-pretty-code` with the custom `brutalist-mono` Shiki theme over fenced code blocks, and emits derived fields in `transform()`: `slug` (leaf folder name, validated against a kebab-case regex), `wordCount`, `readingTime` (220 WPM, min 1), and `ogImage` (`/og/articles/<slug>.png`). GFM (tables, task lists, strikethrough, autolinks) is enabled via Velite's built-in default — no explicit `remark-gfm` plugin entry.
+- **Velite** runs at build time, driven by `velite.config.ts`. The `article` collection (`pattern: 'articles/**/index.mdx'`) validates frontmatter against a Zod schema (`title`, `summary` (max 200 chars), `publishedAt`, optional `updatedAt`, `tags`, optional `devtoUrl`, optional `coverArt: { params: string }` — a raw stipple-art param string consumed by `<StippleArt>` on the article page and the article-card thumbnail), compiles the MDX body to a function-body string (via `@mdx-js/mdx`), runs `rehype-pretty-code` with the custom `brutalist-mono` Shiki theme over fenced code blocks, and emits derived fields in `transform()`: `slug` (leaf folder name, validated against a lowercase kebab-case regex with a 60-char cap), `wordCount`, `readingTime` (220 WPM, min 1), and `ogImage` (`/og/articles/<slug>.png`). GFM (tables, task lists, strikethrough, autolinks) is enabled via Velite's built-in default — no explicit `remark-gfm` plugin entry. `rehype-unwrap-images` is registered first to strip the wrapping `<p>` that MDX generates around standalone images so `ImageMdx` can render as a block-level element without invalid nesting.
 - **Velite's asset handler** copies MDX-referenced images (e.g. `./images/diagram.png`) into `public/static/` with content-hashed filenames, rewrites the URLs in the emitted body, and threads width/height/blurDataURL through the schema. `ImageMdx` consumes those dimensions when mapping `<img>` to `next/image`.
 - **`next.config.mjs`** calls `await build({ silent: true })` at the top level (gated on `NODE_ENV !== 'test'`), so `.velite/` is populated before any module imports from `@/.velite`. The TS path alias `@/.velite` is configured in `tsconfig.json`.
 - **Canonical URLs** — every absolute URL emitted by the site (RSS items, sitemap, JSON-LD, OG meta) is built from the `SITE_ORIGIN` constant in `src/lib/config.ts`. There is one canonical origin, defined in one place.
-- **OG images** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then for each article invokes `grafex.render(tools/og-article.tsx, { props })` and writes `public/og/articles/<slug>.png`. The script is idempotent (skip if PNG mtime is newer than the source MDX, the template (`tools/og-article.tsx`), and the generator script itself) and gated by `SKIP_OG_BUILD` — see §11–§12.
+- **OG images (per-article)** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then for each article invokes `grafex.render(tools/og-article.tsx, { props: { title, publishedAt, readingTime, coverArt } })` and writes `public/og/articles/<slug>.png`. The script is idempotent: it skips a PNG when its mtime is newer than the max of the source MDX mtime, the template (`tools/og-article.tsx`) mtime, and the generator script's own mtime — so editing the template or the generator invalidates every PNG on the next run. Gated by `SKIP_OG_BUILD` — see §11–§12.
+- **OG image (home/standard)** — `tools/og.tsx` is the home/site-wide OG card (wordmark + display name + bio paragraph; eyebrow has been dropped to match the home page). **It is not part of the prebuild pipeline.** Regenerating it is a one-shot manual operation (point grafex at `tools/og.tsx` and commit the PNG). The asymmetry is deliberate: the home card changes a few times a year, the per-article card changes on every new article.
 
 ### Data fetching
 
@@ -349,7 +353,7 @@ No other external services (no CMS, no database, no auth provider, no email, no 
 | `pnpm build`       | `next build`                       | Triggers `prebuild` first via npm's lifecycle hook.                                    |
 | `pnpm start`       | `next start`                       |                                                                                        |
 | `pnpm lint`        | `eslint .`                         |                                                                                        |
-| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual OG-image regeneration (idempotent — skips PNGs newer than their source MDX, the template (`tools/og-article.tsx`), and the generator script itself).    |
+| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual per-article OG regeneration. Idempotent — skips any PNG whose mtime is newer than the max of its source MDX, the template (`tools/og-article.tsx`), and this generator script. Editing the template or the generator therefore invalidates every PNG. The home/standard OG (`tools/og.tsx`) is **not** wired into this script — regenerate it manually when needed. |
 
 ### ESLint
 

@@ -136,14 +136,6 @@ This domain governs how text is sized, spaced, weighted, and rendered — contra
 
 ---
 
-## Type variant usage
-
-### Rule: `display` is reserved for the home hero name — single instance on `/`
-**Applies to:** All pages and surfaces.
-**Why:** `display` carries the identity gesture (the blinking cursor). Using it elsewhere makes every page compete with Home for the "this is André" moment. Single-page hero titles use `h1`. One `display` per site, on `/`.
-
----
-
 ## Font loading and system architecture (detect-and-conform)
 
 ### Rule: Declare a metric-matched fallback stack

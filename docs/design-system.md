@@ -12,7 +12,7 @@ A **brutalist mono** design system in service of a quiet personal site. The regi
 
 ## Token families
 
-All tokens live in `src/styles/globals.css` — 38 in the `@theme inline` block (registered as Tailwind utilities) plus 5 raw `:root` CSS variables that stay un-tokenized (see "Stay as raw CSS variables" below). **43 primary tokens total.** Count convention: each named CSS variable counts once; the seven `--text-*--line-height` sub-tokens are bundled with their size tokens per Tailwind v4 syntax and are not counted separately.
+All tokens live in `src/styles/globals.css` — 39 in the `@theme inline` block (registered as Tailwind utilities) plus 5 raw `:root` CSS variables that stay un-tokenized (see "Stay as raw CSS variables" below). **44 primary tokens total.** Count convention: each named CSS variable counts once; the seven `--text-*--line-height` sub-tokens are bundled with their size tokens per Tailwind v4 syntax and are not counted separately.
 
 ### Colors
 
@@ -61,7 +61,8 @@ Prose widths cap the readable column in `ch` units (not px) so they survive user
 |---|---|---|
 | `--prose-w-narrow` | 56ch | Statements — short single-unit lines (home hero pitch, education descriptions) |
 | `--prose-w-bio` | 60ch | The About-page biography |
-| `--prose-w` | 68ch | Flowing prose — multi-sentence narrative the reader scans paragraph-by-paragraph (home Now paragraph, career role bullets, article descriptions) |
+| `--prose-w` | 68ch | Flowing prose — multi-sentence narrative the reader scans paragraph-by-paragraph (home Now paragraph, career role bullets, article body) |
+| `--prose-w-figure` | 80ch | Captioned figures (`<Figure>`, `<YouTube>`) — wider than prose so diagrams and embeds breathe without breaking out of the article column |
 | `--prose-w-card` | 38ch | Card descriptions — the card column caps the measure, not the text's role (project cards, 3 per row) |
 
 ### Motion
@@ -146,6 +147,7 @@ The 200ms compound-transition value matches Tailwind's default `duration-200` by
 | `--prose-w-narrow` | `--max-width-prose-narrow` | `max-w-prose-narrow` |
 | `--prose-w-bio` | `--max-width-prose-bio` | `max-w-prose-bio` |
 | `--prose-w` | `--max-width-prose-wide` | `max-w-prose-wide` |
+| `--prose-w-figure` | `--max-width-prose-figure` | `max-w-prose-figure` |
 | `--prose-w-card` | `--max-width-prose-card` | `max-w-prose-card` |
 | (hero plasma) | `--max-width-hero-plasma` | `max-w-hero-plasma` |
 

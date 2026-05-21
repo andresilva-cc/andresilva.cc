@@ -12,7 +12,7 @@ All tokens in `src/styles/globals.css`. Canon: `docs/design-system.md` (authorit
 - Fonts: `--font-mono` (JetBrains Mono), `--font-display` (VT323)
 - Type scale: `--text-micro` through `--text-display` with paired `--line-height` vars
 - Motion: `--ease-out`, `--ease-in`, `--duration-fast` (120ms); 200ms uses Tailwind built-in `duration-200`
-- Prose widths: `--max-width-prose-narrow` (56ch), `--max-width-prose-bio` (60ch, about page), `--max-width-prose-wide` (68ch), `--max-width-prose-card` (38ch)
+- Prose widths: `--max-width-prose-narrow` (56ch), `--max-width-prose-bio` (60ch, about page), `--max-width-prose-wide` (68ch), `--max-width-prose-card` (38ch), `--max-width-prose-figure` (80ch, figures/YouTube)
 - Tracking: `--tracking-eyebrow` (0.16em), `--tracking-badge` (0.12em), `--tracking-button` (0.04em)
 
 Raw `:root` vars (NOT Tailwind utilities): `--photo-filter`, `--photo-filter-soft` (filter chains; no Tailwind namespace).
