@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { FigureCaption } from './figure-caption';
 
 export interface FigureProps {
   caption: string;
@@ -48,11 +49,7 @@ export function Figure({ caption, number, src, alt = '', width, height }: Figure
           className="block w-full h-auto"
         />
       ) }
-      <figcaption className="mt-3 text-sm font-mono text-left">
-        <span className="text-accent">{ `Fig. ${number} —` }</span>
-        { ' ' }
-        <span className="text-fg-muted">{ caption }</span>
-      </figcaption>
+      <FigureCaption number={number} caption={caption} />
     </figure>
   );
 }

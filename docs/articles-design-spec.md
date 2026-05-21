@@ -198,7 +198,7 @@ Below the head's hairline, above the body's hairline. Within the `max-w-prose-wi
 
 ### 3.4 Component
 
-The same `<stipple-art>` web component (`src/components/stipple-art.tsx`) used in the article card and the home hero. `config` is passed verbatim from `article.coverArt.params`. The `preset` field is decorative-only — it's already embedded as `p=...` inside `params`.
+The same `<stipple-art>` web component (`src/components/stipple-art.tsx`) used in the article card and the home hero. `config` is passed verbatim from `article.coverArt.params`; the `params` string is the engine's full input.
 
 ### 3.5 Animation
 

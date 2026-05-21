@@ -6,7 +6,7 @@ export function PrinciplesBand() {
     <section id="principles" aria-labelledby="principles-h" className="py-8 border-b border-rule">
       <SectionHead eyebrow="// 01 / what we won&#x2019;t compromise on" title="Design principles" id="principles-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
-        Fourteen rules. Each one is load-bearing &mdash; removing it would compromise either consistency,
+        Nineteen rules. Each one is load-bearing &mdash; removing it would compromise either consistency,
         accessibility, or affordance hygiene. They override local taste.
       </Text>
       <div className="mt-4">
@@ -305,7 +305,7 @@ export function PrinciplesBand() {
           </Text>
         </div>
 
-        <div className="py-5 border-b border-rule last:border-b-0">
+        <div className="py-5 border-b border-rule">
           <Text variant="body" as="p" className="font-semibold text-fg m-0">
             <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">14</Text>
             Inline prose links default to
@@ -334,6 +334,143 @@ export function PrinciplesBand() {
             <code className="text-accent">text-accent</code>
             {' '}
             directly to prose anchors at rest.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">15</Text>
+            Prose measure follows the
+            {' '}
+            <span className="text-accent">text&#x2019;s role</span>
+            , not its font size.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            A short terminal identity line meant to land as a single unit takes
+            {' '}
+            <code className="text-accent">max-w-prose-narrow</code>
+            {' '}
+            (56ch); multi-sentence narrative takes
+            {' '}
+            <code className="text-accent">max-w-prose-wide</code>
+            {' '}
+            (68ch); the About biography takes
+            {' '}
+            <code className="text-accent">max-w-prose-bio</code>
+            {' '}
+            (60ch); a card description takes
+            {' '}
+            <code className="text-accent">max-w-prose-card</code>
+            {' '}
+            (38ch) because the card column caps it; a figure caps at
+            {' '}
+            <code className="text-accent">max-w-prose-figure</code>
+            {' '}
+            (80ch). Two body-text blocks at different widths is a considered signal that they have different jobs, not drift.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">16</Text>
+            Section heads delimit
+            {' '}
+            <span className="text-accent">subdivisions</span>
+            , not pages.
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            A
+            {' '}
+            <code className="text-accent">&lt;SectionHead&gt;</code>
+            {' '}
+            (eyebrow + h2) is used only on pages with two or more content sections. A single-section page
+            (Career, Projects, Articles) goes straight from the
+            {' '}
+            <code className="text-accent">PageHead</code>
+            {' '}
+            h1 into its content &mdash; a lone h2 that duplicates the h1 is a WCAG 2.4.6 regression.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">17</Text>
+            <code className="text-accent">display</code>
+            {' '}
+            variant is
+            {' '}
+            <span className="text-accent">reserved for the home hero</span>
+            {' '}
+            &mdash; one instance on
+            {' '}
+            <code className="text-accent">/</code>
+            .
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Single-page hero titles (articles, about, projects) use the
+            {' '}
+            <code className="text-accent">h1</code>
+            {' '}
+            variant instead.
+            {' '}
+            <code className="text-accent">display</code>
+            {' '}
+            carries the identity gesture (the blinking cursor); applying it elsewhere makes every page compete with Home for the &#x201C;this is Andr&#xe9;&#x201D; moment.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">18</Text>
+            Captioned-figure surfaces
+            {' '}
+            <span className="text-accent">never carry a hairline frame</span>
+            .
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            Applies to
+            {' '}
+            <code className="text-accent">&lt;Figure&gt;</code>
+            ,
+            {' '}
+            <code className="text-accent">&lt;YouTube&gt;</code>
+            , and any future captioned-figure component. The
+            {' '}
+            <code className="text-accent">FigureCaption</code>
+            {' '}
+            row is the only thing that distinguishes them from prose; a hairline around the figure doubles the boundary and demotes it to &#x201C;content card&#x201D; &mdash; the editorial-magazine register this system rejects.
+          </Text>
+        </div>
+
+        <div className="py-5 border-b border-rule last:border-b-0">
+          <Text variant="body" as="p" className="font-semibold text-fg m-0">
+            <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">19</Text>
+            Image-container framing is determined by whether
+            {' '}
+            <span className="text-accent">prose introduces the surface</span>
+            .
+          </Text>
+          <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
+            <em>Identity surfaces</em>
+            {' '}
+            (hero art, stipple article cover, stipple card thumbnails, About portrait) carry
+            {' '}
+            <code className="text-accent">border border-rule</code>
+            {' '}
+            &mdash; no surrounding prose explains them; the hairline says &#x201C;deliberate object, not stray asset.&#x201D;
+            {' '}
+            <em>Referential surfaces</em>
+            {' '}
+            (
+            <code className="text-accent">&lt;Figure&gt;</code>
+            ,
+            {' '}
+            <code className="text-accent">&lt;YouTube&gt;</code>
+            ,
+            {' '}
+            <code className="text-accent">&lt;ImageMdx&gt;</code>
+            {' '}
+            inside MDX prose) are frameless &mdash; the paragraph before and the caption row already supply the boundary. The test: does running prose introduce this image? Yes &rarr; frameless. No &rarr; hairline.
           </Text>
         </div>
 

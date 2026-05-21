@@ -22,6 +22,12 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Portrait } from '@/components/portrait';
 import { HeroArt } from '@/components/hero-art';
+import { StippleArt } from '@/components/stipple-art';
+import { Figure } from '@/components/mdx/figure';
+import { FigureCaption } from '@/components/mdx/figure-caption';
+import { ImageMdx } from '@/components/mdx/image-mdx';
+import { PreShiki } from '@/components/mdx/pre-shiki';
+import { YouTube } from '@/components/mdx/youtube';
 
 interface DemoProps {
   number: string;
@@ -53,8 +59,8 @@ export function ComponentsBand() {
     <section id="components" aria-labelledby="comp-h" className="py-8 border-b border-rule">
       <SectionHead eyebrow="// 06 / the parts in the kit" title="Components" id="comp-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
-        17 components, all rendered live (no screenshots). Markup is verbatim from the five
-        page files. Where markup includes hard-coded SVG paths or attribute strings, those are
+        24 components, all rendered live (no screenshots). Markup is verbatim from page and
+        article files. Where markup includes hard-coded SVG paths or attribute strings, those are
         reproduced exactly so you can copy them directly from this page&#x2019;s source.
       </Text>
 
@@ -282,6 +288,188 @@ export function ComponentsBand() {
           <div className="w-full">
             <Footer />
           </div>
+        </Demo>
+
+        <Demo number="18" name="StippleArt" api="<StippleArt config=… mode=… />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            React wrapper for the
+            {' '}
+            <code className="text-accent">&lt;stipple-art&gt;</code>
+            {' '}
+            Web Component. Loads the engine once per page from
+            {' '}
+            <code className="text-accent">art.andresilva.cc</code>
+            ; subsequent instances reuse it. Used as the home hero art and as article card thumbnails.
+          </Text>
+          <div className="w-full h-32 border border-rule overflow-hidden">
+            <StippleArt
+              config="p=plasma&palette=acid"
+              mode="always"
+              fit="cover"
+              link="none"
+              className="font-mono text-fg-muted w-full h-full block"
+              style={{ fontSize: '7px', lineHeight: 1 }}
+            />
+          </div>
+        </Demo>
+
+        <Demo number="19" name="FigureCaption" api="<FigureCaption number={N} caption=&quot;…&quot; />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Shared caption renderer used by
+            {' '}
+            <code className="text-accent">&lt;Figure&gt;</code>
+            {' '}
+            and
+            {' '}
+            <code className="text-accent">&lt;YouTube&gt;</code>
+            .
+            {' '}
+            <code className="text-accent">Fig. N</code>
+            {' '}
+            lands in
+            {' '}
+            <code className="text-accent">text-accent</code>
+            ; the em-dash and caption body land in
+            {' '}
+            <code className="text-accent">text-fg-muted</code>
+            {' '}
+            &mdash; accent marks the type, not the separator.
+          </Text>
+          <figure>
+            <FigureCaption number={1} caption="Client-side rendering flow." />
+          </figure>
+        </Demo>
+
+        <Demo number="20" name="Figure" api="<Figure caption=… number={N} src=… />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Flush diagram with numbered caption. No border (rule 18). Capped at
+            {' '}
+            <code className="text-accent">max-w-prose-figure</code>
+            {' '}
+            (80ch). Accepts
+            {' '}
+            <code className="text-accent">src/alt/width/height</code>
+            {' '}
+            as direct props; delegates caption rendering to
+            {' '}
+            <code className="text-accent">&lt;FigureCaption&gt;</code>
+            . The placeholder below shows the layout without a real image asset.
+          </Text>
+          <figure className="my-0 mx-auto w-full max-w-prose-figure">
+            <div className="w-full aspect-video bg-surface border border-rule flex items-center justify-center">
+              <span className="text-meta font-mono text-fg-subtle">image placeholder</span>
+            </div>
+            <FigureCaption number={1} caption="Example diagram caption — rendered by FigureCaption." />
+          </figure>
+        </Demo>
+
+        <Demo number="21" name="ImageMdx" api="<ImageMdx src=… alt=… />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Bare flush image for the
+            {' '}
+            <code className="text-accent">![]() </code>
+            {' '}
+            MDX path. No border, no caption (rule 19 &mdash; referential surface). Uses
+            {' '}
+            <code className="text-accent">next/image</code>
+            {' '}
+            when Velite emits width/height; falls back to a plain
+            {' '}
+            <code className="text-accent">&lt;img&gt;</code>
+            {' '}
+            for external URLs. For captioned diagrams use
+            {' '}
+            <code className="text-accent">&lt;Figure&gt;</code>
+            {' '}
+            instead.
+          </Text>
+        </Demo>
+
+        <Demo number="22" name="YouTube" api="<YouTube id=&quot;…&quot; caption=&quot;…&quot; number={N} />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Click-to-load video embed. Server Component renders a static thumbnail fa&#xe7;ade (LCP-friendly);
+            the
+            {' '}
+            <code className="text-accent">YouTubeSwap</code>
+            {' '}
+            client island swaps in the
+            {' '}
+            <code className="text-accent">&lt;iframe&gt;</code>
+            {' '}
+            on click &mdash; no YouTube JS (~600 kB) loads before interaction.
+            Thumbnail is grayscale at rest; dissolves to color on hover (motion-safe gated).
+            No border (rule 18). Optional
+            {' '}
+            <code className="text-accent">caption</code>
+            {' '}
+            +
+            {' '}
+            <code className="text-accent">number</code>
+            {' '}
+            props render a
+            {' '}
+            <code className="text-accent">&lt;FigureCaption&gt;</code>
+            {' '}
+            row beneath.
+          </Text>
+          <div className="w-full max-w-prose-wide">
+            <YouTube id="dQw4w9WgXcQ" caption="Demo embed — click to load the iframe." number={1} />
+          </div>
+        </Demo>
+
+        <Demo number="23" name="PreShiki" api="<PreShiki data-language=&quot;…&quot;>…</PreShiki>">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Styled
+            {' '}
+            <code className="text-accent">&lt;pre&gt;</code>
+            {' '}
+            wrapper emitted by
+            {' '}
+            <code className="text-accent">rehype-pretty-code</code>
+            . Renders a language label strip above the block when
+            {' '}
+            <code className="text-accent">data-language</code>
+            {' '}
+            is present. Extracts plain-text code at render time and passes it to the
+            {' '}
+            <code className="text-accent">CopyButton</code>
+            {' '}
+            client island &mdash; no DOM traversal on the client.
+          </Text>
+          <div className="w-full">
+            <PreShiki data-language="ts">
+              <code>
+                {'const greet = (name: string) => `Hello, ${name}!`;\nconsole.log(greet("André"));'}
+              </code>
+            </PreShiki>
+          </div>
+        </Demo>
+
+        <Demo number="24" name="CopyButton" api="<CopyButton code=&quot;…&quot; />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Client island embedded inside
+            {' '}
+            <code className="text-accent">&lt;PreShiki&gt;</code>
+            . Writes to
+            {' '}
+            <code className="text-accent">navigator.clipboard</code>
+            ; swaps label from
+            {' '}
+            <code className="text-accent">copy</code>
+            {' '}
+            to
+            {' '}
+            <code className="text-accent">copied</code>
+            {' '}
+            for 1500ms. A
+            {' '}
+            <code className="text-accent">sr-only role=&quot;status&quot;</code>
+            {' '}
+            span announces the change to screen readers. Revealed on
+            {' '}
+            <code className="text-accent">group-hover/pre</code>
+            ; silent-fails if clipboard API is unavailable. Hover over the code block above (Demo 23) to see it.
+          </Text>
         </Demo>
       </div>
     </section>

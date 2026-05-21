@@ -5,53 +5,41 @@ export interface ImageMdxProps {
   alt?: string;
   width?: number;
   height?: number;
-  title?: string;
 }
 
 /*
- * ImageMdx — wraps next/image for use inside MDX article bodies.
+ * ImageMdx — bare flush image for the ![]() MDX path.
  *
- * Consumes the width/height metadata that Velite's asset pipeline emits
- * when processing relative image references (e.g. ./images/diagram.png).
- * Adds a 1px hairline border per design spec §4.9.
+ * Consumes width/height metadata emitted by Velite's asset pipeline and
+ * renders via next/image. Falls back to a plain <img> for external URLs
+ * where Velite emits no dimensions.
  *
- * Hover: no grayscale reveal. Article images are content illustrations,
- * not identity photos — they render at full strength, static. (§4.9)
- *
- * When width/height are not available (rare — an absolute-URL image with
- * no dimensions), falls back to a plain <img> with the same classes.
+ * No border, no caption. For captioned, numbered figures, use <Figure>.
  */
-export function ImageMdx({ src, alt = '', width, height, title }: ImageMdxProps) {
-  const caption = title;
+export function ImageMdx({ src, alt = '', width, height }: ImageMdxProps) {
   const hasSize = Boolean(width && height);
 
+  if (hasSize) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className="block my-6 max-w-full w-full h-auto"
+      />
+    );
+  }
+
   return (
-    <figure className="my-6">
-      { hasSize && (
-        <Image
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className="block max-w-full w-full h-auto border border-rule"
-        />
-      ) }
-      { !hasSize && (
-        // Plain <img> fallback for external/absolute URLs where Velite does not
-        // emit width/height metadata. This bypasses next/image's host allowlist —
-        // acceptable under the single-author trust model (all MDX is authored content).
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt={alt}
-          className="block max-w-full w-full h-auto border border-rule"
-        />
-      ) }
-      { caption && (
-        <figcaption className="mt-2 text-meta text-fg-subtle italic font-mono">
-          { caption }
-        </figcaption>
-      ) }
-    </figure>
+    // Plain <img> fallback for external/absolute URLs where Velite does not
+    // emit width/height metadata. Bypasses next/image host allowlist —
+    // acceptable under the single-author trust model (all MDX is authored content).
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      className="block my-6 max-w-full w-full h-auto"
+    />
   );
 }

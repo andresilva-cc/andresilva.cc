@@ -171,6 +171,8 @@ Article diagrams render via `<Figure caption="..." number={N} src="./diagram.png
 
 The previous spec (hairline border + 12px `--bg-elevated` mat) was defensive — it existed to neutralize old purple-card diagrams from the dev.to era. André's call: don't retrofit old diagrams; design the figure pattern for new diagrams instead. The mat became ornament fighting the aesthetic.
 
+**Caption unification (2026-05-20):** The `Fig. N — caption` treatment is now powered by a shared `FigureCaption` component consumed by both `<Figure>` and `<YouTube>`. Treating diagrams, screenshots, and video demos identically — they all serve the same role as referenceable, captioned, numbered exhibits in technical articles. The em-dash sits with the caption body (`fg-muted`), not the label — accent is the categorical signal ("Fig. N"), the dash is structural punctuation like the `·` middot in metadata rows. The prior ImageMdx caption path (`![](… "caption")` italic gray) is deprecated; plain `![]()` falls through to a bare flush image (no border, no caption).
+
 ### 3.10 Diagram-palette policy + grayscale-on-hover rule
 
 **Diagram palette (drawing-tool policy, not code):** going forward, diagrams are drawn **grayscale + one semantic accent chosen per-diagram** — the accent communicates something specific in *that* diagram (the failure node, the active path, the cache hit branch). Reasons: (1) site redesigns recur, (2) diagrams get reshared in contexts where site palette is gone (RSS, dev.to crossposts, screenshots), (3) figure-as-figure is a stronger mental model than figure-as-page-element. Old diagrams (the dev.to-era purple cards) are grandfathered — no retrofit.
@@ -196,8 +198,7 @@ updatedAt: 2024-09-02       # optional
 tags: [React, performance, profiling]
 devtoUrl: https://dev.to/andresilva-cc/how-i-achieved-a-74-performance-increase-on-a-page-2gjm   # optional — populated once the syndicated mirror exists
 coverArt:                   # optional — per-article stipple-art config; see §4.2
-  preset: flow
-  params: pathCount=70&pathLength=140&trail=0.97&speed=2&noiseScale=0.8&ramp=block&palette=mono
+  params: p=flow&pathCount=70&pathLength=140&trail=0.97&speed=2&noiseScale=0.8&ramp=block&palette=mono
 ---
 ```
 
@@ -229,11 +230,10 @@ Today, the per-article stipple config is keyed by dev.to slug in `articles/page.
 
 ```yaml
 coverArt:
-  preset: flow                # one of: flow | donut | (extensible)
-  params: pathCount=70&pathLength=140&trail=0.97&speed=2&noiseScale=0.8&ramp=block&palette=mono
+  params: p=flow&pathCount=70&pathLength=140&trail=0.97&speed=2&noiseScale=0.8&ramp=block&palette=mono
 ```
 
-The `preset` field is decorative — currently every stipple config begins with `p=flow` or `p=donut`. Keeping it explicit at the top level (rather than parsing the `params` string) makes the schema human-scanable and lets us validate the preset name later if we want.
+`params` is the full stipple permalink hash consumed by the Web Component via its `config` attribute. Originally included a `preset` field for future validation; removed 2026-05-20 as unused — `params` is the single source the engine consumes via its `config` attribute.
 
 `coverArt` is **optional**. Articles without `coverArt` render as a single-column card (the design system already handles this — see `article-card.tsx` `hasIllustration` branch).
 
@@ -253,7 +253,6 @@ const article = defineCollection({
     tags: s.array(s.string()),  // brand-cased verbatim (e.g. "LLMs", "Rust", "Next.js"); no case transform
     devtoUrl: s.string().url().optional(),
     coverArt: s.object({
-      preset: s.enum(['flow', 'donut']),
       params: s.string(),
     }).optional(),
     // derived:
@@ -380,7 +379,7 @@ Add a `prebuild` script in `package.json`:
 }
 ```
 
-`scripts/og/generate.mjs` iterates `src/content/articles/*/index.mdx`, parses frontmatter, invokes grafex's API with the article-specific template (see §6.3), and writes `public/og/articles/<slug>.png`. The script is idempotent — it skips slugs whose PNG already exists and whose mtime is newer than the source MDX. This makes local dev fast and Vercel builds not-pathologically-slow.
+`scripts/og/generate.mjs` iterates `src/content/articles/*/index.mdx`, parses frontmatter, invokes grafex's API with the article-specific template (see §6.3), and writes `public/og/articles/<slug>.png`. The script is idempotent — it skips slugs whose PNG already exists and whose mtime is newer than the source MDX, the OG template (`tools/og-article.tsx`), and the generator script itself. Changing the template or generator invalidates all PNGs on the next build. This makes local dev fast and Vercel builds not-pathologically-slow.
 
 Vercel runs `pnpm install` (which triggers grafex's postinstall — webkit downloads), then `pnpm build` (which triggers `prebuild` → `node scripts/og/generate.mjs`), then `next build`. End-to-end OG generation is part of the deploy.
 
@@ -442,6 +441,41 @@ This is a brief for the engineer (or designer, if pixel-perfect is wanted), not 
 - No `summary` rendered in v1 — title + meta line is enough for an OG card. Reserve summary for the JSON-LD / `<meta name="description">` slot.
 
 (The designer can refine — but this is shippable as-is.)
+
+#### Revised 2026-05-20 — designer audit, Path B convergence
+
+The original spec above was the v1 implementation brief. A designer audit on 2026-05-20 identified three issues:
+
+1. The length-based `titleFontSize` conditional (96/80/68px thresholds) failed on a 51-char title that wrapped to 3 lines and collided with the fixed `top:480px` meta line.
+2. Tags in the meta line had no truncation — long tag lists overflowed the canvas.
+3. The dot-grid SVG motif was a deterministic placeholder that was identical across all articles and didn't differentiate them.
+
+**Resolution — Path B (converge article OG toward standard OG):** The standard `tools/og.tsx` was canonical. The article OG was revised to match its proportions rather than pulling the standard toward a unique article style.
+
+**New spec (implemented 2026-05-20):**
+
+- Wordmark: `22px` (was `24px`, matches standard OG)
+- Eyebrow: `// article` at `17px` (was `18px`, matches standard OG scale; lowercase, no number)
+- Title: single fixed `80px` VT323, width `1072px` (full bleed = 1200 − 64 − 64), 2-line CSS clamp (`-webkit-line-clamp: 2`). No length-based conditional. (Originally specced at 96px; further refined after rendered output showed a real 51-char title was truncated — 80px gives ~22 mono-ch/line × 2 lines, comfortably fitting ~44–60 chars.)
+- Meta: `date · readingTime` only. Tags dropped — they overflowed with no truncation. Both segments render in `#9DAA95` (fg-muted, matching standard OG's bio line). Separator `·` at `#7E8E76`.
+- Layout: content cluster (eyebrow + title + meta) in a flex-column container starting at `top:200px` with `gap:24px`. Meta position is relative to the title block, not fixed absolute — a clamped 2-line title can never collide with it.
+- Motif: dot-grid SVG deleted entirely. No right-side decoration. `coverArt` prop retained in the `Props` interface (the generator still passes it) but unused visually.
+
+The result shares two accent moments with the standard OG (eyebrow lime + title lime). No third accent zone.
+
+#### Further revised 2026-05-20 — designer final verdicts
+
+1. **Article OG title color: lime → fg.** Title changed from `#C8FF3D` to `#D7E5D0`. The single-accent-per-surface rule wins: the `// article` eyebrow is the categorical signal (what distinguishes this card type), so it keeps accent; the title is the specific piece identifier, rendered in fg. The cross-card asymmetry is correct — standard card accent = name, article card accent = eyebrow.
+
+2. **Article OG layout: top-anchored → bottom-anchored.** Meta baseline pinned at y = 630 − 64 = 566. The content cluster (eyebrow → title → meta) is a flex-column at `bottom: 64px`. Short titles leave breathing room above the eyebrow toward the hairline; 2-line titles extend up toward but never cross it. The clamp still fires for longer titles.
+
+3. **Standard OG: eyebrow `// 00 / personal site` dropped.** The live home page renders no eyebrow above the display name — the standard OG eyebrow was an invention. The display name moves up to `top: 200px` (absorbing the freed ~56px slot); the bio stays at `top: 480px`.
+
+**New standing rule:** OG cards are previews of their destinations, not separate compositions. Each OG variant's fidelity to its live destination beats the OG family's internal consistency.
+
+#### Final 2026-05-20 — Layout convergence
+
+Both cards refactored to a mixed positioning model — absolute for header chrome (wordmark + hairline), flex column for content cluster anchored at `top:200`. Shared baseline makes the two cards feel like one system. Article OG reverted from bottom-anchored back to top:200 (the prior bottom-anchor solved the wrong problem; the standard OG's content distributes from top:200 down, not from bottom up). Standard OG bio pulled closer to the display name (`gap:48` instead of the ~280px void left after the eyebrow drop).
 
 ### 6.4 `<meta>` and Twitter Card wiring
 
@@ -788,7 +822,7 @@ The following decisions evolved after the article page shipped, based on a struc
 | Velite stops being actively maintained | Low | Medium | The data is plain MDX on disk; replacing Velite is a one-file rewrite (the pipeline) and a schema migration. No content lock-in. |
 | MDX bundle size grows as articles ship | Low | Low | Each article is statically rendered; the body's JS surface is whatever components the article uses, no global bundle penalty. |
 | `canonical_url` on dev.to doesn't carry SEO authority | Medium | Medium | This is the rationale for the migration, not a bug — accept that some dev.to-acquired Google ranking will dilute. The strategy doc treats syndication as discovery, not SEO equivalence. |
-| The `coverArt` schema can't express future stipple variants | Low | Low | The `preset` field is `enum` — extend it. The schema migration is purely additive. |
+| The `coverArt` schema can't express future stipple variants | Low | Low | `params` is a free-form query string — new variants just use new param keys. No schema change needed. |
 
 The decision that could come back is **MDX vs Markdown**. If we ship a year of articles without ever using a custom in-prose component besides `<YouTube>`, the MDX overhead (the build pipeline, the typed components map, the `@mdx-js/mdx` dep) was paid for one thing that doesn't strictly need it. The escape route is: keep Velite, swap the `s.mdx()` field to `s.markdown()`. Authors don't notice; the page renderer changes from `<article.body />` to `<div dangerouslySetInnerHTML={{ __html: article.html }} />` (or a remark-react renderer). It's a one-day refactor. The optionality is preserved.
 

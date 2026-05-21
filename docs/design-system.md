@@ -168,7 +168,7 @@ Five tokens are consumed inside component-scoped CSS (in `globals.css`), not as 
 
 ## Component vocabulary
 
-17 components, all rendered live at the `/design-system` route. Each one is one line below; see that route for markup and behavior.
+24 components, all rendered live at the `/design-system` route. Each one is one line below; see that route for markup and behavior.
 
 1. **Skip link** — first focusable element; jumps focus to `#main`. Visible only on focus.
 2. **Header bar** — wordmark left, primary nav right; stacks at ≤ 480px (no hamburger).
@@ -187,12 +187,19 @@ Five tokens are consumed inside component-scoped CSS (in `globals.css`), not as 
 15. **Photo wrap** — monochrome photo + a `--color-fg-muted` multiply duotone + a CRT scanline overlay; the tint and scanlines clear on focus/hover to reveal natural colour, soft fallback on touch.
 16. **Hero plasma** — Home only; ASCII plasma field rendered into a `<pre>`, accent chars stand out, static frame under reduced-motion.
 17. **Footer** — single row of lowercase social links separated by `·` dots; thin top border.
+18. **StippleArt** — `<stipple-art>` web component wrapper; renders a parametric ASCII stipple field from a `params` string; used in article covers and the home hero.
+19. **FigureCaption** — numbered figure label row (`Figure N — caption text`) in mono small; shared by `Figure`, `YouTube`, and any future captioned-figure component.
+20. **Figure** — MDX image figure with optional numbered caption; frameless per standing rule 18.
+21. **ImageMdx** — MDX inline image; frameless, full prose width, no caption.
+22. **YouTube** — click-to-load YouTube embed; static thumbnail façade on load (LCP-safe), swapped for `<iframe>` on click; grayscale at rest, color on hover.
+23. **PreShiki** — syntax-highlighted code block rendered by Shiki on the server; includes a `CopyButton` client island.
+24. **CopyButton** — thin client island that copies the adjacent code block's text to the clipboard; accent checkmark confirmation on success.
 
 ---
 
 ## Standing rules
 
-Sixteen load-bearing rules. Removing any would compromise consistency, accessibility, or affordance hygiene.
+Nineteen load-bearing rules. Removing any would compromise consistency, accessibility, or affordance hygiene.
 
 1. **Accent lands on the surface's primary noun.** One rule globally; only the referent changes per page.
 2. **Chip hover is texture, not affordance.** Border-color nudge only — no fill, no underline. Chips are labels, not buttons.
@@ -211,6 +218,8 @@ Sixteen load-bearing rules. Removing any would compromise consistency, accessibi
 15. **Prose measure follows the text's role, not its font size.** A short terminal identity line meant to land as a single unit (the home hero pitch) takes `--max-width-prose-narrow` (56ch); multi-sentence narrative the reader scans paragraph-by-paragraph (the home Now paragraph, career role bullets) takes `--max-width-prose-wide` (68ch); the About-page biography takes `--max-width-prose-bio` (60ch); a card description takes `--max-width-prose-card` (38ch) because the card's column — not the text's role — caps it. Two body-text blocks set at different widths is a considered signal that the blocks have different jobs, not drift. The hero pitch's narrow measure is contingent on it staying a single statement — if it grows to multiple sentences it changes role and moves to 68ch (the one-sentence constraint itself is a copy rule the copywriter owns).
 16. **Section heads delimit subdivisions, not pages.** A `SectionHead` (eyebrow + h2) is used only on pages with two or more content sections (About). A single-section page (Career, Projects, Articles) goes straight from the `PageHead` h1 into its content; the lone `<section>` is named with `aria-label`, never a visible h2 that would duplicate the h1 (a WCAG 2.4.6 regression). The 404 page is the deliberate exception — it has one section but keeps a `SectionHead` because its h2 carries real, non-duplicating information.
 17. **`display` variant is reserved for the home hero name — one instance on `/`.** Single-page hero titles use the `h1` variant instead. `display` carries the identity gesture (the blinking cursor); applying it elsewhere makes every page compete with Home for the "this is André" moment.
+18. **Captioned-figure surfaces never carry a hairline frame.** This applies to `<Figure>`, `<YouTube>`, and any future captioned-figure component. The caption row (`FigureCaption`) is the only thing that distinguishes them from prose; a hairline around the figure doubles the boundary the content already has and demotes the figure to "content card" — the editorial-magazine register the system rejects.
+19. **Image-container framing is determined by whether prose introduces the surface.** *Identity surfaces* (hero art, stipple article cover, stipple card thumbnails, About profile picture) carry `border border-rule` — no surrounding prose explains them; the hairline says "deliberate object, not stray asset." *Referential surfaces* (`<Figure>`, `<YouTube>`, `ImageMdx` inside MDX prose) are frameless — the paragraph before and the caption row already supply the boundary; a frame would double it. The test: does running prose introduce this image? Yes → frameless. No → hairline.
 
 ---
 
@@ -241,6 +250,6 @@ Additional floor:
 
 ## See also
 
-- `/design-system` route — the live visual reference. 17 components rendered from production code, all tokens, every standing rule.
+- `/design-system` route — the live visual reference. 24 components rendered from production code, all tokens, every standing rule.
 - `docs/redesign-log.md` — the redesign decision log. Rationale and revision history for every token, principle, and component choice.
 - `docs/ui-spec.md` — page-level structure, content sources, and responsive/accessibility annotations.

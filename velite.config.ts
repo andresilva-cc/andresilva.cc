@@ -20,7 +20,6 @@ const article = defineCollection({
       devtoUrl: s.string().url().optional(),
       coverArt: s
         .object({
-          preset: s.enum(['flow', 'donut']),
           params: s.string(),
         })
         .optional(),

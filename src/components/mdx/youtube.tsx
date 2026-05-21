@@ -1,3 +1,4 @@
+import { FigureCaption } from './figure-caption';
 import { YouTubeSwap } from './youtube-swap';
 
 const YOUTUBE_ID_RE = /^[A-Za-z0-9_-]{11}$/;
@@ -5,6 +6,7 @@ const YOUTUBE_ID_RE = /^[A-Za-z0-9_-]{11}$/;
 export interface YouTubeProps {
   id: string;
   caption?: string;
+  number?: number;
 }
 
 /*
@@ -23,10 +25,13 @@ export interface YouTubeProps {
  * Hover: grayscale dissolves over 200ms (motion-safe gated).
  * Click: façade replaced by the real <iframe> (instantaneous swap).
  */
-export function YouTube({ id, caption }: YouTubeProps) {
+export function YouTube({ id, caption, number }: YouTubeProps) {
   if (!id || !YOUTUBE_ID_RE.test(id)) {
     console.warn(`[YouTube] Invalid or missing video id: "${id}". Rendering nothing.`);
     return null;
+  }
+  if (number !== undefined && !caption) {
+    console.warn(`[YouTube] "number" prop provided without "caption" — figure label will not render.`);
   }
 
   const thumbnailSrc = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
@@ -46,11 +51,14 @@ export function YouTube({ id, caption }: YouTubeProps) {
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              className="absolute inset-0 w-full h-full border border-rule bg-canvas"
+              className="absolute inset-0 w-full h-full bg-canvas"
             />
           </div>
-          { caption && (
-            <figcaption className="mt-2 text-meta text-fg-subtle italic font-mono">
+          { caption && number !== undefined && (
+            <FigureCaption number={number} caption={caption} />
+          ) }
+          { caption && number === undefined && (
+            <figcaption className="mt-3 text-sm font-mono text-left text-fg-muted">
               { caption }
             </figcaption>
           ) }
@@ -59,6 +67,7 @@ export function YouTube({ id, caption }: YouTubeProps) {
       <YouTubeSwap
         id={id}
         caption={caption}
+        number={number}
         thumbnailSrc={thumbnailSrc}
         embedSrc={embedSrc}
       />

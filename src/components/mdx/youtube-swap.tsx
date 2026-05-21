@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { FigureCaption } from './figure-caption';
 
 interface YouTubeSwapProps {
   id: string;
   caption?: string;
+  number?: number;
   thumbnailSrc: string;
   embedSrc: string;
 }
@@ -16,8 +18,11 @@ interface YouTubeSwapProps {
  * with a live <iframe> on click. The server component owns all static markup;
  * this component owns only the stateful swap behavior.
  */
-export function YouTubeSwap({ id, caption, thumbnailSrc, embedSrc }: YouTubeSwapProps) {
+export function YouTubeSwap({ id, caption, number, thumbnailSrc, embedSrc }: YouTubeSwapProps) {
   const [active, setActive] = useState(false);
+  if (number !== undefined && !caption) {
+    console.warn(`[YouTubeSwap] "number" prop provided without "caption" — figure label will not render.`);
+  }
   const ariaLabel = caption ? `Play video: ${caption}` : `Play video (YouTube ${id})`;
 
   return (
@@ -29,7 +34,7 @@ export function YouTubeSwap({ id, caption, thumbnailSrc, embedSrc }: YouTubeSwap
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            className="absolute inset-0 w-full h-full border border-rule bg-canvas"
+            className="absolute inset-0 w-full h-full bg-canvas"
           />
         ) }
         { !active && (
@@ -37,7 +42,7 @@ export function YouTubeSwap({ id, caption, thumbnailSrc, embedSrc }: YouTubeSwap
             type="button"
             onClick={() => setActive(true)}
             aria-label={ariaLabel}
-            className="group/yt-play absolute inset-0 w-full h-full border border-rule bg-canvas overflow-hidden cursor-pointer"
+            className="group/yt-play absolute inset-0 w-full h-full bg-canvas overflow-hidden cursor-pointer"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -57,8 +62,11 @@ export function YouTubeSwap({ id, caption, thumbnailSrc, embedSrc }: YouTubeSwap
           </button>
         ) }
       </div>
-      { caption && (
-        <figcaption className="mt-2 text-meta text-fg-subtle italic font-mono">
+      { caption && number !== undefined && (
+        <FigureCaption number={number} caption={caption} />
+      ) }
+      { caption && number === undefined && (
+        <figcaption className="mt-3 text-sm font-mono text-left text-fg-muted">
           { caption }
         </figcaption>
       ) }
