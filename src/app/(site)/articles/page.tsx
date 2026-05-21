@@ -3,7 +3,7 @@ import { Text } from '@/components/text';
 import { ArticleCard } from '@/components/article-card';
 import { ArticleIllustration } from '@/components/article-illustration';
 import { getRepositories } from '@/repositories';
-import { formatArticleDate } from '@/lib/format-date';
+import { formatDate } from '@/lib/format-date';
 import type { Article } from '@/.velite';
 
 export const metadata = {
@@ -40,7 +40,7 @@ export default function Articles() {
             { articles.map((article) => (
               <ArticleCard
                 key={article.slug}
-                date={formatArticleDate(article.publishedAt)}
+                date={formatDate(article.publishedAt)}
                 readingTime={article.readingTime}
                 title={article.title}
                 description={article.summary}

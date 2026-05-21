@@ -1,0 +1,51 @@
+---
+name: project-notes-voice-decisions
+description: Locked decisions for /notes copy — kind taxonomy, title rules, body discipline, anti-patterns
+metadata:
+  type: project
+---
+
+# /notes copy decisions (locked 2026-05-21)
+
+Codified in `docs/copy-guide.md` §7 (microcopy inventory subsection "Notes") and §8 (Notes — authoring rules).
+
+**Why:** New content surface launching alongside Articles. Distinct register: short, unpolished, no scaffolding. Rules guard against drift into "small articles."
+
+**How to apply:** When reviewing or writing note content, the rules below are the source of truth — do not loosen them without a copy-guide update.
+
+## Kind taxonomy — closed set of 4
+
+- `til` — thing learned ("I learned X about Y")
+- `take` — opinion ("I think X about Y")
+- `snippet` — small code fragment with context ("Here’s how to do X")
+- `aside` — meta/site notes, announcements, observations ("By the way…")
+
+Most-specific-fits rule. `aside` is the catch-all only when none of the other three apply. Always lowercase in frontmatter and rendered meta.
+
+## Title rules
+
+- Required, 2–7 words, sentence case, no terminal period.
+- Don't prefix with the kind ("TIL:", "Hot take:") — the badge does that.
+- Readable beats clever.
+
+## Body discipline
+
+- Brevity over completeness. No intro, no transition, no conclusion.
+- First-person `I` is allowed (more freely than About/Career) when subject-less feels stilted.
+- If it needs scaffolding, it's an article — move it.
+
+## Meta line format
+
+`{YYYY.MM.DD} · {kind}` — ISO date period-separated (matches brutalist-mono cadence), middle dot `·` (U+00B7), lowercase mono kind word.
+
+Example: `2026.05.21 · til`
+
+## Empty state
+
+`No notes yet.` — exact match for articles empty-state pattern.
+
+## Detail-page `<title>` divergence from ui-spec
+
+ui-spec.md §Note detail wrote `{note title} | André Silva` (pipe, title-first). I encoded the site-wide convention instead: `André Silva · {note title}` (middle dot, brand-first) per copy-guide §3/§7. If this needs to flip, update both docs together.
+
+Related: [[project_hero_pitch_rule]] (sibling content-surface copy lock).

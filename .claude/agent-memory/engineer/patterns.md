@@ -63,6 +63,20 @@ type: project
 - rehype-pretty-code adds `data-language` to `<pre>` and `data-highlighted-line` to highlighted line spans
 - Shiki theme: pass JSON object directly to `rehype-pretty-code`'s `theme` option (not a string theme name)
 
+## Pagination guard pattern (notes and similar paginated routes)
+- `pageNum < 1` (invalid) → `notFound()`
+- `pageNum === 1` (canonical handled by root route) → `permanentRedirect('/notes')` — SEO-safe; signals "never canonical here"
+- `pageNum > totalPages` (out of range) → `notFound()`
+- `RedirectType.permanent` does NOT exist in Next.js 16 — use `permanentRedirect(url)` from `next/navigation` instead
+- `/notes/page/1` redirect: `import { permanentRedirect } from 'next/navigation'` then `permanentRedirect('/notes')`
+
+## Design-system living reference conventions (`/design-system`)
+- Every production component must appear in `/design-system` (architecture §6)
+- Component entries live in `src/app/design-system/_components/components-band.tsx`
+- Each entry is a `<Demo number="NN" name="…" api="…">` block
+- Async server components (e.g. `NoteBlock`) get their own async helper function in the same file that calls `getRepositories()` — the `ComponentsBand` function itself stays sync and JSX-composes them
+- Keep component count in the band description in sync with actual count
+
 ## Article illustrations (post-T3)
 - `coverArt` config now comes from `article.coverArt.params` frontmatter — no keyed lookup map in page.tsx
 - `ArticleIllustration` now uses `next/link` (internal links only) — removed external URL support

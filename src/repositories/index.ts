@@ -1,4 +1,5 @@
 import { LocalArticlesRepository } from '@/repositories/implementations/local-articles-repository';
+import { LocalNotesRepository } from '@/repositories/implementations/local-notes-repository';
 import { StaticFooterRepository } from '@/repositories/implementations/static-footer-repository';
 import { StaticJobsRepository } from '@/repositories/implementations/static-jobs-repository';
 import { StaticMenuRepository } from '@/repositories/implementations/static-menu-repository';
@@ -14,6 +15,7 @@ import { StaticProjectsRepository } from '@/repositories/implementations/static-
 export function getRepositories() {
   return {
     articlesRepository: new LocalArticlesRepository(),
+    notesRepository: new LocalNotesRepository(),
     footerRepository: new StaticFooterRepository(),
     jobsRepository: new StaticJobsRepository(),
     menuRepository: new StaticMenuRepository(),

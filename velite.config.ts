@@ -68,6 +68,49 @@ const article = defineCollection({
     }),
 });
 
+const note = defineCollection({
+  name: 'Note',
+  pattern: 'notes/*.mdx',
+  schema: s
+    .object({
+      title: s.string(),
+      publishedAt: s.isodate(),
+      kind: s.enum(['til', 'take', 'snippet', 'aside']),
+      // derived from the file path — filename becomes the slug
+      slug: s.path(),
+      // compiled MDX function-body string — same pipeline as articles
+      body: s.mdx({
+        rehypePlugins: [
+          rehypeUnwrapImages,
+          [
+            rehypePrettyCode,
+            {
+              theme: brutalistMono,
+              keepBackground: false,
+            },
+          ],
+        ],
+      }),
+    })
+    .transform((data) => {
+      // s.path() returns 'notes/<filename>' — extract only the leaf segment
+      const slug = data.slug.split('/').pop() ?? data.slug;
+      if (!SLUG_RE.test(slug)) {
+        throw new Error(`Invalid note slug "${slug}" — must be lowercase kebab-case`);
+      }
+      if (slug.length > SLUG_MAX_LEN) {
+        throw new Error(
+          `Note slug "${slug}" exceeds ${SLUG_MAX_LEN} chars — slugs are keyword-focused, not title-mirrors`,
+        );
+      }
+      return {
+        ...data,
+        slug,
+        ogImage: '/og/notes/default.png',
+      };
+    }),
+});
+
 export default defineConfig({
   root: 'src/content',
   output: {
@@ -77,5 +120,5 @@ export default defineConfig({
     name: '[name]-[hash:6].[ext]',
     clean: true,
   },
-  collections: { article },
+  collections: { article, note },
 });

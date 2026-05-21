@@ -106,7 +106,12 @@ Rationale: the accented form was dropped deliberately in the redesign. The plain
 ### Sentence case
 
 - **Eyebrows**: lowercase (rendered uppercase by CSS).
-- **Page titles in `<title>`**: `André Silva · {Page}` with the page word in title case (`About`, `Career`, `Projects`, `Articles`). The separator is a middle dot (`·`, U+00B7) with one space on each side. **Home is just `André Silva`** — the brand alone, no page suffix (standard home-page convention).
+- **Page titles in `<title>`** follow a **split convention**:
+  - **Home**: just `André Silva` — the brand alone, no page suffix (standard home-page convention).
+  - **Index / section pages** (About, Career, Projects, Articles, Notes, 404): `André Silva · {Page}` — **brand-first, middle dot** (`·`, U+00B7) with one space on each side, page word in title case.
+  - **Detail pages** (individual notes, and any future per-item page): `{Title} | André Silva` — **title-first, pipe** (`|`) with one space on each side. The detail's own title leads so it's the part the browser tab shows when truncated; the brand follows.
+
+  The split is intentional, not a drift: index titles read as system labels (brand → section), detail titles read as content references (title → brand). Matches what's shipped in `src/app/(site)/articles/page.tsx` (index, dot) and `src/app/(site)/articles/[slug]/page.tsx` (detail, pipe). When adding a new surface, decide whether it's an index or a detail and pick the matching form.
 - **Nav labels**: lowercase, single word, in source. The active page is wrapped in square brackets (`[home]`) — that’s a render decoration, not a copy variant; the underlying string is still `home`.
 - **Page H1** (about/career/projects/articles): rendered as `<{NAME} />` using pixel font, with the page name in **uppercase** — e.g. `<ABOUT />`, `<CAREER />`. The angle braces are decorative (rendered via `.brace`) and the inner text is the literal page word in caps. Home’s H1 is the person’s name in pixel-display: `André Silva`.
 - **Section H2** (`Bio`, `Latest`, `Education`, `Facts`, `Resume`): title case if multi-word, sentence case for single words.
@@ -151,6 +156,8 @@ When adding new copy, ask: what is this surface’s primary noun? Tint that, not
 | Footer links | lowercase (`github`, `linkedin`, `dev.to`, `x`, `instagram`, `email`) | as written |
 | Button CTAs | Sentence case (`Download resume`) | UPPERCASE via CSS |
 | Project link labels | lowercase generics (`site`, `github`) or canonical repo names (`eyesup-web`, `oac-api`, `NativeScript Spotify`, `CONFEA`) | as written |
+| Note titles | Sentence case (`Specialists vs generalists`) | as written |
+| Note `kind` (frontmatter + meta line) | lowercase mono (`til`, `take`, `snippet`, `aside`) | as written |
 
 ### Tech-stack chips — canonical brand case
 
@@ -217,16 +224,28 @@ Authoritative quick-reference for currently-shipped strings.
 
 ### Page titles (`<title>`)
 
+**Index / section pages** — brand-first, middle-dot separator:
+
 ```
 André Silva
 André Silva · About
 André Silva · Career
 André Silva · Projects
 André Silva · Articles
+André Silva · Notes
 André Silva · Not Found
 ```
 
-Separator: middle dot (`·`, U+00B7), space on each side. **Home is just `André Silva`** — the brand alone, no page suffix (standard home-page convention; agrees with §3). Interior pages append `· {Page}` with the page word in title case. The 404 surface uses `· Not Found` (title case, mirroring the H2 below).
+Separator: middle dot (`·`, U+00B7), space on each side. **Home is just `André Silva`** — the brand alone, no page suffix (standard home-page convention; agrees with §3). Interior index pages append `· {Page}` with the page word in title case. The 404 surface uses `· Not Found` (title case, mirroring the H2 below).
+
+**Detail pages** — title-first, pipe separator:
+
+```
+{Article Title} | André Silva
+{Note Title} | André Silva
+```
+
+Separator: pipe (`|`) with single spaces. The content title leads so a truncated browser tab still surfaces the per-item identity; the brand follows. Matches what's shipped (`src/app/(site)/articles/[slug]/page.tsx`). See §3 for the rationale.
 
 ### Skip link
 
@@ -242,6 +261,7 @@ about →  [about]
 career →  [career]
 projects → [projects]
 articles → [articles]
+notes → [notes]
 ```
 
 ### Home hero
@@ -324,6 +344,21 @@ The middle dot `·` separates items in a single value.
 - Read-through label: `read on dev.to` (lowercase, no period, arrow follows).
 - Comments / reactions pluralization is rendered by data, not editorial — `1 comment` / `2 comments`, `1 reaction` / `11 reactions` (or `♥` short form in the meta strip).
 
+### Notes
+
+- Page H1: `<NOTES />` (caps, brace-wrapped, mirrors `<ARTICLES />`).
+- Nav label: `notes` (lowercase, single word — slots into `home · about · career · projects · articles · notes`).
+- Latest row badge (home): source `Note` → renders `NOTE` (mirrors `Career` / `Project` / `Article`).
+- Meta line format: `{YYYY.MM.DD} · {kind}` — ISO date period-separated, middle dot (`·`, U+00B7) with single spaces, lowercase mono `kind` word.
+  - Example: `2026.05.21 · til`
+- Permalink affordance on each block: `permalink` (lowercase, no period, arrow follows). ARIA label: `permalink to {note title}` — the visible word is too generic out of context.
+- Detail-page back-links (top + bottom): `back to notes`.
+- Detail-page prev/next labels: `older · {title}` (left, points to chronologically older note) and `{title} · newer` (right, points to chronologically newer note). Middle dot is the conjunction; the role word stays adjacent to its arrow.
+- Index paginator: `← older notes` / `newer notes →`, separated from a `page {n} of {total}` label by middle dots. Absent at boundaries — no disabled state.
+- Empty state (`/notes` when zero notes): `No notes yet.` — exact match for the articles empty-state pattern.
+- Page title `<title>` (index): `André Silva · Notes` — index convention, brand-first middle-dot, same as Articles.
+- Detail-page `<title>`: `{Note Title} | André Silva` — **detail convention, title-first pipe** (see §3 split rule). Matches what `src/app/(site)/articles/[slug]/page.tsx` ships for article detail. The note title is sentence case per §8.2; truncate to ~60 chars if longer for browser-tab fit.
+
 ### Footer
 
 ```
@@ -362,7 +397,71 @@ When adding an interactive element with no visible text, give it a verb-first AR
 
 ---
 
-## 8. Examples — before / after
+## 8. Notes — authoring rules
+
+The `/notes` surface is a chronological feed of short, unpolished pieces — TILs, hot takes, code snippets, asides. Notes are **not** articles: there is no summary, no cover art, no tags, no reading time, no edit history. The discipline is brevity. If a note feels like it needs an intro and a conclusion, it’s an article.
+
+This section governs how to **author** a note (frontmatter values + body voice). The shipped microcopy that wraps notes (meta line, permalink label, paginator, empty state) lives in §7 above.
+
+### 8.1 Kind taxonomy (closed set of 4)
+
+Every note carries exactly one `kind` in frontmatter. The four are a closed set — no new kinds without updating this guide and the design system.
+
+| Kind | One-line definition | Frame the author writes in | Example title |
+|---|---|---|---|
+| `til` | A thing learned — usually a tool, library, syntax, or behavior. | "I learned X about Y." | `Claude’s /btw command` |
+| `take` | An opinion or argument. | "I think X about Y." | `Specialists vs generalists` |
+| `snippet` | A small code fragment with the context that justifies it. | "Here’s how to do X." | `Type-safe env vars in 8 lines` |
+| `aside` | A remark off to the side — meta/site notes, announcements, industry observations, bookmark-with-commentary. | "By the way…" | `Redesigned the home today` / `Speaking at X next month` |
+
+**Selection rule.** Pick the most specific kind that fits. `aside` is the catch-all — default to it only when none of the other three apply. A snippet *about* a thing you learned is a `snippet`, not a `til`. An opinion *about* a snippet is a `take`. If it could be two, pick the one the title most clearly signals.
+
+**Source casing.** Always lowercase in the frontmatter and in the rendered meta line. The kind word is a system label, not a category brand — it stays in the mono register.
+
+### 8.2 Title rules
+
+- **Required.** Every note has a title. No untitled drafts ship.
+- **2–7 words.** Brevity is the discipline — the title is the scannable identity in the feed, and 50+ notes in a column need to be glanceable.
+- **Sentence case.** Capitalize the first word and proper nouns only. Aligns with §3 (sentence case for everything that isn’t a brace H1, badge, or eyebrow).
+- **No terminal period.** Same rule as labels and card descriptions in §10.3.
+- **Readable, not clever.** `Specialists vs generalists` beats `On the eternal debate between depth and breadth`. The title states the noun; the body earns the angle.
+- **Don’t prefix with the kind.** The badge already names it. `Claude /btw command` beats `TIL: Claude has a /btw command`. `Specialists vs generalists` beats `Hot take: specialists vs generalists`. (See §8.4.)
+
+### 8.3 Body voice
+
+Notes inherit every voice rule in §1 — terse mono, subject-less verbs on personal observations, curly apostrophes per §3, no exclamation marks, no "passionate about" / "world-class" / "game-changing", named projects over vague "various projects".
+
+**One note-specific rule on top: brevity over completeness.** A note doesn’t need an intro, a transition, or a conclusion. Start in the middle, end when the point lands.
+
+- **No setup paragraph.** Don’t open with "Today I was working on X and noticed Y…" — open with Y.
+- **No transition phrases.** Cut "moreover", "in any case", "as it turns out", "long story short". If two thoughts need a bridge, they’re probably two notes.
+- **No conclusion.** The last sentence carries the point. Don’t restate it. Don’t editorialize about it. Don’t append "so yeah" / "anyway" / "that’s it for now."
+- **Tense.** Same rules as the rest of the site (§1): past tense for completed observations ("Noticed this morning that …"), present tense for ongoing positions and properties ("Claude exposes a `/btw` command that …"). A `til` is most often present-tense — the *thing learned* is a current fact.
+- **First-person is allowed**, more freely than on the About/Career surfaces. Notes are diaristic by nature; subject-less verbs can feel stilted in a 30-word remark. Use `I` when dropping it would force an awkward sentence — but still prefer the verb-first form when it lands cleanly.
+
+**If a note feels like it needs scaffolding, it’s an article.** The discipline of the format is that the substance fits in the body length the surface affords. Move it to `src/content/articles/` instead.
+
+### 8.4 Anti-patterns
+
+| Don’t | Do | Why |
+|---|---|---|
+| `TIL: Claude has a /btw command` | `Claude’s /btw command` | The `til` badge does that work — the title shouldn’t repeat it. |
+| `Hot take: specialists vs generalists` | `Specialists vs generalists` | Same: the `take` badge names the register. |
+| `Quick thought: …` / `Random idea: …` | (just the noun) | Hedging openers belong to social-media drafts, not the site. |
+| Closing with `anyway, that’s it for now.` | (end on the substance) | No sign-off. The hairline rule below is the closer. |
+| `…and you can read more about this in my [other article](…).` | (link inline where it belongs, no closer) | No "more from this category" closer. The index does discovery. |
+| `Title Cased Note Title` | `Sentence case note title` | §3 sentence-case rule; aligns with article titles. |
+| `Speaking at X next month.` (with terminal period in the title) | `Speaking at X next month` | §8.2: no terminal period on titles. |
+| Naming the kind in the body ("As a quick TIL, …") | (drop the meta-frame, state the fact) | The badge above the title has already announced the kind. |
+| `kind: thought` / `kind: ramble` / `kind: meta` | One of `til` / `take` / `snippet` / `aside` | Closed set. If none fit, the piece may not be a note. |
+
+### 8.5 When in doubt
+
+A note that doesn’t pick a clean kind, doesn’t fit in a few short paragraphs, or wants a summary line is probably an article. Move it, or cut it. The point of `/notes` is that it stays a stream of fragments — every note that drifts toward "small article" weakens the surface as a whole.
+
+---
+
+## 9. Examples — before / after
 
 Quick pattern matches for the most common slips:
 
@@ -371,7 +470,7 @@ Quick pattern matches for the most common slips:
 | `Get the PDF` | `Download resume` | Verb + object, canonical artifact name matching `resume.pdf`. |
 | `Connect with me` | `hello@andresilva.cc` | No funnel; the email address is the surface. |
 | `My personal website` | (data) `The personal website that you are seeing right now` | Protected verbatim copy from the static repo. |
-| `andresilva.cc — your future favorite portfolio` | `André Silva` (home) / `André Silva · About` (others) | Brand alone on home; brand + dot + page on interior surfaces. |
+| `andresilva.cc — your future favorite portfolio` | `André Silva` (home) / `André Silva · About` (index) / `{Title} \| André Silva` (detail) | Split `<title>` convention — brand alone on home, brand-first middle-dot on indexes, title-first pipe on details (§3). |
 | `// 02 / latest` | `// 02 / recent activity` | Eyebrow must differ from the H2 it labels. |
 | `// 01 / About me` | `// 01 / in my own words` | Lowercase, evocative gloss, no terminal punctuation. |
 | `Read full bio →` | `Full bio →` | Page-section link arrow uses bare noun. |
@@ -389,7 +488,7 @@ Quick pattern matches for the most common slips:
 
 ---
 
-## 9. When the guide doesn’t cover it
+## 10. When the guide doesn’t cover it
 
 1. Default to the **plainest, most concrete phrasing** consistent with the existing About and Career copy.
 2. Prefer the **subject-less verb** on any personal/bio surface.
