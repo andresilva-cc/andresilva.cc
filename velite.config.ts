@@ -2,7 +2,13 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeUnwrapImages from 'rehype-unwrap-images';
 import { defineCollection, defineConfig, s } from 'velite';
 import { countWords, readingTime } from './src/lib/reading-time';
+import { MDX_JSX_ALLOWLIST } from './src/lib/mdx-jsx-allowlist';
 import brutalistMono from './src/styles/shiki/brutalist-mono.json';
+
+// Regex-based fallback: matches opening tags for PascalCase JSX components.
+// Does not parse MDX AST — misses components in comments or code fences, but
+// catches real author mistakes cleanly enough for a single-author trust model.
+const JSX_COMPONENT_RE = /<([A-Z][A-Za-z0-9]*)/g;
 
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 const SLUG_MAX_LEN = 60;
@@ -45,8 +51,29 @@ const article = defineCollection({
       }),
     })
     .transform((data) => {
-      // s.path() returns 'articles/<folder-name>' — extract only the leaf segment
       const slug = data.slug.split('/').pop() ?? data.slug;
+
+      // Verify all PascalCase JSX components in the raw source are on the allowlist.
+      // Fails the build early rather than silently omitting components from the RSS feed.
+      // Code-fenced and inline-code JSX is ignored — strip both before scanning.
+      const rawNoCode = data.raw
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/`[^`\n]*`/g, '');
+      const seen = new Set<string>();
+      let match: RegExpExecArray | null;
+      JSX_COMPONENT_RE.lastIndex = 0;
+      while ((match = JSX_COMPONENT_RE.exec(rawNoCode)) !== null) {
+        const name = match[1];
+        if (!seen.has(name)) {
+          seen.add(name);
+          if (!(MDX_JSX_ALLOWLIST as readonly string[]).includes(name)) {
+            throw new Error(
+              `Disallowed MDX JSX <${name}> in ${slug} — add to MDX_JSX_ALLOWLIST and provide an RSS mapping in src/lib/rss-renderer.tsx`,
+            );
+          }
+        }
+      }
+
       if (!SLUG_RE.test(slug)) {
         throw new Error(`Invalid article slug "${slug}" — must be lowercase kebab-case`);
       }
