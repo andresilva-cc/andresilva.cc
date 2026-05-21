@@ -87,70 +87,55 @@ export default function OgCard() {
         }}
       />
 
-      {/* 3. Eyebrow comment-tag — canonical `// nn / phrase` format
-         (zero-padded index, then lowercase phrase rendered uppercase by
-         text-transform). Matches <Eyebrow>: micro size, Mono 600, accent,
-         0.16em tracking. */}
-      <span
-        style={{
-          position: 'absolute',
-          left: '64px',
-          top: '200px',
-          fontFamily: '\'JetBrains Mono\', monospace',
-          fontSize: '17px',
-          fontWeight: 600,
-          color: '#C8FF3D',
-          letterSpacing: '0.16em',
-          textTransform: 'uppercase',
-          lineHeight: 1.5,
-        }}
-      >
-        &#47;&#47; 00 / personal site
-      </span>
-
-      {/* 4. Display name */}
-      <span
-        style={{
-          position: 'absolute',
-          left: '64px',
-          top: '256px',
-          fontFamily: '\'VT323\', monospace',
-          fontSize: '184px',
-          fontWeight: 400,
-          lineHeight: 1.1,
-          color: '#C8FF3D',
-          letterSpacing: '-0.01em',
-          whiteSpace: 'nowrap',
-          WebkitFontSmoothing: 'none',
-        }}
-      >
-        André Silva
-      </span>
-
-      {/* 5. Bio paragraph */}
+      {/* 3. Content cluster — display name + bio, flex column from y=200 */}
       <div
         style={{
           position: 'absolute',
           left: '64px',
-          top: '480px',
-          width: '830px',
-          fontFamily: '\'JetBrains Mono\', monospace',
-          fontSize: '22px',
-          fontWeight: 400,
-          lineHeight: 1.65,
-          color: '#9DAA95',
+          top: '200px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '48px',
         }}
       >
-        {'Software engineer with '}
-        <strong
+        {/* 3a. Display name */}
+        <span
           style={{
-            fontWeight: 600,
-            color: '#D7E5D0',
+            fontFamily: '\'VT323\', monospace',
+            fontSize: '184px',
+            fontWeight: 400,
+            lineHeight: 1.1,
+            color: '#C8FF3D',
+            letterSpacing: '-0.01em',
+            whiteSpace: 'nowrap',
+            WebkitFontSmoothing: 'none',
           }}
         >
-          9+ years of experience
-        </strong>
-        {' building web platforms, internal tools, and developer tooling.'}
+          André Silva
+        </span>
+
+        {/* 3b. Bio paragraph */}
+        <div
+          style={{
+            width: '830px',
+            fontFamily: '\'JetBrains Mono\', monospace',
+            fontSize: '22px',
+            fontWeight: 400,
+            lineHeight: 1.65,
+            color: '#9DAA95',
+          }}
+        >
+          {'Software engineer with '}
+          <strong
+            style={{
+              fontWeight: 600,
+              color: '#D7E5D0',
+            }}
+          >
+            9+ years of experience
+          </strong>
+          {' building web platforms, internal tools, and developer tooling.'}
+        </div>
       </div>
 
     </div>

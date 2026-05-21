@@ -9,23 +9,19 @@ export const metadata = {
   title: 'André Silva',
 };
 
-export default async function Home() {
+export default function Home() {
   const { jobsRepository, projectsRepository, articlesRepository } = getRepositories();
 
   const currentJob = jobsRepository.getAll()[0];
   const projects = projectsRepository.getAll();
   const featuredProject = projects.find((p) => p.featured);
 
-  let latestArticleTitle = '';
-  try {
-    const articles = await articlesRepository.getAll();
-    if (articles.length > 0) {
-      latestArticleTitle = articles[0].title;
-    }
-  }
-  catch {
-    // Forem feed unavailable at build time — fall back to no row.
-  }
+  // T3 stub: only the latest article title is surfaced here. T3 will rewrite
+  // this to wire the latest-article card from LocalArticlesRepository properly.
+  const articles = articlesRepository.getAll();
+  const latestArticle = articles[0];
+  const latestArticleTitle = latestArticle?.title ?? '';
+  const latestArticleSlug = latestArticle?.slug ?? '';
 
   return (
     <>
@@ -94,7 +90,7 @@ export default async function Home() {
           { latestArticleTitle && (
             <LatestRow
               category="Article"
-              href="/articles"
+              href={`/articles/${latestArticleSlug}`}
               title={latestArticleTitle}
             />
           ) }

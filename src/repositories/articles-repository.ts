@@ -1,8 +1,6 @@
-import { Article } from '@/types/article';
-
-export interface ArticlesRepositoryResponse extends Article {}
+import type { Article } from '@/.velite';
 
 export interface ArticlesRepository {
-  getAll(): Promise<Array<ArticlesRepositoryResponse>>;
-  getById(id: number): Promise<ArticlesRepositoryResponse | null>;
+  getAll(): Article[];
+  getBySlug(slug: string): Article | undefined;
 }

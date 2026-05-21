@@ -18,7 +18,8 @@ export interface TagProps {
  *
  * Casing is the caller's responsibility:
  * - Tech chips (career, projects): canonical brand case (TypeScript, Vue.js).
- * - Article tags (articles): lowercase as delivered by the dev.to API.
+ * - Article tags (articles): brand-cased verbatim from frontmatter (LLMs, Rust, Next.js).
+ *   Authors are the source of truth; no case transform is applied.
  */
 export function Tag({ className, children }: TagProps) {
   return (

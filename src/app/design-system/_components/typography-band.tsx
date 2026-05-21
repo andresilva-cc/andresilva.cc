@@ -197,6 +197,66 @@ export function TypographyBand() {
         page is about); JetBrains Mono carries everything else. VT323 is never used inside body prose.
       </Text>
 
+      <Text variant="h3" as="h3" className="mt-8 mb-3 text-fg">Article prose hygiene</Text>
+      <Text variant="body" className="text-fg-muted max-w-prose-wide mt-2">
+        Three typographic rules scoped to
+        {' '}
+        <code className="text-accent">.article-prose</code>
+        {' '}
+        (applied via the wrapper div in
+        {' '}
+        <code className="text-accent">/articles/[slug]</code>
+        ):
+      </Text>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full text-left border border-rule border-collapse" aria-label="Article prose typographic rules">
+          <thead>
+            <tr>
+              <th className="py-3 px-4 border-b border-rule bg-surface text-fg-subtle font-mono text-micro font-semibold uppercase tracking-eyebrow">Rule</th>
+              <th className="py-3 px-4 border-b border-rule bg-surface text-fg-subtle font-mono text-micro font-semibold uppercase tracking-eyebrow">Applied to</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-rule last:border-b-0">
+              <td className="py-3 px-4 font-mono text-meta text-fg-muted align-top">
+                <code className="text-accent">text-wrap: balance</code>
+              </td>
+              <td className="py-3 px-4 text-meta text-fg-muted">
+                All
+                {' '}
+                <code className="text-accent">h2</code>
+                {' '}
+                headings &mdash; prevents ragged single-word final lines in section titles.
+              </td>
+            </tr>
+            <tr className="border-b border-rule last:border-b-0">
+              <td className="py-3 px-4 font-mono text-meta text-fg-muted align-top">
+                <code className="text-accent">text-wrap: pretty</code>
+              </td>
+              <td className="py-3 px-4 text-meta text-fg-muted">
+                Last paragraph of the article and any paragraph immediately before an
+                {' '}
+                <code className="text-accent">h2</code>
+                {' '}
+                or
+                {' '}
+                <code className="text-accent">h3</code>
+                {' '}
+                &mdash; scoped to end-of-section positions to avoid performance cost across the whole body.
+              </td>
+            </tr>
+            <tr className="border-b border-rule last:border-b-0">
+              <td className="py-3 px-4 font-mono text-meta text-fg-muted align-top">
+                <code className="text-accent">font-feature-settings: &quot;tnum&quot;, &quot;zero&quot;</code>
+              </td>
+              <td className="py-3 px-4 text-meta text-fg-muted">
+                Tables &mdash; tabular figures align numeric columns; slashed zero prevents 0/O ambiguity in data cells.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <Text variant="h3" as="h3" className="mt-8 mb-3 text-fg">Quotes &amp; apostrophes (standing rule)</Text>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-left border border-rule border-collapse" aria-label="Quote conventions">

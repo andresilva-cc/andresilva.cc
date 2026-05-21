@@ -1,3 +1,12 @@
+import { build } from 'velite';
+
+// Build Velite content before Next.js compiles pages — ensures .velite/
+// is populated before any module imports '@/.velite'.
+// See: https://velite.js.org/guide/with-nextjs
+if (process.env.NODE_ENV !== 'test') {
+  await build({ silent: true });
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Pin the workspace root to this directory. Without this, the dual

@@ -8,3 +8,4 @@
 ## Key patterns
 
 - [Project structure and conventions](patterns.md) — tech stack, component conventions, design tokens
+- [Velite pipeline notes](velite-pipeline.md) — export naming, s.mdx() returns string not component, path alias, ESLint ignore

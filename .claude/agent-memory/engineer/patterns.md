@@ -49,5 +49,21 @@ type: project
 - Arbitrary `style` props are the correct way to consume these vars on the embed element
 
 ## ESLint gotchas
-- SVG `<text>` content containing `//` gets flagged by `react/jsx-no-comment-textnodes` — use `&#x2F;&#x2F;` HTML entities
+- SVG `<text>` content containing `//` gets flagged by `react/jsx-no-comment-textnodes` — use `&#x2F;&#x2F;` HTML entities or assign to a variable first
 - `@stylistic/jsx-curly-brace-presence` rejects unnecessary `{' '}` or `{'string'}` — use raw text in JSX text positions
+- `@stylistic/quote-props` is set to `"consistent-as-needed"` — if ANY key in an object literal requires quotes (e.g., `@context`), ALL keys must be quoted. JSON-LD objects: quote all keys.
+- `@stylistic/multiline-ternary` fires when a ternary spans multiple lines without each operand on its own line. Avoid in JSX props — extract to a function or variable with `if` statements instead.
+- `@stylistic/jsx-one-expression-per-line` fires on inline JSX fragment children on the same line. Put each child on its own line.
+- TypeScript interface properties with hyphens (`'data-language'`) are flagged by `quote-props` when used in object destructuring — access via `(props as any)['data-language']` and cast instead.
+
+## MDX rendering pattern (Velite + @mdx-js/mdx)
+- `s.mdx()` returns a compiled function-body string — NOT a React component
+- To render: `const runtime = require('react/jsx-runtime') as RunOptions; const mdxModule = await run(body, { ...runtime, baseUrl: import.meta.url }) as any; const Content = mdxModule.default as ComponentType<...>`
+- The MDX components map is passed as `<Content components={...} />` — keys are HTML element names (`img`, `pre`, `a`) or custom component names (`YouTube`)
+- rehype-pretty-code adds `data-language` to `<pre>` and `data-highlighted-line` to highlighted line spans
+- Shiki theme: pass JSON object directly to `rehype-pretty-code`'s `theme` option (not a string theme name)
+
+## Article illustrations (post-T3)
+- `coverArt` config now comes from `article.coverArt.params` frontmatter — no keyed lookup map in page.tsx
+- `ArticleIllustration` now uses `next/link` (internal links only) — removed external URL support
+- Illustration container (in `ArticleCard`): unchanged, still `border border-rule bg-canvas overflow-hidden`
