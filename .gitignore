@@ -52,3 +52,6 @@ next-env.d.ts
 !.reviews/.gitkeep
 .reports/*
 !.reports/.gitkeep
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+.claire/
