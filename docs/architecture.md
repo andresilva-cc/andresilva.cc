@@ -53,7 +53,7 @@ andresilva.cc/
 │   ├── design-system.md           # token + component reference
 │   ├── redesign-log.md            # redesign decision log
 │   ├── articles-decision-log.md   # articles self-host decision log
-│   ├── articles-design-spec.md    # articles design spec (Shiki theme, page layout)
+│   ├── ui-spec.md                 # page-level structure spec
 │   └── architecture.md            # this file
 ├── public/
 │   ├── me.jpg                     # about-page portrait
