@@ -538,6 +538,8 @@ This goes inside the `<article>` element on the page. No npm dependency — it's
 
 ## 8. RSS
 
+> Updated 2026-05-21: feed now ships full-content `<content:encoded>` alongside the summary `<description>`. See §18.
+
 `src/app/articles/rss.xml/route.ts` — a static Route Handler (no `force-dynamic`, no `revalidate`). Returns an XML body assembled from `articlesRepository.getAll()`:
 
 - `<title>` = article title
@@ -825,5 +827,103 @@ The following decisions evolved after the article page shipped, based on a struc
 | The `coverArt` schema can't express future stipple variants | Low | Low | `params` is a free-form query string — new variants just use new param keys. No schema change needed. |
 
 The decision that could come back is **MDX vs Markdown**. If we ship a year of articles without ever using a custom in-prose component besides `<YouTube>`, the MDX overhead (the build pipeline, the typed components map, the `@mdx-js/mdx` dep) was paid for one thing that doesn't strictly need it. The escape route is: keep Velite, swap the `s.mdx()` field to `s.markdown()`. Authors don't notice; the page renderer changes from `<article.body />` to `<div dangerouslySetInnerHTML={{ __html: article.html }} />` (or a remark-react renderer). It's a one-day refactor. The optionality is preserved.
+
+---
+
+## 18. RSS full-content rendering
+
+The original §8 spec emitted summary-only items (`<description>` = `article.summary`, no body). This section captures the decisions made on 2026-05-21 to ship full-content items alongside the summary.
+
+### 18.1 Why full-content over summary
+
+The §8 default was summary-only on the grounds that the canonical destination is the site and the feed's job is discovery. A three-agent debate before implementation concluded **GO FULL-CONTENT**: in-reader behaviour is the dominant subscriber experience for engineering blogs (NetNewsWire, Reeder, Feedly all render `<content:encoded>` inline), and a summary-only feed treats subscribers as a worse-served audience than RSS regulars. Canonical authority is preserved by `<link>` and the existing `<link rel="canonical">` on the site — `<content:encoded>` does not move the canonical signal. The summary `<description>` is kept so readers that don't render `content:encoded` (a small minority, mostly preview popovers) still get something useful.
+
+### 18.2 Renderer placement
+
+The body-to-HTML transform lives in **`src/lib/rss-renderer.tsx`** and exports `renderArticleHtml(article)`. It runs the compiled MDX body through React with a feed-specific components map and serializes via `react-dom/server.edge`'s `renderToStaticMarkup`. Also exports `absolutize(url, slug)` for URL rewriting (§18.5).
+
+**Rejected — Velite-derivation (precompute HTML in `.velite/`):** would bloat `.velite/` output for every consumer (sitemap, JSON-LD, page render) when only the RSS route needs HTML. Build-time MDX is already React-compiled; double-rendering at build to also emit a string is waste.
+
+**Rejected — inline in the route handler:** couples the rendering policy to the transport layer, makes the components map untestable in isolation, and the route handler grows past a screen of code.
+
+`src/lib/` is the right seam: framework-agnostic, importable from a Route Handler, isolated from the page-rendering React tree.
+
+### 18.3 Component mapping
+
+The feed uses a separate components map from the page. Page components emit Next-optimized output (`next/image`, client islands, focus rings); feed components emit plain HTML readers can render.
+
+| MDX element | Page renderer | Feed renderer |
+|---|---|---|
+| `<YouTube id={id} caption={c} />` | Server thumbnail façade + `<noscript>` iframe + client swap | Thumbnail-link (§18.4) |
+| `<Figure src caption number />` | `next/image` + `FigureCaption` | `src/components/mdx/rss/figure.tsx` — `makeFigureRss(slug)` factory; absolutizes `src` |
+| `img` (bare Markdown image) | `ImageMdx` with `next/image` + width/height | `src/components/mdx/rss/image-mdx.tsx` — `makeImageMdxRss(slug)` factory; bare `<img>` with absolutized `src` and `loading="lazy"` |
+| `a` (inline link) | `InlineLink` with safe-href guard + focus ring | `src/components/mdx/rss/inline-link.tsx` — `makeInlineLinkRss(slug)` factory; absolutized `href` |
+| `pre` (code block) | `PreShiki` (border, copy button, focus ring) | `src/components/mdx/rss/pre-shiki.tsx` — bare `<pre>` passthrough; `rehype-pretty-code` already emitted highlighted HTML with inline styles |
+
+Factories take `slug` so each component can absolutize URLs against the article's canonical URL. The slug is closed over at render time, not threaded through props.
+
+### 18.4 YouTube convention: thumbnail-link, not iframe
+
+The feed renders `<YouTube>` as:
+
+```html
+<figure>
+  <a href="https://www.youtube.com/watch?v={id}">
+    <img src="https://i.ytimg.com/vi/{id}/hqdefault.jpg" alt="{caption}" loading="lazy" />
+  </a>
+  <figcaption>Fig. N — {caption}</figcaption>
+</figure>
+```
+
+No iframe, no embed script. Reasoning: iframes in RSS items are inconsistently supported (some readers strip them, some sandbox them, some render them but block third-party JS), the click-to-load swap the page uses requires JS that readers won't run, and a thumbnail-link gets the reader to YouTube cleanly with universal support. The `Fig. N — caption` treatment matches the page's caption unification rule (§3.9).
+
+### 18.5 Absolute URL rules
+
+Feed items live in a third-party context — readers don't know the article's origin URL. Every relative URL inside the body must be absolutized. `absolutize(url, slug)` handles four cases:
+
+| Input | Output |
+|---|---|
+| `http://...` / `https://...` | unchanged |
+| `/path` | `${SITE_ORIGIN}/path` |
+| `#hash` | `${SITE_ORIGIN}/articles/${slug}${hash}` |
+| `./image.png` (or any other relative) | resolved against `${SITE_ORIGIN}/articles/${slug}/` |
+
+`SITE_ORIGIN` is the existing constant in `src/lib/config.ts`. Applied uniformly in `figure.tsx`, `image-mdx.tsx`, and `inline-link.tsx`.
+
+### 18.6 Sanitization — deliberately skipped
+
+`rehype-sanitize` was considered and rejected. Reasoning: the input is the author's own MDX, not user-generated content. The realistic threat model — an in-prose component leaking a `<script>` or arbitrary HTML — is handled at the build-time boundary (§18.7) rather than at the output boundary. Running `rehype-sanitize` over the rendered HTML would also strip the inline `style="color:..."` attributes that Shiki emits for syntax highlighting, defeating §18.9.
+
+The real safety boundary is the JSX allowlist enforced at build (§18.7), not output-side stripping. Output-side sanitization is the correct tool when input is untrusted; here it would solve a non-problem and break a feature.
+
+### 18.7 Build-time JSX allowlist enforcement
+
+A regex sweep in `velite.config.ts`'s `.transform()` block fails the build if the MDX source uses a JSX tag outside the allowlist. The allowlist is a shared constant — `src/lib/mdx-jsx-allowlist.ts` exports `MDX_JSX_ALLOWLIST = ['YouTube', 'Figure']` — so the velite check and any future runtime-side check stay aligned.
+
+**Implementation choice — regex over AST walk:** the original architect spec called for a full AST walk via `remark-parse` + `remark-mdx` to enumerate JSX nodes. The implementation chose a regex sweep instead, with the trade-off documented inline in `velite.config.ts`. Rationale: pulling `remark-parse` and `remark-mdx` in as direct deps (they're already transitive via `@mdx-js/mdx`, but adding them as direct deps to script our own walk was rejected) inflates the dep surface for a check that's load-bearing for *one* failure mode (an author types `<Script src="...">` in an article).
+
+The trade-off: regex catches every disallowed JSX tag in prose — the actual failure mode we care about — but doesn't distinguish a JSX-looking string inside an HTML comment or inside a fenced code block from real JSX. In practice this means a `<script>` written *inside a markdown code fence* (where it's deliberately rendered as literal text) would trigger the check. Acceptable: the author can rename the tag in prose examples (`<Script>` → `<​Script>`) or use a backslash escape; the false positive is loud and the failure is build-time, not runtime. A future AST walk can replace the regex without changing the allowlist constant.
+
+### 18.8 RSS 2.0 spec additions
+
+The route handler now emits, in addition to the §8 fields:
+
+- `xmlns:content="http://purl.org/rss/1.0/modules/content/"` on `<rss>` — required to namespace `<content:encoded>`.
+- `xmlns:dc="http://purl.org/dc/elements/1.1/"` — required to namespace `<dc:creator>`.
+- `xmlns:atom="http://www.w3.org/2005/Atom"` — was already present for `<atom:link rel="self">`.
+- `<content:encoded><![CDATA[...]]></content:encoded>` per item, alongside the existing summary `<description>`. CDATA-wrapped; any `]]>` sequence in the rendered HTML is escaped (split into `]]]]><![CDATA[>`) so the CDATA block can't terminate early.
+- `<dc:creator>André Silva</dc:creator>` at both channel and item level — `<author>` in RSS 2.0 requires an email-format string; `<dc:creator>` is the convention for a plain name and is what every major reader picks up.
+- One `<category>` element per tag on each item.
+
+### 18.9 Shiki inline styles — accepted size cost
+
+`rehype-pretty-code` emits highlighted code as `<span>`s with inline `style="color:#..."` attributes (the brutalist-mono theme is resolved at build, not via CSS classes). The feed renderer preserves these styles. On a code-heavy article this inflates the `<content:encoded>` payload by roughly 30% versus stripping color.
+
+Kept because syntax-highlighted code is the *single* in-prose element where rendered fidelity meaningfully changes comprehension — a paragraph in a sans-serif feed reader still reads the same; a code block in flat gray loses the syntactic cue. This is the one place the feed HTML deviates from "plain semantic HTML that any reader styles itself" and the deviation is deliberate.
+
+### 18.10 Two deviations from the architect spec
+
+1. **`rss-renderer.tsx`, not `.ts`** — the file contains JSX literal (the components map and the render call), so the `.tsx` extension is required. The architect spec's `.ts` was a typo; the substance is unchanged.
+2. **`react-dom/server.edge`, not `react-dom/server`** — Next.js App Router under Turbopack blocks the non-edge `react-dom/server` import in Route Handlers (it's flagged as a Node-only module in the edge-aware bundler graph). The `.edge` entry point exposes the same `renderToStaticMarkup` API and is the supported path. No behavioural difference for our use (`renderToStaticMarkup` is sync, no streaming, no hydration markers — exactly what RSS HTML wants).
 
 ---
