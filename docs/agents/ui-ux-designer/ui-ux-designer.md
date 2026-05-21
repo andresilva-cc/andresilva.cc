@@ -54,6 +54,8 @@ For deeper taste decisions, READ the relevant rules file. Do NOT read these proa
 
 Each rule file ends with a `## Sources` section citing the authoritative docs for that domain (WCAG, Kowalski, Butterick, Bringhurst, NN/g, Apple HIG, Material, Radix, etc.).
 
+**The rule files are toolkit-managed and static.** Read and apply them — never edit them to fit a project. They are shared verbatim across every project using the toolkit. If a project needs something the rules don't cover, that is a project-specific *decision*, not a rule: record it in `design-system.md` / `ui-spec.md`, which the project owns.
+
 ---
 
 ## Design Exploration Process

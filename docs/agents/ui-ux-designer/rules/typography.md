@@ -4,6 +4,8 @@
 
 This domain governs how text is sized, spaced, weighted, and rendered — contrast and color are in `color.md`.
 
+> **Toolkit-managed file — do not edit per-project.** These rules are static and shared across every project using the toolkit. Project-specific design decisions (brand fonts, palette values, chosen breakpoints, component variants) belong in the project's own `design-system.md` and `ui-spec.md` — never here.
+
 ---
 
 ## Contrast and accessibility floor
@@ -80,6 +82,19 @@ This domain governs how text is sized, spaced, weighted, and rendered — contra
 
 ---
 
+## Family count and pairing
+
+### Rule: A page uses at most three font families — display + body + optional outlier
+**Numeric baseline:** ≤3 families per page. Two is the common case (display + body). A third is permissible when it carries a single dedicated role (wordmark, code, hero stat, pull quote) used in ≤2 places.
+**Applies to:** Marketing pages, product surfaces, editorial layouts. Apps with code-rendering surfaces may legitimately use a mono in addition to display + body.
+**Why:** Each additional family introduces visual noise without adding hierarchy — weight and size already provide that. Same family at multiple weights counts as one family; mono counts as a separate family. The third family should tag a specific kind of content, not appear ad-hoc.
+
+### Rule: Hero display size scales inversely with headline length
+**Applies to:** Hero h1, marketing landing headlines, any oversized single-statement block.
+**Why:** Display sizes are tuned for short, dense statements. Short statements can take the full display size; longer statements step down. Headlines beyond roughly 90 characters are usually wrong as display type and should be rewritten or treated as deck/subhead. The fix is almost always shorter copy, not bigger type.
+
+---
+
 ## Caps, tracking, micro-typography
 
 ### Rule: Add 5–12% letterspacing to all-caps and small-caps
@@ -100,6 +115,11 @@ This domain governs how text is sized, spaced, weighted, and rendered — contra
 ### Rule: Don't fake small caps — use OpenType or skip them
 **Applies to:** Acronyms, abbreviations where designers reach for small caps.
 **Why:** Browser-synthesized `font-variant: small-caps` scales down capitals, producing strokes thinner than real-body text — looks broken.
+
+### Rule: All-caps display headlines need line-height ≥ 1.0 (recommend 1.02–1.08)
+**Numeric baseline:** ≥1.0; 1.02–1.08 recommended; condensed faces (Anton, Bebas, Inter Tight 900) lean toward the upper end.
+**Applies to:** Uppercase-transformed h1/h2 display, hero headlines using `text-transform: uppercase`.
+**Why:** Without descenders to cushion the gap between lines, cap-tops on line N+1 collide with the baseline of line N. Letter pairs like comma + cap-D fuse into a single shape on wrapped headlines. Mixed-case display can tolerate line-height below 1.0; all-caps cannot.
 
 ---
 
@@ -166,6 +186,7 @@ This domain governs how text is sized, spaced, weighted, and rendered — contra
 - [Butterick — Line Spacing](https://practicaltypography.com/line-spacing.html)
 - [Butterick — Bold or Italic](https://practicaltypography.com/bold-or-italic.html)
 - [Butterick — All Caps](https://practicaltypography.com/all-caps.html)
+- [Butterick — Combining Fonts](https://practicaltypography.com/combining-fonts.html)
 - [Robert Bringhurst — Elements of Typographic Style (Rutter)](http://webtypography.net/2.1.2)
 - [Emil Kowalski — Agents with Taste](https://emilkowal.ski/ui/agents-with-taste)
 - [Apple HIG — Typography](https://developer.apple.com/design/human-interface-guidelines/typography)

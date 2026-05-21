@@ -4,6 +4,8 @@
 
 This file covers component-level patterns. Motion/typography/color/spacing universals live in their own files — only component-specific rules are here.
 
+> **Toolkit-managed file — do not edit per-project.** These rules are static and shared across every project using the toolkit. Project-specific design decisions (brand fonts, palette values, chosen breakpoints, component variants) belong in the project's own `design-system.md` and `ui-spec.md` — never here.
+
 ---
 
 ## Buttons
@@ -30,6 +32,15 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 **Applies to:** Delete, remove, archive, discard-unsaved-changes.
 **Why:** Speed-bump proportional to consequence. Red + confirm catches fat-finger mistakes.
 
+### Rule: Prefer undo over confirmation for reversible actions
+**Numeric baseline:** Undo affordance visible for 5–10s after the action.
+**Applies to:** Soft-delete, archive, dismiss, mark-as-read, toggle, reorder — anywhere restore is feasible.
+**Why:** "Are you sure?" before every reversible action trains users to click through dialogs without reading — defeating the purpose. An immediate action + undo respects the common case (the user meant it) without losing recovery for the rare case. Reserve modal confirmation for irreversible destructive actions per the destructive-buttons rule; for those, type-the-name confirmation is stronger than click-OK.
+
+### Rule: Disabled controls must communicate why
+**Applies to:** Disabled submit buttons, locked menu items, gated actions.
+**Why:** A disabled control without explanation is a dead end — users don't know if it's broken, gated by their plan, awaiting input, or temporarily unavailable. Use a tooltip on focus/hover, helper text near the control, or inline copy. For gated / not-yet-available controls, prefer `aria-disabled` over the native `disabled` attribute so the control remains focusable and the explanation is reachable by assistive tech. Use native `disabled` only when the control truly should not be interactive (e.g., a button mid-async per the loading-button rule).
+
 ### Rule: Loading buttons preserve width and show a spinner, disabled during async work
 **Applies to:** Any button triggering async work.
 **Why:** Prevents CLS (width jumping as label changes) and double-submit.
@@ -55,6 +66,15 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 **Applies to:** All form fields.
 **Why:** WCAG 3.3.2. Placeholder disappears on focus; screen readers often skip placeholders; grey placeholder often fails contrast. Floating labels have a cognitive cost on re-entry — use static labels by default.
 
+### Rule: Placeholders show format, not instruction
+**Applies to:** All text inputs with a placeholder.
+**Why:** The label tells the user what the field is; the placeholder shows what valid input looks like. "Enter your birth date" duplicates the label; "01 Jan 2026" shows the expected format. Placeholder-as-instruction wastes the affordance and disappears on focus when the user might need it most.
+
+### Rule: Input height matches adjacent button height
+**Numeric baseline:** One base height across inputs and buttons in the same form (≥44px for touch primary).
+**Applies to:** Forms with inline buttons (search bars, login forms, inline-edit rows).
+**Why:** Mismatched input and button heights (44px button next to a 38px input) read as untuned. A single base height aligns baselines and creates visual rhythm.
+
 ### Rule: Label spacing makes the label "belong" to its input
 **Numeric baseline:** Margin below label < margin below input.
 **Applies to:** All form groups.
@@ -72,6 +92,20 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 ### Rule: Error messages anchor to the offending field and stay visible
 **Applies to:** All form validation.
 **Why:** WCAG 3.3.1 + 3.3.3. Distant error summaries force users to memorize and re-find the field. Text-only errors (not just red border / tooltip) ensure screen-reader and colorblind accessibility.
+
+### Rule: Helper text reserves height so errors don't shift layout
+**Numeric baseline:** `min-height: 1lh` on the helper-text slot, even when empty.
+**Applies to:** All form fields with helper or error text below.
+**Why:** A field that grows by one line when validation fails pushes the rest of the form down — buttons move under the cursor, layout shifts at the worst moment. Reserve the slot at render time so errors swap in place. CLS < 0.1 (Web Vitals) applies to forms too.
+
+### Rule: Input state changes must not shift layout — border width stays constant
+**Numeric baseline:** `border-width` is the same value (typically 1px) across default, hover, focus, error, and disabled. State changes go to `background-color`, `outline` (with `outline-offset`), or `box-shadow`.
+**Applies to:** All text inputs, textareas, selects, and comboboxes.
+**Why:** A 1px → 2px border on focus shifts the field's content box by 1px in every direction. Sibling fields stay put; the focused one jumps. Reserve focus-indicator space with `outline: 2px solid transparent` at rest so the ring appears at full strength on focus without geometry change.
+
+### Rule: Don't disable a field to indicate loading — keep it editable with a spinner
+**Applies to:** Async validation, debounced search, autocomplete fetches.
+**Why:** A disabled field during async work locks the user out of fixing what they typed. Show an inline spinner in the field; keep the field editable; disable only the submit affordance if needed.
 
 ### Rule: Preserve user input on error — never wipe the form
 **Applies to:** All form submissions (password fields exempted when required by security).
@@ -132,6 +166,10 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 ### Rule: One pattern per severity — toast OR inline banner, not both
 **Applies to:** Cross-product consistency.
 **Why:** Mixing patterns for the same severity creates ambiguity. Pick toast for transient feedback OR inline banner for persistent — don't mix.
+
+### Rule: Don't toast when the effect is already visible
+**Applies to:** Success notifications for save, delete, toggle, like, and similar actions whose result is visible in the UI.
+**Why:** A "Saved!" toast for a setting the user just changed (and can see is changed) adds noise without information. Reserve toasts for: (1) async actions whose effect is off-screen or delayed, (2) failures and errors, (3) actions the user will need to confirm later (e.g., "Invitation sent to 12 people"). When the result is on-screen, the result *is* the feedback.
 
 ### Rule: Toast position follows platform convention
 **Numeric baseline:** Bottom-center (Material / mobile); top-right (desktop web / shadcn/sonner); top-center (iOS banners).

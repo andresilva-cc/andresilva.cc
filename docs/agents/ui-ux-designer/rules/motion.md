@@ -4,6 +4,8 @@
 
 This domain governs perceptual timing (how fast / slow a change should be), easing (the shape of the change), physics (how objects behave), and orchestration (how multiple moving things combine).
 
+> **Toolkit-managed file — do not edit per-project.** These rules are static and shared across every project using the toolkit. Project-specific design decisions (brand fonts, palette values, chosen breakpoints, component variants) belong in the project's own `design-system.md` and `ui-spec.md` — never here.
+
 ---
 
 ## Perceptual timing
@@ -55,6 +57,11 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 **Applies to:** Buttons, toggles, cards, any tappable/clickable element on pointer-capable devices.
 **Why:** Mimics the physical button press and confirms input before server/logic responds. Buttons that don't depress feel dead.
 
+### Rule: No overshoot/elastic easings on standard UI chrome
+**Numeric baseline:** Forbidden on buttons, modals, dropdowns, tooltips, menus: curves with y-values > 1 such as `cubic-bezier(0.34, 1.56, 0.64, 1)`. Reserve overshoot for genuinely physical interactions (drag release, swipe-snap, picker wheel).
+**Applies to:** All chrome and content-level UI motion. Allowed: gesture-release physics where overshoot communicates momentum.
+**Why:** Overshoot on UI reads as toy-like and dated. Bounces belong in physical-metaphor moments (something snapping back after a flick), not in modal entrances or button hovers.
+
 ---
 
 ## Performance
@@ -72,6 +79,10 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 **Applies to:** Elements with imminent or frequent animation.
 **Why:** Hints to the browser to promote to its own compositor layer, preventing jitter. Don't apply globally — only where needed.
 
+### Rule: Don't animate the LCP element on first paint
+**Applies to:** Hero text, hero image, primary above-the-fold content.
+**Why:** Entry animations on the largest contentful element push LCP later by the duration of the animation. Render the content first; if motion is needed, animate secondary elements or run the LCP element's transition after a paint has occurred. Content visible first, motion enhances.
+
 ---
 
 ## Meaning and restraint
@@ -79,6 +90,16 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 ### Rule: Motion must convey meaning — no decorative animation
 **Applies to:** All UI motion decisions.
 **Why:** Decorative motion adds cognitive load without payoff. Animation should answer "why this movement, why now?" Motion-as-noise degrades perceived product quality.
+
+### Rule: Don't apply hover transforms uniformly across all interactive elements
+**Numeric baseline:** Reserve hover-lift / hover-scale for elevated affordances (primary CTA, cards opening detail views). Lists, nav items, and dense UI get color/border changes instead.
+**Applies to:** Any pattern where the same hover transform is applied to many disparate element types.
+**Why:** Uniform hover motion across cards, buttons, links, and rows is the most common motion-as-noise tell. Hover affordance should grade by importance — a primary CTA earns motion; a row in a table does not.
+
+### Rule: Focus rings appear instantly — never animate the focus indicator
+**Numeric baseline:** 0ms. `transition` declarations must not include `outline` — and must not include `box-shadow` when `box-shadow` carries the focus ring.
+**Applies to:** All `:focus-visible` styles on buttons, inputs, links, and custom interactive elements.
+**Why:** Animating the focus ring leaves keyboard users without a full-contrast indicator during the transition. WCAG 2.4.7 / 2.4.11 require the indicator to be visible *when* focus is received, not 200ms later. State changes on focus are fine; the ring itself must be instant.
 
 ### Rule: Don't animate high-frequency / keyboard-initiated actions
 **Numeric baseline:** 0ms for actions repeated 100+ times per day.
@@ -88,6 +109,11 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 ### Rule: Respect `prefers-reduced-motion`
 **Applies to:** All non-essential animation, parallax, reveal-on-scroll, autoplay video.
 **Why:** WCAG 2.3.3. Vestibular disorders cause nausea, migraine, and dizziness from motion triggers. Essential animation (e.g. authoring-tool preview) is exempt but must be declared so.
+
+### Rule: Reduced-motion fallback collapses spatial motion to opacity ≤150ms
+**Numeric baseline:** When `prefers-reduced-motion: reduce`: remove all `transform` and positional motion; replace with opacity crossfades capped at 150ms. Functional motion (progress bars, determinate spinners, skeletons) is exempt — slow it but keep it.
+**Applies to:** Every spatial transition the product ships.
+**Why:** "Respect the preference" is incomplete guidance — without a defined fallback, implementations either kill all motion (losing functional feedback) or do nothing (failing the user). The opacity-crossfade pattern preserves state-change information without triggering vestibular symptoms.
 
 ---
 
