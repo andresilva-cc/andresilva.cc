@@ -187,7 +187,7 @@ const note = defineCollection({
         ...rest,
         slug,
         excerpt: excerptFromRaw(data.raw) || data.title,
-        ogImage: '/og/notes/default.png',
+        ogImage: `/og/notes/${slug}.png`,
       };
     }),
 });

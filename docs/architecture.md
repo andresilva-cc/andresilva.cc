@@ -31,7 +31,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Icons                   | Hand-rolled inline SVG components (`icon-arrow.tsx`, `icon-heart.tsx`) — no icon-library dependency |
 | HTTP client             | None — no runtime HTTP. All content is hard-coded or compiled from MDX at build time.      |
 | Content pipeline        | **Velite** + **@mdx-js/mdx** + **rehype-pretty-code** + **shiki** (+ Velite's built-in GFM via `remark-gfm`) — MDX collections under `src/content/`, emitted to `.velite/` (devDeps) |
-| OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/`. Playwright/WebKit ships as a transitive dep of grafex. |
+| OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/` and per-note PNGs into `public/og/notes/`. Playwright/WebKit ships as a transitive dep of grafex. |
 | Class utilities         | `clsx`                                                                                     |
 | Analytics               | Vercel Analytics via `@vercel/analytics/next` — `<Analytics />` in root layout             |
 | Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`     |
@@ -62,6 +62,7 @@ andresilva.cc/
 │   ├── robots.txt                 # allow-all
 │   ├── docs/teseu.pdf
 │   ├── og/articles/               # COMMITTED — grafex per-article OG PNGs (Vercel escape hatch active; regenerate locally and commit)
+│   ├── og/notes/                  # COMMITTED — grafex per-note OG PNGs (same Vercel escape hatch)
 │   └── static/                    # GENERATED (gitignored) — Velite-emitted hashed assets from MDX
 ├── src/
 │   ├── app/                       # Next.js App Router
@@ -140,9 +141,10 @@ andresilva.cc/
 │           └── brutalist-mono.json # custom Shiki theme for code blocks
 ├── tools/                         # grafex compositions (excluded from tsconfig — see §11)
 │   ├── og.tsx                     # home OG card
-│   └── og-article.tsx             # per-article OG card
+│   ├── og-article.tsx             # per-article OG card
+│   └── og-note.tsx                # per-note OG card
 ├── scripts/og/
-│   └── generate.mjs               # prebuild step — iterates articles + invokes grafex
+│   └── generate.mjs               # prebuild step — iterates articles + notes + invokes grafex
 ├── .velite/                       # GENERATED (gitignored) — Velite compiled output (typed + JSON)
 ├── velite.config.ts               # Velite collection schema for articles + notes
 ├── eslint.config.mjs
@@ -216,7 +218,7 @@ Notes use the same MDX compile/run pipeline as articles (Velite-compiled body st
 Two surfaces render notes:
 
 - **`/notes` (index)** — every note on the current page is rendered in **full** inline as MDX, separated by hairline rules. Each note is wrapped in `<article id="<slug>">` so `/notes#<slug>` jumps to it in-page. Paginated at 50 notes/page; pages 2..N live at `/notes/page/<n>`. `<NoteBlock>` (server component) is the per-note renderer used here and on the detail page.
-- **`/notes/[slug]` (detail)** — canonical SEO/share target for each note. Renders `<NoteBlock>` plus prev/next chronological navigation and a "back to notes" link. `<link rel="canonical">` points to itself (not to the index hash), and the page emits a `BlogPosting` JSON-LD block (headline = `title`, `datePublished` = `publishedAt`, `image` = the single shared `/og/notes/default.png`; no `wordCount` / `timeRequired`).
+- **`/notes/[slug]` (detail)** — canonical SEO/share target for each note. Renders `<NoteBlock>` plus prev/next chronological navigation and a "back to notes" link. `<link rel="canonical">` points to itself (not to the index hash), and the page emits a `BlogPosting` JSON-LD block (headline = `title`, `datePublished` = `publishedAt`, `image` = the per-note `/og/notes/<slug>.png`; no `wordCount` / `timeRequired`).
 
 **Perf watch-point**: at 50 notes per index page with multiple `<PreShiki>` blocks each, the index ships a large number of `CopyButton` client islands. Not a blocker today; if it bites, a future compact-mode flag on `PreShiki` (skip the copy island when rendered on the index) is the obvious fix. Tracked as a known watch-point, not work to do up front.
 
@@ -335,7 +337,7 @@ LocalArticlesRepository (sync)  ──▶  /articles, /articles/[slug], /article
 - **Velite's asset handler** copies MDX-referenced images (e.g. `./images/diagram.png`) into `public/static/` with content-hashed filenames, rewrites the URLs in the emitted body, and threads width/height/blurDataURL through the schema. `ImageMdx` consumes those dimensions when mapping `<img>` to `next/image`.
 - **`next.config.mjs`** calls `await build({ silent: true })` at the top level (gated on `NODE_ENV !== 'test'`), so `.velite/` is populated before any module imports from `@/.velite`. The TS path alias `@/.velite` is configured in `tsconfig.json`.
 - **Canonical URLs** — every absolute URL emitted by the site (RSS items, sitemap, JSON-LD, OG meta) is built from the `SITE_ORIGIN` constant in `src/lib/config.ts`. There is one canonical origin, defined in one place.
-- **OG images (per-article)** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then for each article invokes `grafex.render(tools/og-article.tsx, { props: { title, publishedAt, readingTime, coverArt } })` and writes `public/og/articles/<slug>.png`. The script is idempotent: it skips a PNG when its mtime is newer than the max of the source MDX mtime, the template (`tools/og-article.tsx`) mtime, and the generator script's own mtime — so editing the template or the generator invalidates every PNG on the next run. Gated by `SKIP_OG_BUILD` — see §11–§12.
+- **OG images (per-article and per-note)** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then iterates **both** the article and note collections: for each article it invokes `grafex.render(tools/og-article.tsx, { props: { title, publishedAt, readingTime, coverArt } })` and writes `public/og/articles/<slug>.png`; for each note it invokes `grafex.render(tools/og-note.tsx, { props: { title, publishedAt } })` and writes `public/og/notes/<slug>.png`. The script is idempotent per entry: it skips a PNG when its mtime is newer than the max of the source MDX mtime, the relevant template mtime (`tools/og-article.tsx` for articles, `tools/og-note.tsx` for notes), and the generator script's own mtime — so editing either template, or the generator, invalidates every PNG of that kind on the next run. Gated by `SKIP_OG_BUILD` — see §11–§12.
 - **OG image (home/standard)** — `tools/og.tsx` is the home/site-wide OG card (wordmark + display name + bio paragraph; eyebrow has been dropped to match the home page). **It is not part of the prebuild pipeline.** Regenerating it is a one-shot manual operation (point grafex at `tools/og.tsx` and commit the PNG). The asymmetry is deliberate: the home card changes a few times a year, the per-article card changes on every new article.
 
 ### Notes content pipeline
@@ -359,10 +361,10 @@ LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, 
   - `kind: 'til' | 'take' | 'snippet' | 'aside'` — required, closed enum (`z.enum([...])`).
   - No `updatedAt`, no `tags`, no `coverArt`, no `summary`, no reading time.
   - `raw: s.raw()` — the unprocessed body text, read in-transform (for the JSX-allowlist check and `excerpt` derivation) and destructured out, so it is **not** present on the emitted type.
-- **Derived fields in `transform()`**: `slug` (from filename via `s.path()`, validated against the same lowercase kebab-case `SLUG_RE` and `SLUG_MAX_LEN = 60` constants reused from the article collection), `excerpt` (a plaintext, markdown-stripped ~140-char preview of the body, used as the `<description>` in the notes RSS feed — falls back to the title when the body is code-only), and `ogImage` (constant `/og/notes/default.png` — see below). No `wordCount` / `readingTime`.
+- **Derived fields in `transform()`**: `slug` (from filename via `s.path()`, validated against the same lowercase kebab-case `SLUG_RE` and `SLUG_MAX_LEN = 60` constants reused from the article collection), `excerpt` (a plaintext, markdown-stripped ~140-char preview of the body, used as the `<description>` in the notes RSS feed — falls back to the title when the body is code-only), and `ogImage` (`/og/notes/<slug>.png` — see below). No `wordCount` / `readingTime`.
 - **Body compilation**: same MDX pipeline as articles — `@mdx-js/mdx` compile to function-body string; same rehype stack (`rehype-unwrap-images` first, then `rehype-pretty-code` with the `brutalist-mono` Shiki theme); GFM via Velite's built-in default. No component restrictions in the page-level MDX components map.
 - **Assets**: rare per-note media lives in `src/content/notes/_assets/<slug>/`, picked up by Velite's asset handler and emitted under `public/static/` with content hashing (same path as article images).
-- **OG image**: a single shared static `/og/notes/default.png`, generated **once manually** via the existing grafex pipeline against a notes OG template (visual language: same brutalist-mono palette as articles). It is **not** wired into `scripts/og/generate.mjs` — the asymmetry mirrors the home/site-wide OG card decision in §7 above. Per-note OG generation was rejected as not worth the build cost given the small share traffic notes are expected to attract.
+- **OG image (per-note)**: `tools/og-note.tsx` is the per-note OG template — same brutalist-mono layout as `tools/og-article.tsx`, but with eyebrow `// note` and a simplified meta strip (date only, no read time, no cover art). Props: `{ title, publishedAt }`. Generated by the same `scripts/og/generate.mjs` prebuild step as articles (see §7 above) and written to `public/og/notes/<slug>.png`. Same idempotency rule, same `SKIP_OG_BUILD` escape hatch, same commit-the-PNGs decision (PNGs ship in git because Playwright/WebKit can't run on Vercel's build container — see §12).
 - **Authoring ergonomics (optional)**: a `pnpm notes:new <slug>` scaffolder may create a stub `src/content/notes/<slug>.mdx` with today's date and a `kind` prompt. Author-side convenience only — no architectural significance, no counter, no slug allocator. Slugs are author-chosen kebab-case.
 
 ### Data fetching
@@ -417,11 +419,11 @@ No other external services (no CMS, no database, no auth provider, no email, no 
 | Script             | Command                            | Notes                                                                                  |
 | ------------------ | ---------------------------------- | -------------------------------------------------------------------------------------- |
 | `pnpm dev`         | `next dev`                         | Velite is invoked from `next.config.mjs` via top-level `await build()` on dev startup. |
-| `pnpm prebuild`    | `node scripts/og/generate.mjs`     | Runs automatically before `pnpm build`. Generates per-article OG PNGs via grafex. Skips work if `SKIP_OG_BUILD=1` (see §12). |
+| `pnpm prebuild`    | `node scripts/og/generate.mjs`     | Runs automatically before `pnpm build`. Generates per-article and per-note OG PNGs via grafex. Skips work if `SKIP_OG_BUILD=1` (see §12). |
 | `pnpm build`       | `next build`                       | Triggers `prebuild` first via npm's lifecycle hook.                                    |
 | `pnpm start`       | `next start`                       |                                                                                        |
 | `pnpm lint`        | `eslint .`                         |                                                                                        |
-| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual per-article OG regeneration. Idempotent — skips any PNG whose mtime is newer than the max of its source MDX, the template (`tools/og-article.tsx`), and this generator script. Editing the template or the generator therefore invalidates every PNG. The home/standard OG (`tools/og.tsx`) is **not** wired into this script — regenerate it manually when needed. |
+| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual per-article and per-note OG regeneration. Idempotent — skips any PNG whose mtime is newer than the max of its source MDX, the relevant template (`tools/og-article.tsx` for articles, `tools/og-note.tsx` for notes), and this generator script. Editing either template or the generator therefore invalidates every PNG of that kind. The home/standard OG (`tools/og.tsx`) is **not** wired into this script — regenerate it manually when needed. |
 
 ### ESLint
 
@@ -449,6 +451,7 @@ Three trees under the repo root are build outputs, not source:
 - **`/.velite`** — Velite's compiled content (typed `article.d.ts` + `article.json` + `note.d.ts` + `note.json`). Regenerated on every dev/build run. Never edit by hand.
 - **`/public/static`** — content-hashed copies of MDX-referenced images, emitted by Velite's asset handler. Regenerated alongside `.velite`.
 - **`/public/og/articles`** — per-article OG PNGs, emitted by `scripts/og/generate.mjs`. Regenerated by the `prebuild` step. Committed only if the grafex escape hatch is active (see §12).
+- **`/public/og/notes`** — per-note OG PNGs, emitted by the same script alongside articles. Same regeneration and commit behavior.
 
 All three are listed in `.gitignore`.
 
@@ -462,7 +465,7 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 
 - **Platform**: Vercel, connected to the GitHub repo `andresilva-cc/andresilva.cc`. Auto-deploy from `main`; preview deploys per PR.
 - **Build**: `pnpm install` → `pnpm build`, which fires the `prebuild` script (`scripts/og/generate.mjs`) and then `next build`. The `next.config.mjs` pins `turbopack.root` and calls `await build()` from Velite at the top level so `.velite/` is populated before any module resolves `@/.velite`. Otherwise default Next output, image optimization, and runtime.
-- **OG generation on Vercel is currently disabled via the §6.1.2 escape hatch.** Vercel's build container is missing ~40 system libs that WebKit needs (libgtk-4, libgstreamer, libvulkan, libgraphene, …) and the container doesn't allow `apt install`. So `SKIP_OG_BUILD=1` is set in Vercel project env vars — the prebuild script exits before grafex is imported, and Vercel serves the per-article PNGs committed under `public/og/articles/`. Local flow: regenerate after editing article frontmatter or `tools/og-article.tsx` with `pnpm og:generate` (or `pnpm build` — both run the same script), then commit the updated PNGs.
+- **OG generation on Vercel is currently disabled via the §6.1.2 escape hatch.** Vercel's build container is missing ~40 system libs that WebKit needs (libgtk-4, libgstreamer, libvulkan, libgraphene, …) and the container doesn't allow `apt install`. So `SKIP_OG_BUILD=1` is set in Vercel project env vars — the prebuild script exits before grafex is imported, and Vercel serves the per-article PNGs committed under `public/og/articles/` and the per-note PNGs committed under `public/og/notes/`. Local flow: regenerate after editing article/note frontmatter or either OG template (`tools/og-article.tsx`, `tools/og-note.tsx`) with `pnpm og:generate` (or `pnpm build` — both run the same script), then commit the updated PNGs.
 - **Environment variables**: there are no required env vars for the site to build or render. Analytics has no config (Vercel auto-detects). Required on Vercel: `SKIP_OG_BUILD=1` (see above — disables the OG prebuild that can't run on Vercel's container).
 - **Domain / DNS**: `andresilva.cc`, managed via Vercel.
 - **CI**: deployment status is visible via the deployments badge in `README.md`; there is no `.github/workflows/` directory — CI is whatever Vercel runs on push/PR.
@@ -497,7 +500,6 @@ Noting these so nobody goes hunting:
 - No test suite or test runner.
 - No i18n today (site is English-only). The repository pattern is the future seam for it.
 - No CMS — content is either code-hard-coded or authored as MDX in `src/content/`.
-- No image pipeline beyond Next's default `<Image>` optimizer (consumed through `ImageMdx` for in-article images) and Velite's build-time copy-and-hash of MDX-referenced assets into `public/static/`. Runtime image surface is `/me.jpg`, the per-article OG PNGs in `public/og/articles/`, and the Velite-emitted MDX images in `public/static/`.
+- No image pipeline beyond Next's default `<Image>` optimizer (consumed through `ImageMdx` for in-article images) and Velite's build-time copy-and-hash of MDX-referenced assets into `public/static/`. Runtime image surface is `/me.jpg`, the per-article OG PNGs in `public/og/articles/`, the per-note OG PNGs in `public/og/notes/`, and the Velite-emitted MDX images in `public/static/`.
 - No error-tracking/observability service — Vercel logs only.
 - **No merged `/feed.xml`.** Articles and notes ship as two separate full-content feeds (`/articles/rss.xml`, `/notes/rss.xml`) rather than one combined feed — notes are own-site-only while articles syndicate to dev.to, so the two surfaces have different audiences. A merged feed can be added later if readers request it. Notes are **not** syndicated to dev.to.
-- **No per-note OG generation.** Notes share a single static `/og/notes/default.png`; the per-article grafex pipeline is not extended to notes (see §7).
