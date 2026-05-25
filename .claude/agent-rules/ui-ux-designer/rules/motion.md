@@ -99,7 +99,7 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 ### Rule: Focus rings appear instantly — never animate the focus indicator
 **Numeric baseline:** 0ms. `transition` declarations must not include `outline` — and must not include `box-shadow` when `box-shadow` carries the focus ring.
 **Applies to:** All `:focus-visible` styles on buttons, inputs, links, and custom interactive elements.
-**Why:** Animating the focus ring leaves keyboard users without a full-contrast indicator during the transition. WCAG 2.4.7 / 2.4.11 require the indicator to be visible *when* focus is received, not 200ms later. State changes on focus are fine; the ring itself must be instant.
+**Why:** Animating the focus ring leaves keyboard users without a full-contrast indicator during the transition. WCAG 2.4.7 (Focus Visible) / 2.4.13 (Focus Appearance) require the indicator to be visible *when* focus is received, not 200ms later. State changes on focus are fine; the ring itself must be instant.
 
 ### Rule: Don't animate high-frequency / keyboard-initiated actions
 **Numeric baseline:** 0ms for actions repeated 100+ times per day.

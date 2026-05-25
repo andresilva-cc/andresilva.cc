@@ -28,7 +28,7 @@ This domain governs color as a system (palette, scales, aliases), contrast for a
 ### Rule: Focus indicators ≥ 2 CSS pixels thick, ≥ 3:1 contrast
 **Numeric baseline:** 2 CSS px perimeter; 3:1 contrast between focused and unfocused state.
 **Applies to:** All custom focus styles.
-**Why:** WCAG 2.4.11. Using `outline: none` without replacement is a WCAG violation.
+**Why:** WCAG 2.4.13 (Focus Appearance). Using `outline: none` without replacement is a WCAG violation.
 
 ---
 
@@ -139,7 +139,7 @@ This domain governs color as a system (palette, scales, aliases), contrast for a
 - [W3C — WCAG 2.2 1.4.3 Contrast (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
 - [W3C — WCAG 2.2 1.4.6 Contrast (Enhanced)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html)
 - [W3C — WCAG 2.2 1.4.11 Non-text Contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html)
-- [W3C — WCAG 2.2 2.4.11 Focus Appearance](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html)
+- [W3C — WCAG 2.2 2.4.13 Focus Appearance](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html)
 - [Apple — Differentiate Without Color Alone](https://developer.apple.com/help/app-store-connect/manage-app-accessibility/differentiate-without-color-alone-evaluation-criteria/)
 - [Refactoring UI — Building Your Color Palette](https://refactoringui.com/previews/building-your-color-palette/)
 - [Tailwind CSS — Customizing Colors](https://tailwindcss.com/docs/customizing-colors)

@@ -42,7 +42,7 @@ This domain governs how text is sized, spaced, weighted, and rendered — contra
 ### Rule: Body text measure 45–75 characters per line
 **Numeric baseline:** 45–75 cpl (66 ideal for single-column); 40–50 for multi-column.
 **Applies to:** Article body, documentation prose, long-form marketing copy. Dense UI tables exempt.
-**Why:** Longer lines cost saccade accuracy on line return — reading speed drops. Bringhurst's "perfect measure" is 66 characters.
+**Why:** Longer lines cost saccade accuracy on line return — reading speed drops. Butterick gives a wider acceptable range of 45–90 characters; Bringhurst's "perfect measure" is 66 — the 45–75 envelope above is the practical intersection.
 
 ### Rule: Body line-height 1.20–1.45 (unitless)
 **Numeric baseline:** 1.2–1.45 for body at 14–18px.
