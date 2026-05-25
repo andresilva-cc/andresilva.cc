@@ -1,9 +1,0 @@
----
-title: Next.js permanentRedirect
-publishedAt: 2026-05-19
-kind: til
----
-
-Next 16 ships `permanentRedirect` from `next/navigation` — it's the 308 sibling of the regular `redirect` (307). Use it for canonicalization (e.g. `/notes/page/1` → `/notes`) where the URL is permanently the wrong one. Search engines treat 308 as a hint to update their index; 307 is "this time only."
-
-The function signature is identical to `redirect` — only the status code differs.
