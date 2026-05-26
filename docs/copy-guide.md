@@ -357,6 +357,7 @@ The middle dot `·` separates items in a single value.
 
 - Page H1: `<NOTES />` (caps, brace-wrapped, mirrors `<ARTICLES />`).
 - Nav label: `notes` (lowercase, single word — slots into `home · about · career · projects · articles · notes`).
+- Detail-page eyebrow: `<Eyebrow>// note</Eyebrow>` — exact source string `// note`, lowercase, mirrors `// article` on article detail. Provides on-page "this is a note" framing for cold-link visitors (the kind labels in the meta line — `til` / `take` / `snippet` / `aside` — aren't self-identifying as kinds of notes to an uninitiated reader). Applies to the detail surface only; the list page (`/notes`) already frames via the `<NOTES />` page-head.
 - Latest row badge (home): source `Note` → renders `NOTE` (mirrors `Career` / `Project` / `Article`).
 - Meta line format: `{YYYY.MM.DD} · {kind}` — ISO date period-separated, middle dot (`·`, U+00B7) with single spaces, lowercase mono `kind` word.
   - Example: `2026.05.21 · til`

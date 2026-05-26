@@ -3,6 +3,7 @@ import { run } from '@mdx-js/mdx';
 import * as jsxRuntime from 'react/jsx-runtime';
 
 import { Text } from '@/components/text';
+import { Eyebrow } from '@/components/eyebrow';
 import { ArrowLink } from '@/components/arrow-link';
 import { InlineLink } from '@/components/inline-link';
 import { YouTube } from '@/components/mdx/youtube';
@@ -31,6 +32,7 @@ export async function NoteBlock({ note, surface = 'list' }: NoteBlockProps) {
 
   const formattedDate = formatDate(note.publishedAt);
   const isDetail = surface === 'detail';
+  const eyebrowLabel = '// note';
 
   const meta = (
     <Text variant="meta" as="p" className="inline-flex flex-wrap items-baseline gap-2 text-fg-subtle mb-0">
@@ -46,10 +48,12 @@ export async function NoteBlock({ note, surface = 'list' }: NoteBlockProps) {
     <>
       { !isDetail && meta }
 
+      { isDetail && <Eyebrow className="block">{ eyebrowLabel }</Eyebrow> }
+
       <Text
-        variant={isDetail ? 'h2' : 'h3'}
-        as={isDetail ? 'h2' : 'p'}
-        className={`${isDetail ? 'mt-0' : 'mt-3'} mb-0 text-fg`}
+        variant={isDetail ? 'h1' : 'h3'}
+        as={isDetail ? 'h1' : 'p'}
+        className="mt-3 mb-0 text-fg"
       >
         { note.title }
       </Text>

@@ -52,9 +52,10 @@ Unified rule (supersedes prior split convention, locked 2026-05-25):
 - Paginated index: `Notes (Page 2) · André Silva` (parens for sub-page, avoids `· · ·` ambiguity).
 - Detail `<title>`: `{Note Title} · André Silva` (same unified form). The pipe is dropped entirely.
 
-## Detail page has NO eyebrow and NO prev/next
+## Detail page eyebrow and no prev/next
 
-- Unlike articles, `/notes/[slug]` does NOT carry an `<Eyebrow>// {kind}</Eyebrow>` or any eyebrow. The badge in the meta line carries the kind.
+- Detail page carries `<Eyebrow>// note</Eyebrow>` — exact source `// note`, lowercase, mirrors `// article` on article detail (decided 2026-05-26, supersedes prior "no eyebrow on detail" rule). The eyebrow does NOT echo the kind (`// til` etc.) — the kind label lives in the meta line; the eyebrow frames the surface as a note for cold-link visitors who don't know the taxonomy.
+- List surface (`/notes`) carries no eyebrow — the `<NOTES />` page-head already frames it.
 - Detail page has back-link only (top + bottom: `back to notes`). No prev/next labels at the bottom — removed 2026-05-21.
 
 Related: [[project_hero_pitch_rule]] (sibling content-surface copy lock).
