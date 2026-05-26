@@ -10,7 +10,7 @@ import { LayoutBand } from './_components/layout-band';
 import { AccessibilityBand } from './_components/accessibility-band';
 
 export const metadata = {
-  title: 'André Silva · Design System',
+  title: 'Design System · André Silva',
   description: 'Tokens, components, and standing rules for the andresilva.cc design system.',
   robots: { index: false },
 };

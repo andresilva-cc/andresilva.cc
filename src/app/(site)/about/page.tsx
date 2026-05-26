@@ -9,7 +9,7 @@ import { GridFrame } from '@/components/grid-frame';
 import { IconArrow } from '@/components/icon-arrow';
 
 export const metadata = {
-  title: 'André Silva · About',
+  title: 'About · André Silva',
 };
 
 const educationItems = [

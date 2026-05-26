@@ -38,7 +38,10 @@ export const metadata = {
   },
   alternates: {
     types: {
-      'application/rss+xml': '/articles/rss.xml',
+      'application/rss+xml': [
+        { url: '/articles/rss.xml', title: 'André Silva — Articles' },
+        { url: '/notes/rss.xml', title: 'André Silva — Notes' },
+      ],
     },
   },
 };

@@ -4,7 +4,7 @@ import { ProjectCard } from '@/components/project-card';
 import { getRepositories } from '@/repositories';
 
 export const metadata = {
-  title: 'André Silva · Projects',
+  title: 'Projects · André Silva',
 };
 
 export default function Projects() {

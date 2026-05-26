@@ -9,10 +9,10 @@ This document describes **what is**, not what should be. Treat the code as the s
 ## 1. Overview
 
 - **Domain**: https://andresilva.cc
-- **Purpose**: Personal site — home, about, career, projects, and articles authored in the repo.
+- **Purpose**: Personal site — home, about, career, projects, articles, and notes authored in the repo.
 - **Shape**: Next.js App Router app, Server Components by default, with four `'use client'` islands: `nav.tsx` (route-aware active highlighting), `stipple-art.tsx` (loads the external ASCII-art Web Component), `mdx/youtube-swap.tsx` (click-to-load YouTube embed inside article prose), and `mdx/copy-button.tsx` (code-block copy button with local clipboard state).
 - **Visual reference**: the shipped code is the source of truth — the token block in `src/styles/globals.css` and the components in `src/components/`, live-rendered at the `/design-system` route. `docs/redesign-log.md` is the decision log.
-- **Data**: Content is either hard-coded in "static" repositories or authored as MDX files in `src/content/articles/` and compiled at build time by Velite. The dev.to integration has been removed — `ForemArticlesRepository` and `axios` are no longer in the codebase. The site is the canonical home for articles; dev.to is a syndicated mirror (with `canonical_url` pointing back here). There is no database, no auth, no backend of our own, and no user-generated content.
+- **Data**: Content is either hard-coded in "static" repositories or authored as MDX files in `src/content/articles/` and `src/content/notes/` and compiled at build time by Velite. The dev.to integration has been removed — `ForemArticlesRepository` and `axios` are no longer in the codebase. The site is the canonical home for articles; dev.to is a syndicated mirror (with `canonical_url` pointing back here). There is no database, no auth, no backend of our own, and no user-generated content.
 - **Deployment**: Vercel, auto-deploy from `main`.
 
 > Articles content pipeline: see `docs/articles-decision-log.md` for the rationale behind the MDX-in-repo design (collection schema, OG image generation, RSS, JSON-LD, content migration).
@@ -31,7 +31,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Icons                   | Hand-rolled inline SVG components (`icon-arrow.tsx`, `icon-heart.tsx`) — no icon-library dependency |
 | HTTP client             | None — no runtime HTTP. All content is hard-coded or compiled from MDX at build time.      |
 | Content pipeline        | **Velite** + **@mdx-js/mdx** + **rehype-pretty-code** + **shiki** (+ Velite's built-in GFM via `remark-gfm`) — MDX collections under `src/content/`, emitted to `.velite/` (devDeps) |
-| OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/`. Playwright/WebKit ships as a transitive dep of grafex. |
+| OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/` and per-note PNGs into `public/og/notes/`. Playwright/WebKit ships as a transitive dep of grafex. |
 | Class utilities         | `clsx`                                                                                     |
 | Analytics               | Vercel Analytics via `@vercel/analytics/next` — `<Analytics />` in root layout             |
 | Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`     |
@@ -62,16 +62,19 @@ andresilva.cc/
 │   ├── robots.txt                 # allow-all
 │   ├── docs/teseu.pdf
 │   ├── og/articles/               # COMMITTED — grafex per-article OG PNGs (Vercel escape hatch active; regenerate locally and commit)
+│   ├── og/notes/                  # COMMITTED — grafex per-note OG PNGs (same Vercel escape hatch)
 │   └── static/                    # GENERATED (gitignored) — Velite-emitted hashed assets from MDX
 ├── src/
 │   ├── app/                       # Next.js App Router
 │   │   ├── layout.tsx             # bare root layout: <html>/<body> + fonts + GA
 │   │   ├── not-found.tsx          # 404 — at root; replicates the shell — SkipLink + Header + Footer + container
 │   │   ├── fonts.ts               # next/font loaders
-│   │   ├── sitemap.ts             # dynamic sitemap: static routes + one entry per article
+│   │   ├── sitemap.ts             # dynamic sitemap: static routes + one entry per article + one entry per note
 │   │   ├── favicon.ico
 │   │   ├── articles/rss.xml/
-│   │   │   └── route.ts           # RSS feed Route Handler (force-static)
+│   │   │   └── route.ts           # articles RSS feed Route Handler (force-static)
+│   │   ├── notes/rss.xml/
+│   │   │   └── route.ts           # notes RSS feed Route Handler (force-static)
 │   │   ├── (site)/                # route group — shared shell layout
 │   │   │   ├── layout.tsx         # the shell: SkipLink + Header + main + Footer
 │   │   │   ├── page.tsx           # / (home)
@@ -79,6 +82,10 @@ andresilva.cc/
 │   │   │   ├── articles/
 │   │   │   │   ├── page.tsx       # /articles (static — reads LocalArticlesRepository)
 │   │   │   │   └── [slug]/page.tsx # /articles/<slug> (SSG via generateStaticParams)
+│   │   │   ├── notes/
+│   │   │   │   ├── page.tsx       # /notes (static — reads LocalNotesRepository; full inline render, paginated 50/page)
+│   │   │   │   ├── page/[page]/page.tsx # /notes/page/<n> (paginated index)
+│   │   │   │   └── [slug]/page.tsx # /notes/<slug> (canonical detail — SSG via generateStaticParams)
 │   │   │   ├── career/page.tsx
 │   │   │   └── projects/page.tsx
 │   │   └── design-system/         # separate route — outside the (site) group
@@ -86,7 +93,8 @@ andresilva.cc/
 │   │       ├── page.tsx           # /design-system — living reference page
 │   │       └── _components/       # band sections, private to this route
 │   ├── components/                # presentational + client components (the redesign vocabulary)
-│   │   └── mdx/                   # custom MDX components used in article prose
+│   │   ├── note-block.tsx         # server component — renders one note (meta + body) inline
+│   │   └── mdx/                   # custom MDX components used in article + note prose
 │   │       ├── youtube.tsx        # server component — façade + noscript iframe
 │   │       ├── youtube-swap.tsx   # 'use client' island — click-to-load swap
 │   │       ├── figure.tsx         # numbered figure (next/image + caption)
@@ -101,23 +109,28 @@ andresilva.cc/
 │   │           ├── inline-link.tsx
 │   │           └── pre-shiki.tsx
 │   ├── content/
-│   │   └── articles/              # authored MDX, one folder per article (slug = folder)
-│   │       └── <slug>/
-│   │           ├── index.mdx
-│   │           └── images/        # co-located media (hashed into public/static at build)
+│   │   ├── articles/              # authored MDX, one folder per article (slug = folder)
+│   │   │   └── <slug>/
+│   │   │       ├── index.mdx
+│   │   │       └── images/        # co-located media (hashed into public/static at build)
+│   │   └── notes/                 # authored MDX, FLAT — one file per note (slug = filename)
+│   │       ├── <slug>.mdx
+│   │       └── _assets/<slug>/    # rare per-note media (only if a note ships an image)
 │   ├── lib/
 │   │   ├── safe-href.ts           # URL allowlist guard (http/https/relative/fragment/mailto/tel)
 │   │   ├── format-date.ts         # formatMonthYear / formatDateRange / formatArticleDate
 │   │   ├── reading-time.ts        # word count + reading-time estimator (220 WPM)
 │   │   ├── config.ts              # SITE_ORIGIN — canonical origin for absolute URLs
 │   │   ├── mdx-jsx-allowlist.ts   # MDX_JSX_ALLOWLIST — single source of truth for permitted MDX JSX components
-│   │   ├── rss-url.ts             # absolutize(url, slug) — URL absolutization helper for RSS HTML output
-│   │   └── rss-renderer.tsx       # renderArticleHtml(article) — build-time MDX→HTML renderer for the RSS feed
+│   │   ├── rss-url.ts             # absolutize(url, basePath) — URL absolutization helper for RSS HTML output
+│   │   ├── rss-helpers.ts         # escapeXml / toRfc822 / escapeCdata — shared RSS feed serialization helpers
+│   │   └── rss-renderer.tsx       # renderEntryHtml core + renderArticleHtml(article) / renderNoteHtml(note) wrappers — build-time MDX→HTML renderer for the RSS feeds
 │   ├── repositories/
 │   │   ├── index.ts               # getRepositories() — factory for all repositories
 │   │   ├── *.ts                   # interfaces (ArticlesRepository, ...)
 │   │   └── implementations/
 │   │       ├── local-articles-repository.ts    # reads compiled MDX from .velite
+│   │       ├── local-notes-repository.ts       # reads compiled MDX from .velite (notes collection)
 │   │       ├── static-footer-repository.ts
 │   │       ├── static-jobs-repository.tsx
 │   │       ├── static-menu-repository.ts
@@ -128,11 +141,12 @@ andresilva.cc/
 │           └── brutalist-mono.json # custom Shiki theme for code blocks
 ├── tools/                         # grafex compositions (excluded from tsconfig — see §11)
 │   ├── og.tsx                     # home OG card
-│   └── og-article.tsx             # per-article OG card
+│   ├── og-article.tsx             # per-article OG card
+│   └── og-note.tsx                # per-note OG card
 ├── scripts/og/
-│   └── generate.mjs               # prebuild step — iterates articles + invokes grafex
+│   └── generate.mjs               # prebuild step — iterates articles + notes + invokes grafex
 ├── .velite/                       # GENERATED (gitignored) — Velite compiled output (typed + JSON)
-├── velite.config.ts               # Velite collection schema for articles
+├── velite.config.ts               # Velite collection schema for articles + notes
 ├── eslint.config.mjs
 ├── next.config.mjs                # turbopack.root pin + top-level `await build()` for Velite
 ├── postcss.config.js              # @tailwindcss/postcss
@@ -145,10 +159,10 @@ Path alias: `@/*` resolves to `src/*`.
 
 ### Role of each top-level `src/` directory
 
-- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` is a static Route Handler that lives outside the `(site)` group because it returns XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
-- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`). The nested `mdx/rss/` subdirectory holds HTML-only React mirrors of the page-side MDX components (`youtube`, `figure`, `image-mdx`, `inline-link`, `pre-shiki`) — no client JS, used solely by the RSS renderer to produce inert markup for feed readers.
-- **`src/content/`** — Authored content. Today, only `articles/<slug>/index.mdx` — one folder per article, with optional co-located `images/`. Velite reads this tree at build time. See §7.
-- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency (the one exception being `rss-renderer.tsx`, which uses React only at build time to stringify HTML). Seven modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatArticleDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta), `mdx-jsx-allowlist.ts` (exports `MDX_JSX_ALLOWLIST` — the single source of truth for which MDX JSX components are permitted; enforced at Velite build time, mirrored in the RSS component map), `rss-url.ts` (exports `absolutize(url, slug)` — the URL absolutization helper for RSS HTML output, handling `http(s):`, protocol-relative `//`, `mailto:` / `tel:`, absolute `/path`, fragment `#hash`, and relative `./` forms), and `rss-renderer.tsx` (exports `renderArticleHtml(article)` — the build-time MDX→HTML renderer used by the RSS feed; runs the compiled MDX body through `@mdx-js/mdx`'s `run()` with an RSS-specific component map and stringifies via `react-dom/server.edge.renderToStaticMarkup`).
+- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` and `notes/rss.xml/route.ts` are static Route Handlers that live outside the `(site)` group because they return XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
+- **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card, note-block). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article and note prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`). The nested `mdx/rss/` subdirectory holds HTML-only React mirrors of the page-side MDX components (`youtube`, `figure`, `image-mdx`, `inline-link`, `pre-shiki`) — no client JS, used solely by the RSS renderer to produce inert markup for feed readers.
+- **`src/content/`** — Authored content. Two collections: `articles/<slug>/index.mdx` (one folder per article, with optional co-located `images/`) and `notes/<slug>.mdx` (flat — one file per note; rare local media goes in `notes/_assets/<slug>/`). Velite reads both trees at build time. See §7.
+- **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency (the one exception being `rss-renderer.tsx`, which uses React only at build time to stringify HTML). Eight modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta), `mdx-jsx-allowlist.ts` (exports `MDX_JSX_ALLOWLIST` — the single source of truth for which MDX JSX components are permitted; enforced at Velite build time, mirrored in the RSS component map), `rss-url.ts` (exports `absolutize(url, basePath)` — the URL absolutization helper for RSS HTML output, where `basePath` is the full path segment `articles/<slug>` or `notes/<slug>`; handles `http(s):`, protocol-relative `//`, `mailto:` / `tel:`, absolute `/path`, fragment `#hash`, and relative `./` forms), `rss-helpers.ts` (exports `escapeXml` / `toRfc822` / `escapeCdata` — the shared serialization helpers used by both RSS Route Handlers), and `rss-renderer.tsx` (exports a shared `renderEntryHtml(body, basePath)` core plus two thin wrappers, `renderArticleHtml(article)` and `renderNoteHtml(note)` — the build-time MDX→HTML renderer used by both the articles and notes RSS feeds; runs the compiled MDX body through `@mdx-js/mdx`'s `run()` with an RSS-specific component map and stringifies via `react-dom/server.edge.renderToStaticMarkup`).
 - **`src/repositories/`** — Data-access seam. `index.ts` exports the `getRepositories()` factory; interfaces at the top level; concrete implementations under `implementations/`. See §7.
 - **`src/styles/`** — `globals.css` (Tailwind import + `@theme inline` token block) plus `shiki/brutalist-mono.json` (the custom Shiki theme loaded by `rehype-pretty-code`). There are no other CSS files in `src/` after the redesign — the multi-theme `themes/*.css` system has been removed.
 
@@ -156,7 +170,7 @@ Path alias: `@/*` resolves to `src/*`.
 
 ## 4. Routing & Rendering
 
-App Router. One dynamic segment (`/articles/[slug]`), one Route Handler (`/articles/rss.xml`), no parallel/intercepting routes, no middleware. The `(site)` route group carries the content routes under a shared shell layout; `design-system` is a separate route outside that group with its own bare layout; the RSS Route Handler lives outside `(site)` because it returns XML rather than the HTML shell.
+App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes/page/[page]`), two Route Handlers (`/articles/rss.xml` and `/notes/rss.xml`), no parallel/intercepting routes, no middleware. The `(site)` route group carries the content routes under a shared shell layout; `design-system` is a separate route outside that group with its own bare layout; the RSS Route Handlers live outside `(site)` because they return XML rather than the HTML shell.
 
 | Path                  | File                                          | Rendering                                                |
 | --------------------- | --------------------------------------------- | -------------------------------------------------------- |
@@ -165,6 +179,10 @@ App Router. One dynamic segment (`/articles/[slug]`), one Route Handler (`/artic
 | `/articles`           | `src/app/(site)/articles/page.tsx`            | Server (static) — reads `LocalArticlesRepository`        |
 | `/articles/[slug]`    | `src/app/(site)/articles/[slug]/page.tsx`     | Server (static) — SSG via `generateStaticParams`         |
 | `/articles/rss.xml`   | `src/app/articles/rss.xml/route.ts`           | Static Route Handler (`export const dynamic = 'force-static'`) — full-content feed (`<content:encoded>` alongside summary `<description>`); body rendering via `src/lib/rss-renderer.tsx` |
+| `/notes`              | `src/app/(site)/notes/page.tsx`               | Server (static) — reads `LocalNotesRepository` (page 1)  |
+| `/notes/page/[page]`  | `src/app/(site)/notes/page/[page]/page.tsx`   | Server (static) — SSG via `generateStaticParams` (pages 2..N) |
+| `/notes/[slug]`       | `src/app/(site)/notes/[slug]/page.tsx`        | Server (static) — SSG via `generateStaticParams`         |
+| `/notes/rss.xml`      | `src/app/notes/rss.xml/route.ts`              | Static Route Handler (`export const dynamic = 'force-static'`) — full-content feed (`<content:encoded>` alongside summary `<description>`); body rendering via `src/lib/rss-renderer.tsx` |
 | `/career`             | `src/app/(site)/career/page.tsx`              | Server (static)                                          |
 | `/projects`           | `src/app/(site)/projects/page.tsx`            | Server (static)                                          |
 | `/design-system`      | `src/app/design-system/page.tsx`              | Server (static)                                          |
@@ -192,6 +210,17 @@ Everything else — header, footer, page heads, section heads, project cards, ro
 Article bodies are compiled to a function-body string by Velite at build time (via `@mdx-js/mdx`'s `compile`). At request time, `/articles/[slug]/page.tsx` calls `@mdx-js/mdx`'s `run()` against the string, with `react/jsx-runtime` passed in, and renders the resulting default export through the page's MDX components map (`YouTube`, `Figure`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`). `PreShiki` mounts the `CopyButton` client island internally — the components map only allowlists the elements authors can name. Because the body string is build-time output — never runtime user input — `run()` is not dynamic code execution in the security sense; it is the standard MDX runtime pattern.
 
 The article page also embeds a `BlogPosting` JSON-LD `<script type="application/ld+json">` (headline, description, dates, author, URL, image, keywords, `wordCount`, `timeRequired`, `inLanguage`, `isPartOf`) — Server Component, no client overhead.
+
+### Note rendering
+
+Notes use the same MDX compile/run pipeline as articles (Velite-compiled body string → `@mdx-js/mdx`'s `run()` against `react/jsx-runtime` → render through the MDX components map). There are no per-note component restrictions: the components map is identical to the article one (`YouTube`, `Figure`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`).
+
+Two surfaces render notes:
+
+- **`/notes` (index)** — every note on the current page is rendered in **full** inline as MDX, separated by hairline rules. Each note is wrapped in `<article id="<slug>">` so `/notes#<slug>` jumps to it in-page. Paginated at 50 notes/page; pages 2..N live at `/notes/page/<n>`. `<NoteBlock>` (server component) is the per-note renderer used here and on the detail page.
+- **`/notes/[slug]` (detail)** — canonical SEO/share target for each note. Renders `<NoteBlock surface="detail">` (which prepends a `// note` eyebrow, escalates the title to `<h1>` + `h1` visual variant in VT323, and moves the meta below the title) plus top and bottom "back to notes" links. `<link rel="canonical">` points to itself (not to the index hash), and the page emits a `BlogPosting` JSON-LD block (headline = `title`, `datePublished` = `publishedAt`, `image` = the per-note `/og/notes/<slug>.png`; no `wordCount` / `timeRequired`).
+
+**Perf watch-point**: at 50 notes per index page with multiple `<PreShiki>` blocks each, the index ships a large number of `CopyButton` client islands. Not a blocker today; if it bites, a future compact-mode flag on `PreShiki` (skip the copy island when rendered on the index) is the obvious fix. Tracked as a known watch-point, not work to do up front.
 
 ### Metadata
 
@@ -238,7 +267,7 @@ The component layer is a vocabulary of roughly 24 components, each a single visu
 - **Layout chrome**: `header`, `footer`, `wordmark`, `nav` (route-aware client component), `skip-link`.
 - **Page structure**: `page-head`, `section-head`, `eyebrow`, `grid-frame`.
 - **Inline primitives**: `tag` / `badge`, `status-dot`, `link-arrow`, `button-cta`.
-- **Cards & rows**: `row` (home Latest), `project-card`, `role-card`, `article-card`.
+- **Cards & rows**: `row` (home Latest), `project-card`, `role-card`, `article-card`, `note-block` (server component — renders one note inline; used on `/notes` and `/notes/[slug]`).
 - **Media**: `photo-wrap` (about portrait with the filter token), `hero-art` / `stipple-art` (the ASCII-art embed — home hero + article thumbnails).
 - **MDX in-prose components** (live under `src/components/mdx/`, used only inside article bodies): `youtube` (server façade with `<noscript>` iframe) + `youtube-swap` ('use client' click-to-load island), `figure` (numbered diagram — `next/image` + `FigureCaption`, falls back to a plain `<img>` when Velite emits no dimensions for an absolute-URL source), `figure-caption` (shared caption renderer powering both `<Figure>` and `<YouTube>`'s figure mode), `image-mdx` (bare flush image for the `![]()` markdown path — `next/image` with Velite-emitted dimensions, no caption; absolute-URL fallback as `<img>`), `pre-shiki` (styled `<pre>` wrapper around `rehype-pretty-code`'s output; mounts `CopyButton` internally), `copy-button` ('use client' code-block copy island, revealed on `group-hover/pre`). The MDX components map in `[slug]/page.tsx` is the allowlist (`YouTube`, `Figure`, `img → ImageMdx`, `a → InlineLink`, `pre → PreShiki`) — authors can only use components named there.
 
@@ -258,11 +287,15 @@ The component file listing in `src/components/` is the authoritative inventory; 
 flowchart LR
     Page["App Router Page<br/>(Server Component)"] -->|getRepositories()| Factory["repositories/index.ts"]
     Factory --> Static["Static*Repository<br/>(hard-coded data)"]
-    Factory --> Local["LocalArticlesRepository"]
-    Local -->|reads at module init| Velite[".velite/<br/>(built MDX + frontmatter)"]
-    Velite -.->|build-time| MDX[("src/content/articles/<br/>**/index.mdx")]
+    Factory --> LocalA["LocalArticlesRepository"]
+    Factory --> LocalN["LocalNotesRepository"]
+    LocalA -->|reads at module init| Velite[".velite/<br/>(built MDX + frontmatter)"]
+    LocalN -->|reads at module init| Velite
+    Velite -.->|build-time| MDXA[("src/content/articles/<br/>**/index.mdx")]
+    Velite -.->|build-time| MDXN[("src/content/notes/<br/>*.mdx")]
     Static --> Page
-    Local --> Page
+    LocalA --> Page
+    LocalN --> Page
     Page --> HTML[(Rendered HTML)]
 ```
 
@@ -276,14 +309,14 @@ There are two kinds of implementations:
 
 1. **Static repositories** — data is hard-coded in the class. The content for the career page, projects page, footer social links, and site menu all live here. Changes ship as code commits.
    - `StaticJobsRepository` is written as `.tsx` because the `description` field is JSX (nested `<ul>`/`<li>`/`<p>`).
-2. **Local file-system repository** — `LocalArticlesRepository` reads the pre-built MDX collection emitted by Velite (`.velite/article.json`, surfaced as the typed `article` array exported from `@/.velite`). Its interface is synchronous (`getAll(): Article[]`, `getBySlug(slug): Article | undefined`) — there is no async data source. `getAll()` sorts by `publishedAt` descending so callers don't re-sort.
+2. **Local file-system repositories** — `LocalArticlesRepository` and `LocalNotesRepository` both read pre-built MDX collections emitted by Velite (`.velite/article.json` and `.velite/note.json`, surfaced as the typed `article` and `note` arrays exported from `@/.velite`). Their interfaces are synchronous (`getAll(): Article[] | Note[]`, `getBySlug(slug): Article | Note | undefined`) — there is no async data source. `getAll()` sorts by `publishedAt` descending so callers don't re-sort.
 
 ### Why keep the repository pattern
 
 The site has no database and most content is hard-coded — at first glance the abstraction looks like over-engineering for static data. It is kept deliberately:
 
 - **It is the i18n seam.** When the site grows a second locale, the swap point is the repository — `StaticProjectsRepository` becomes `LocalizedProjectsRepository` (or a wrapper) without touching any page or component.
-- **It is the content-source seam.** `LocalArticlesRepository` is the seam between pages and the build-time Velite output. If articles ever move to a CMS, or notes ship as a sibling collection, the interface lets pages stay agnostic about the underlying source.
+- **It is the content-source seam.** `LocalArticlesRepository` and `LocalNotesRepository` are the seam between pages and the build-time Velite output. If articles or notes ever move to a CMS, the interface lets pages stay agnostic about the underlying source.
 - **It is the testing seam.** Pages depend on interfaces, not concrete classes; a future test suite can substitute fakes without monkey-patching.
 
 This decision has been re-evaluated and ratified after the redesign — do not propose removing it without addressing these three roles.
@@ -304,12 +337,40 @@ LocalArticlesRepository (sync)  ──▶  /articles, /articles/[slug], /article
 - **Velite's asset handler** copies MDX-referenced images (e.g. `./images/diagram.png`) into `public/static/` with content-hashed filenames, rewrites the URLs in the emitted body, and threads width/height/blurDataURL through the schema. `ImageMdx` consumes those dimensions when mapping `<img>` to `next/image`.
 - **`next.config.mjs`** calls `await build({ silent: true })` at the top level (gated on `NODE_ENV !== 'test'`), so `.velite/` is populated before any module imports from `@/.velite`. The TS path alias `@/.velite` is configured in `tsconfig.json`.
 - **Canonical URLs** — every absolute URL emitted by the site (RSS items, sitemap, JSON-LD, OG meta) is built from the `SITE_ORIGIN` constant in `src/lib/config.ts`. There is one canonical origin, defined in one place.
-- **OG images (per-article)** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then for each article invokes `grafex.render(tools/og-article.tsx, { props: { title, publishedAt, readingTime, coverArt } })` and writes `public/og/articles/<slug>.png`. The script is idempotent: it skips a PNG when its mtime is newer than the max of the source MDX mtime, the template (`tools/og-article.tsx`) mtime, and the generator script's own mtime — so editing the template or the generator invalidates every PNG on the next run. Gated by `SKIP_OG_BUILD` — see §11–§12.
+- **OG images (per-article and per-note)** — `scripts/og/generate.mjs` runs as a `prebuild` step. It re-runs Velite (idempotent, ~200ms), then iterates **both** the article and note collections: for each article it invokes `grafex.render(tools/og-article.tsx, { props: { title, publishedAt, readingTime, coverArt } })` and writes `public/og/articles/<slug>.png`; for each note it invokes `grafex.render(tools/og-note.tsx, { props: { title, publishedAt } })` and writes `public/og/notes/<slug>.png`. The script is idempotent per entry: it skips a PNG when its mtime is newer than the max of the source MDX mtime, the relevant template mtime (`tools/og-article.tsx` for articles, `tools/og-note.tsx` for notes), and the generator script's own mtime — so editing either template, or the generator, invalidates every PNG of that kind on the next run. Gated by `SKIP_OG_BUILD` — see §11–§12.
 - **OG image (home/standard)** — `tools/og.tsx` is the home/site-wide OG card (wordmark + display name + bio paragraph; eyebrow has been dropped to match the home page). **It is not part of the prebuild pipeline.** Regenerating it is a one-shot manual operation (point grafex at `tools/og.tsx` and commit the PNG). The asymmetry is deliberate: the home card changes a few times a year, the per-article card changes on every new article.
+
+### Notes content pipeline
+
+Mirrors the article collection pattern, with these differences:
+
+```
+src/content/notes/<slug>.mdx        (authored source — flat, one file per note)
+            │
+            ▼
+       velite build  ──▶  .velite/note.json + note.d.ts   (typed array)
+            │
+            ▼
+LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, /notes/rss.xml, sitemap
+```
+
+- **Collection**: a second Velite collection in `velite.config.ts` — `note` with `pattern: 'notes/*.mdx'` (flat, not folder-per-slug). The `_assets/` subdirectory is excluded from the pattern.
+- **Frontmatter schema** (Zod):
+  - `title: string` — required. Editorial 2-7 word target enforced by `docs/copy-guide.md`, **not** by the schema.
+  - `publishedAt: ISO date` — required.
+  - `kind: 'til' | 'take' | 'snippet' | 'aside'` — required, closed enum (`z.enum([...])`).
+  - No `updatedAt`, no `tags`, no `coverArt`, no `summary`, no reading time.
+  - `raw: s.raw()` — the unprocessed body text, read in-transform (for the JSX-allowlist check and `excerpt` derivation) and destructured out, so it is **not** present on the emitted type.
+- **Derived fields in `transform()`**: `slug` (from filename via `s.path()`, validated against the same lowercase kebab-case `SLUG_RE` and `SLUG_MAX_LEN = 60` constants reused from the article collection), `excerpt` (a plaintext, markdown-stripped ~140-char preview of the body, used as the `<description>` in the notes RSS feed — falls back to the title when the body is code-only), and `ogImage` (`/og/notes/<slug>.png` — see below). No `wordCount` / `readingTime`.
+- **Body compilation**: same MDX pipeline as articles — `@mdx-js/mdx` compile to function-body string; same rehype stack (`rehype-unwrap-images` first, then `rehype-pretty-code` with the `brutalist-mono` Shiki theme); GFM via Velite's built-in default. No component restrictions in the page-level MDX components map.
+- **Assets**: rare per-note media lives in `src/content/notes/_assets/<slug>/`, picked up by Velite's asset handler and emitted under `public/static/` with content hashing (same path as article images).
+- **OG image (per-note)**: `tools/og-note.tsx` is the per-note OG template — same brutalist-mono layout as `tools/og-article.tsx`, but with eyebrow `// note` and a simplified meta strip (date only, no read time, no cover art). Props: `{ title, publishedAt }`. Generated by the same `scripts/og/generate.mjs` prebuild step as articles (see §7 above) and written to `public/og/notes/<slug>.png`. Same idempotency rule, same `SKIP_OG_BUILD` escape hatch, same commit-the-PNGs decision (PNGs ship in git because Playwright/WebKit can't run on Vercel's build container — see §12).
+- **Authoring ergonomics (optional)**: a `pnpm notes:new <slug>` scaffolder may create a stub `src/content/notes/<slug>.mdx` with today's date and a `kind` prompt. Author-side convenience only — no architectural significance, no counter, no slug allocator. Slugs are author-chosen kebab-case.
 
 ### Data fetching
 
 - All article routes (`/articles`, `/articles/[slug]`, `/articles/rss.xml`) are statically generated at build time. `[slug]/page.tsx` uses `generateStaticParams` to pre-render every article. The RSS route handler sets `export const dynamic = 'force-static'`.
+- All note routes (`/notes`, `/notes/page/[page]`, `/notes/[slug]`, `/notes/rss.xml`) are statically generated at build time. `[slug]/page.tsx` and `page/[page]/page.tsx` both use `generateStaticParams` (enumerating slugs and page numbers respectively from the `LocalNotesRepository`); the RSS route handler sets `export const dynamic = 'force-static'`.
 - All other pages are fully static.
 - **There is no runtime data fetching anywhere in the application.**
 
@@ -358,11 +419,11 @@ No other external services (no CMS, no database, no auth provider, no email, no 
 | Script             | Command                            | Notes                                                                                  |
 | ------------------ | ---------------------------------- | -------------------------------------------------------------------------------------- |
 | `pnpm dev`         | `next dev`                         | Velite is invoked from `next.config.mjs` via top-level `await build()` on dev startup. |
-| `pnpm prebuild`    | `node scripts/og/generate.mjs`     | Runs automatically before `pnpm build`. Generates per-article OG PNGs via grafex. Skips work if `SKIP_OG_BUILD=1` (see §12). |
+| `pnpm prebuild`    | `node scripts/og/generate.mjs`     | Runs automatically before `pnpm build`. Generates per-article and per-note OG PNGs via grafex. Skips work if `SKIP_OG_BUILD=1` (see §12). |
 | `pnpm build`       | `next build`                       | Triggers `prebuild` first via npm's lifecycle hook.                                    |
 | `pnpm start`       | `next start`                       |                                                                                        |
 | `pnpm lint`        | `eslint .`                         |                                                                                        |
-| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual per-article OG regeneration. Idempotent — skips any PNG whose mtime is newer than the max of its source MDX, the template (`tools/og-article.tsx`), and this generator script. Editing the template or the generator therefore invalidates every PNG. The home/standard OG (`tools/og.tsx`) is **not** wired into this script — regenerate it manually when needed. |
+| `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual per-article and per-note OG regeneration. Idempotent — skips any PNG whose mtime is newer than the max of its source MDX, the relevant template (`tools/og-article.tsx` for articles, `tools/og-note.tsx` for notes), and this generator script. Editing either template or the generator therefore invalidates every PNG of that kind. The home/standard OG (`tools/og.tsx`) is **not** wired into this script — regenerate it manually when needed. |
 
 ### ESLint
 
@@ -387,9 +448,10 @@ Flat config (`eslint.config.mjs`):
 
 Three trees under the repo root are build outputs, not source:
 
-- **`/.velite`** — Velite's compiled content (typed `article.d.ts` + `article.json`). Regenerated on every dev/build run. Never edit by hand.
+- **`/.velite`** — Velite's compiled content (typed `article.d.ts` + `article.json` + `note.d.ts` + `note.json`). Regenerated on every dev/build run. Never edit by hand.
 - **`/public/static`** — content-hashed copies of MDX-referenced images, emitted by Velite's asset handler. Regenerated alongside `.velite`.
 - **`/public/og/articles`** — per-article OG PNGs, emitted by `scripts/og/generate.mjs`. Regenerated by the `prebuild` step. Committed only if the grafex escape hatch is active (see §12).
+- **`/public/og/notes`** — per-note OG PNGs, emitted by the same script alongside articles. Same regeneration and commit behavior.
 
 All three are listed in `.gitignore`.
 
@@ -403,7 +465,7 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 
 - **Platform**: Vercel, connected to the GitHub repo `andresilva-cc/andresilva.cc`. Auto-deploy from `main`; preview deploys per PR.
 - **Build**: `pnpm install` → `pnpm build`, which fires the `prebuild` script (`scripts/og/generate.mjs`) and then `next build`. The `next.config.mjs` pins `turbopack.root` and calls `await build()` from Velite at the top level so `.velite/` is populated before any module resolves `@/.velite`. Otherwise default Next output, image optimization, and runtime.
-- **OG generation on Vercel is currently disabled via the §6.1.2 escape hatch.** Vercel's build container is missing ~40 system libs that WebKit needs (libgtk-4, libgstreamer, libvulkan, libgraphene, …) and the container doesn't allow `apt install`. So `SKIP_OG_BUILD=1` is set in Vercel project env vars — the prebuild script exits before grafex is imported, and Vercel serves the per-article PNGs committed under `public/og/articles/`. Local flow: regenerate after editing article frontmatter or `tools/og-article.tsx` with `pnpm og:generate` (or `pnpm build` — both run the same script), then commit the updated PNGs.
+- **OG generation on Vercel is currently disabled via the §6.1.2 escape hatch.** Vercel's build container is missing ~40 system libs that WebKit needs (libgtk-4, libgstreamer, libvulkan, libgraphene, …) and the container doesn't allow `apt install`. So `SKIP_OG_BUILD=1` is set in Vercel project env vars — the prebuild script exits before grafex is imported, and Vercel serves the per-article PNGs committed under `public/og/articles/` and the per-note PNGs committed under `public/og/notes/`. Local flow: regenerate after editing article/note frontmatter or either OG template (`tools/og-article.tsx`, `tools/og-note.tsx`) with `pnpm og:generate` (or `pnpm build` — both run the same script), then commit the updated PNGs.
 - **Environment variables**: there are no required env vars for the site to build or render. Analytics has no config (Vercel auto-detects). Required on Vercel: `SKIP_OG_BUILD=1` (see above — disables the OG prebuild that can't run on Vercel's container).
 - **Domain / DNS**: `andresilva.cc`, managed via Vercel.
 - **CI**: deployment status is visible via the deployments badge in `README.md`; there is no `.github/workflows/` directory — CI is whatever Vercel runs on push/PR.
@@ -431,12 +493,13 @@ Noting these so nobody goes hunting:
 
 - No authentication, no user accounts, no sessions.
 - No database, no ORM, no migrations.
-- No API routes (`app/api/*`) and no server actions. The only Route Handler in the app is `/articles/rss.xml` (`force-static`), which exists because the RSS feed must serve XML rather than the HTML shell — it is otherwise identical in spirit to a static page.
+- No API routes (`app/api/*`) and no server actions. The only Route Handlers in the app are `/articles/rss.xml` and `/notes/rss.xml` (both `force-static`), which exist because the RSS feeds must serve XML rather than the HTML shell — they are otherwise identical in spirit to static pages.
 - No middleware.
 - No multi-theme system, no theme selector, no theme cookie. The site is single-palette.
 - No `tailwind.config.*` — Tailwind 4 is configured entirely via the `@theme inline` block in `globals.css`.
 - No test suite or test runner.
 - No i18n today (site is English-only). The repository pattern is the future seam for it.
 - No CMS — content is either code-hard-coded or authored as MDX in `src/content/`.
-- No image pipeline beyond Next's default `<Image>` optimizer (consumed through `ImageMdx` for in-article images) and Velite's build-time copy-and-hash of MDX-referenced assets into `public/static/`. Runtime image surface is `/me.jpg`, the per-article OG PNGs in `public/og/articles/`, and the Velite-emitted MDX images in `public/static/`.
+- No image pipeline beyond Next's default `<Image>` optimizer (consumed through `ImageMdx` for in-article images) and Velite's build-time copy-and-hash of MDX-referenced assets into `public/static/`. Runtime image surface is `/me.jpg`, the per-article OG PNGs in `public/og/articles/`, the per-note OG PNGs in `public/og/notes/`, and the Velite-emitted MDX images in `public/static/`.
 - No error-tracking/observability service — Vercel logs only.
+- **No merged `/feed.xml`.** Articles and notes ship as two separate full-content feeds (`/articles/rss.xml`, `/notes/rss.xml`) rather than one combined feed — notes are own-site-only while articles syndicate to dev.to, so the two surfaces have different audiences. A merged feed can be added later if readers request it. Notes are **not** syndicated to dev.to.

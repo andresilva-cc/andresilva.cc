@@ -15,7 +15,7 @@ import { ImageMdx } from '@/components/mdx/image-mdx';
 import { Figure } from '@/components/mdx/figure';
 import { PreShiki } from '@/components/mdx/pre-shiki';
 import { getRepositories } from '@/repositories';
-import { formatArticleDate } from '@/lib/format-date';
+import { formatDate } from '@/lib/format-date';
 import { SITE_ORIGIN } from '@/lib/config';
 
 const mdxComponents = {
@@ -44,7 +44,7 @@ export async function generateMetadata({
   const article = articlesRepository.getBySlug(slug);
   if (!article) return {};
   return {
-    title: `${article.title} | André Silva`,
+    title: `${article.title} · André Silva`,
     description: article.summary,
     openGraph: {
       title: article.title,
@@ -81,8 +81,8 @@ export default async function ArticlePage({
 
   const Content = mdxModule.default as ComponentType<{ components: typeof mdxComponents }>;
 
-  const formattedDate = formatArticleDate(article.publishedAt);
-  const formattedUpdated = article.updatedAt ? formatArticleDate(article.updatedAt) : null;
+  const formattedDate = formatDate(article.publishedAt);
+  const formattedUpdated = article.updatedAt ? formatDate(article.updatedAt) : null;
 
   // JSON-LD BlogPosting — per architecture §7.
   // consistent-as-needed quote-props: @-prefixed keys require quotes, so all

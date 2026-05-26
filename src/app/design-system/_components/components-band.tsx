@@ -3,6 +3,8 @@ import { ReactNode } from 'react';
 
 import { Text } from '@/components/text';
 import { SectionHead } from '@/components/section-head';
+import { NoteBlock } from '@/components/note-block';
+import { getRepositories } from '@/repositories';
 import { Eyebrow } from '@/components/eyebrow';
 import { Tag } from '@/components/tag';
 import { Badge } from '@/components/badge';
@@ -28,6 +30,25 @@ import { FigureCaption } from '@/components/mdx/figure-caption';
 import { ImageMdx } from '@/components/mdx/image-mdx';
 import { PreShiki } from '@/components/mdx/pre-shiki';
 import { YouTube } from '@/components/mdx/youtube';
+
+async function NoteBlockDemo() {
+  const { notesRepository } = getRepositories();
+  const notes = notesRepository.getAll();
+  if (notes.length === 0) {
+    return (
+      <Text variant="body" className="text-fg-muted m-0">No notes in content directory.</Text>
+    );
+  }
+  return (
+    <div className="w-full flex flex-col divide-y divide-rule">
+      { await Promise.all(notes.slice(0, 2).map((note) => (
+        <div key={note.slug} className="py-6 first:pt-0">
+          <NoteBlock note={note} />
+        </div>
+      ))) }
+    </div>
+  );
+}
 
 interface DemoProps {
   number: string;
@@ -59,7 +80,7 @@ export function ComponentsBand() {
     <section id="components" aria-labelledby="comp-h" className="py-8 border-b border-rule">
       <SectionHead eyebrow="// 06 / the parts in the kit" title="Components" id="comp-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
-        24 components, all rendered live (no screenshots). Markup is verbatim from page and
+        25 components, all rendered live (no screenshots). Markup is verbatim from page and
         article files. Where markup includes hard-coded SVG paths or attribute strings, those are
         reproduced exactly so you can copy them directly from this page&#x2019;s source.
       </Text>
@@ -443,6 +464,28 @@ export function ComponentsBand() {
               </code>
             </PreShiki>
           </div>
+        </Demo>
+
+        <Demo number="25" name="NoteBlock" api="<NoteBlock note={…} surface=&quot;list|detail&quot; />">
+          <Text variant="body" className="text-fg-muted m-0 w-full">
+            Inline stream block for a single note. Two surfaces via the
+            {' '}
+            <code className="text-accent">surface</code>
+            {' prop (default "list"). List: meta above title, title as '}
+            <code className="text-accent">&lt;p&gt;</code>
+            {' in '}
+            <code className="text-accent">h3</code>
+            {' visual variant, permalink at bottom. Detail ('}
+            <code className="text-accent">surface=&quot;detail&quot;</code>
+            {'): title as '}
+            <code className="text-accent">&lt;h2&gt;</code>
+            {' in '}
+            <code className="text-accent">h2</code>
+            {' visual variant, meta below title, no permalink. MDX body styled by '}
+            <code className="text-accent">.article-prose</code>
+            {' in both surfaces.'}
+          </Text>
+          <NoteBlockDemo />
         </Demo>
 
         <Demo number="24" name="CopyButton" api="<CopyButton code=&quot;…&quot; />">

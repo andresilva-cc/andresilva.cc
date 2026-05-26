@@ -8,6 +8,7 @@ export class StaticMenuRepository implements MenuRepository {
       { name: 'career', path: '/career' },
       { name: 'projects', path: '/projects' },
       { name: 'articles', path: '/articles' },
+      { name: 'notes', path: '/notes' },
     ];
   }
 }

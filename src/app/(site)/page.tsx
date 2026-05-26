@@ -10,18 +10,19 @@ export const metadata = {
 };
 
 export default function Home() {
-  const { jobsRepository, projectsRepository, articlesRepository } = getRepositories();
+  const { jobsRepository, projectsRepository, articlesRepository, notesRepository } = getRepositories();
 
   const currentJob = jobsRepository.getAll()[0];
   const projects = projectsRepository.getAll();
   const featuredProject = projects.find((p) => p.featured);
 
-  // T3 stub: only the latest article title is surfaced here. T3 will rewrite
-  // this to wire the latest-article card from LocalArticlesRepository properly.
   const articles = articlesRepository.getAll();
   const latestArticle = articles[0];
   const latestArticleTitle = latestArticle?.title ?? '';
   const latestArticleSlug = latestArticle?.slug ?? '';
+
+  const notes = notesRepository.getAll();
+  const latestNote = notes[0];
 
   return (
     <>
@@ -92,6 +93,13 @@ export default function Home() {
               category="Article"
               href={`/articles/${latestArticleSlug}`}
               title={latestArticleTitle}
+            />
+          ) }
+          { latestNote && (
+            <LatestRow
+              category="Note"
+              href={`/notes/${latestNote.slug}`}
+              title={latestNote.title}
             />
           ) }
         </ul>

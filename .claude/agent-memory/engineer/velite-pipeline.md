@@ -65,3 +65,7 @@ This runs Velite before Next's compilation — Turbopack-compatible (no webpack 
 ## Reading time with s.raw()
 
 Use `s.raw()` to get the raw MDX source text for word counting. Strip it in the transform and compute `readingTime` there. Don't expose `raw` in the final Article type.
+
+## JSX allowlist check pattern
+
+The article collection checks for disallowed PascalCase JSX components in `.transform()` using `s.raw()`. When adding this same check to a collection that doesn't need reading time (like `note`), you still need to add `raw: s.raw()` to the schema, run the check, then destructure it out with `const { raw: _raw, ...rest } = data` so it doesn't appear in the emitted type.
