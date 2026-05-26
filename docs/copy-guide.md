@@ -106,12 +106,12 @@ Rationale: the accented form was dropped deliberately in the redesign. The plain
 ### Sentence case
 
 - **Eyebrows**: lowercase (rendered uppercase by CSS).
-- **Page titles in `<title>`** follow a **split convention**:
+- **Page titles in `<title>`** follow a **unified convention**:
   - **Home**: just `André Silva` — the brand alone, no page suffix (standard home-page convention).
-  - **Index / section pages** (About, Career, Projects, Articles, Notes, 404): `André Silva · {Page}` — **brand-first, middle dot** (`·`, U+00B7) with one space on each side, page word in title case.
-  - **Detail pages** (individual notes, and any future per-item page): `{Title} | André Silva` — **title-first, pipe** (`|`) with one space on each side. The detail's own title leads so it's the part the browser tab shows when truncated; the brand follows.
+  - **Every other page** (indexes and details alike): `{Page or Title} · André Silva` — **title-first, middle dot** (`·`, U+00B7) with one space on each side. The page word or content title leads; the brand follows.
+  - **Paginated indexes**: `Notes (Page 2) · André Silva` — sub-page sits in parentheses inside the leading segment to avoid `· · ·` separator ambiguity.
 
-  The split is intentional, not a drift: index titles read as system labels (brand → section), detail titles read as content references (title → brand). Matches what's shipped in `src/app/(site)/articles/page.tsx` (index, dot) and `src/app/(site)/articles/[slug]/page.tsx` (detail, pipe). When adding a new surface, decide whether it's an index or a detail and pick the matching form.
+  Every browser tab leads with what the page *is*, and the middle dot matches the separator the rest of the site already uses (footer, meta lines, eyebrows). The pipe is dropped. Matches what `src/app/(site)/articles/[slug]/page.tsx` ships after the unification. When adding a new surface, use the suffix form unless it’s the home page.
 - **Nav labels**: lowercase, single word, in source. The active page is wrapped in square brackets (`[home]`) — that’s a render decoration, not a copy variant; the underlying string is still `home`.
 - **Page H1** (about/career/projects/articles): rendered as `<{NAME} />` using pixel font, with the page name in **uppercase** — e.g. `<ABOUT />`, `<CAREER />`. The angle braces are decorative (rendered via `.brace`) and the inner text is the literal page word in caps. Home’s H1 is the person’s name in pixel-display: `André Silva`.
 - **Section H2** (`Bio`, `Latest`, `Education`, `Facts`, `Resume`): title case if multi-word, sentence case for single words.
@@ -224,28 +224,37 @@ Authoritative quick-reference for currently-shipped strings.
 
 ### Page titles (`<title>`)
 
-**Index / section pages** — brand-first, middle-dot separator:
+Title-first, middle-dot separator everywhere except home:
 
 ```
 André Silva
-André Silva · About
-André Silva · Career
-André Silva · Projects
-André Silva · Articles
-André Silva · Notes
-André Silva · Not Found
+About · André Silva
+Career · André Silva
+Projects · André Silva
+Articles · André Silva
+Notes · André Silva
+Design System · André Silva
+Page not found · André Silva
 ```
 
-Separator: middle dot (`·`, U+00B7), space on each side. **Home is just `André Silva`** — the brand alone, no page suffix (standard home-page convention; agrees with §3). Interior index pages append `· {Page}` with the page word in title case. The 404 surface uses `· Not Found` (title case, mirroring the H2 below).
+Separator: middle dot (`·`, U+00B7), space on each side. **Home is just `André Silva`** — the brand alone, no page suffix (standard home-page convention; agrees with §3). Every other page leads with the page word (title case) and suffixes `· André Silva`. The 404 surface uses `Page not found` (sentence case, mirroring the H2).
 
-**Detail pages** — title-first, pipe separator:
+**Detail pages** — same form, content title leads:
 
 ```
-{Article Title} | André Silva
-{Note Title} | André Silva
+{Article Title} · André Silva
+{Note Title} · André Silva
 ```
 
-Separator: pipe (`|`) with single spaces. The content title leads so a truncated browser tab still surfaces the per-item identity; the brand follows. Matches what's shipped (`src/app/(site)/articles/[slug]/page.tsx`). See §3 for the rationale.
+The content title is the first thing the browser tab shows, so a truncated tab still surfaces the per-item identity; the brand follows. Note titles are sentence case per §8.2; truncate to ~60 chars if longer for browser-tab fit.
+
+**Paginated indexes** — sub-page in parens:
+
+```
+Notes (Page 2) · André Silva
+```
+
+Parens (not another middle dot) so the separator language stays unambiguous — `Notes · Page 2 · André Silva` reads as three peer segments rather than a paginated index. See §3 for the rationale.
 
 ### Skip link
 
@@ -355,8 +364,9 @@ The middle dot `·` separates items in a single value.
 - Detail-page back-links (top + bottom): `back to notes`.
 - Index paginator: `← older notes` / `newer notes →`, separated from a `page {n} of {total}` label by middle dots. Absent at boundaries — no disabled state.
 - Empty state (`/notes` when zero notes): `No notes yet.` — exact match for the articles empty-state pattern.
-- Page title `<title>` (index): `André Silva · Notes` — index convention, brand-first middle-dot, same as Articles.
-- Detail-page `<title>`: `{Note Title} | André Silva` — **detail convention, title-first pipe** (see §3 split rule). Matches what `src/app/(site)/articles/[slug]/page.tsx` ships for article detail. The note title is sentence case per §8.2; truncate to ~60 chars if longer for browser-tab fit.
+- Page title `<title>` (index): `Notes · André Silva` — title-first, middle-dot, same as every other suffix page (see §3).
+- Paginated index `<title>`: `Notes (Page 2) · André Silva` — sub-page in parens to avoid `· · ·` ambiguity.
+- Detail-page `<title>`: `{Note Title} · André Silva` — same unified form. The note title is sentence case per §8.2; truncate to ~60 chars if longer for browser-tab fit.
 
 ### Footer
 
@@ -469,7 +479,7 @@ Quick pattern matches for the most common slips:
 | `Get the PDF` | `Download resume` | Verb + object, canonical artifact name matching `resume.pdf`. |
 | `Connect with me` | `hello@andresilva.cc` | No funnel; the email address is the surface. |
 | `My personal website` | (data) `The personal website that you are seeing right now` | Protected verbatim copy from the static repo. |
-| `andresilva.cc — your future favorite portfolio` | `André Silva` (home) / `André Silva · About` (index) / `{Title} \| André Silva` (detail) | Split `<title>` convention — brand alone on home, brand-first middle-dot on indexes, title-first pipe on details (§3). |
+| `andresilva.cc — your future favorite portfolio` | `André Silva` (home) / `About · André Silva` (suffix page) / `Notes (Page 2) · André Silva` (paginated) | Unified `<title>` convention — brand alone on home; title-first middle-dot everywhere else; parens for paginated sub-pages (§3). |
 | `// 02 / latest` | `// 02 / recent activity` | Eyebrow must differ from the H2 it labels. |
 | `// 01 / About me` | `// 01 / in my own words` | Lowercase, evocative gloss, no terminal punctuation. |
 | `Read full bio →` | `Full bio →` | Page-section link arrow uses bare noun. |

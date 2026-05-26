@@ -70,10 +70,12 @@ type: project
 - `RedirectType.permanent` does NOT exist in Next.js 16 — use `permanentRedirect(url)` from `next/navigation` instead
 - `/notes/page/1` redirect: `import { permanentRedirect } from 'next/navigation'` then `permanentRedirect('/notes')`
 
-## NoteBlock semantic element override pattern
-- `NoteBlock` accepts a `titleAs?: 'p' | 'h2'` prop (default `'p'`) to control the title's HTML element while keeping the `h3` visual variant on both.
-- Index pages pass nothing (defaults to `<p>`); detail page passes `titleAs="h2"` for a correct heading outline.
-- This pattern is the canonical way to vary semantic element without duplicating the component.
+## NoteBlock surface prop pattern
+- `NoteBlock` accepts `surface?: 'list' | 'detail'` (default `'list'`) to control both the semantic element and visual variant of the title, and the position of meta.
+- List surface: title as `<p>` in `h3` visual variant, meta above title, permalink shown.
+- Detail surface: title as `<h2>` in `h2` visual variant, meta below title in a `mt-3` wrapper, permalink hidden (pass `showPermalink={false}` explicitly — it does not auto-hide when `surface="detail"`).
+- Index pages pass nothing (defaults to `'list'`); detail page passes `surface="detail" showPermalink={false}`.
+- Internal `isDetail` boolean (`const isDetail = surface === 'detail'`) is the single branch point — no repeated string comparisons.
 - Meta line uses `<Text variant="meta">` with `inline-flex items-baseline gap-2 text-fg-subtle` container; date `<time>` gets `text-fg-muted`, kind `<span>` inherits `text-fg-subtle` from the wrapper — matches `ArticleCard`'s two-tone treatment exactly.
 
 ## Design-system living reference conventions (`/design-system`)

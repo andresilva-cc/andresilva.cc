@@ -466,37 +466,24 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="25" name="NoteBlock" api="<NoteBlock note={…} />">
+        <Demo number="25" name="NoteBlock" api="<NoteBlock note={…} surface=&quot;list|detail&quot; />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
-            Inline stream block for a single note. Anatomy: permalink anchor
+            Inline stream block for a single note. Two surfaces via the
             {' '}
-            <code className="text-accent">id=&#x22;&#x7b;slug&#x7d;&#x22;</code>
-            {', '}
-            meta line (
-            <code className="text-accent">Text variant=&quot;meta&quot;</code>
-            {' — '}
-            date in
-            {' '}
-            <code className="text-accent">text-fg-muted</code>
-            {', kind in '}
-            <code className="text-accent">text-fg-subtle</code>
-            ), title as
-            {' '}
+            <code className="text-accent">surface</code>
+            {' prop (default "list"). List: meta above title, title as '}
             <code className="text-accent">&lt;p&gt;</code>
-            {' in the '}
+            {' in '}
             <code className="text-accent">h3</code>
-            {' visual variant (index form — detail page passes '}
-            <code className="text-accent">titleAs=&quot;h2&quot;</code>
-            {'), MDX body styled by '}
+            {' visual variant, permalink at bottom. Detail ('}
+            <code className="text-accent">surface=&quot;detail&quot;</code>
+            {'): title as '}
+            <code className="text-accent">&lt;h2&gt;</code>
+            {' in '}
+            <code className="text-accent">h2</code>
+            {' visual variant, meta below title, no permalink. MDX body styled by '}
             <code className="text-accent">.article-prose</code>
-            . Used verbatim on
-            {' '}
-            <code className="text-accent">/notes</code>
-            {' '}
-            and
-            {' '}
-            <code className="text-accent">/notes/[slug]</code>
-            .
+            {' in both surfaces.'}
           </Text>
           <NoteBlockDemo />
         </Demo>

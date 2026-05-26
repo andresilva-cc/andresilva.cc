@@ -46,8 +46,11 @@ Example: `2026.05.21 · til`
 
 ## Page titles
 
-- Index `<title>`: `André Silva · Notes` (brand-first, middle dot — index convention).
-- Detail `<title>`: `{Note Title} | André Silva` (title-first, pipe — detail convention, matches what article detail ships).
+Unified rule (supersedes prior split convention, locked 2026-05-25):
+
+- Index `<title>`: `Notes · André Silva` (title-first, middle dot — same form site-wide).
+- Paginated index: `Notes (Page 2) · André Silva` (parens for sub-page, avoids `· · ·` ambiguity).
+- Detail `<title>`: `{Note Title} · André Silva` (same unified form). The pipe is dropped entirely.
 
 ## Detail page has NO eyebrow and NO prev/next
 

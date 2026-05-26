@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/format-date';
 import type { Article } from '@/.velite';
 
 export const metadata = {
-  title: 'André Silva · Articles',
+  title: 'Articles · André Silva',
 };
 
 function illustrationFor(article: Article) {

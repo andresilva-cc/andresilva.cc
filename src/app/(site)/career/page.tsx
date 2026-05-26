@@ -4,7 +4,7 @@ import { getRepositories } from '@/repositories';
 import { formatDateRange } from '@/lib/format-date';
 
 export const metadata = {
-  title: 'André Silva · Career',
+  title: 'Career · André Silva',
 };
 
 export default function Career() {

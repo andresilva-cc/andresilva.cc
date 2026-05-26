@@ -25,7 +25,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { page } = await params;
   return {
-    title: `André Silva · Notes · Page ${page}`,
+    title: `Notes (Page ${page}) · André Silva`,
   };
 }
 

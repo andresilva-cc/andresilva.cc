@@ -44,7 +44,7 @@ export async function generateMetadata({
   const article = articlesRepository.getBySlug(slug);
   if (!article) return {};
   return {
-    title: `${article.title} | André Silva`,
+    title: `${article.title} · André Silva`,
     description: article.summary,
     openGraph: {
       title: article.title,

@@ -6,7 +6,7 @@ import { getRepositories } from '@/repositories';
 import { NOTES_PAGE_SIZE } from './constants';
 
 export const metadata = {
-  title: 'André Silva · Notes',
+  title: 'Notes · André Silva',
 };
 
 export default async function Notes() {

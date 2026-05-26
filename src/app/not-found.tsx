@@ -7,7 +7,7 @@ import { Footer } from '@/components/footer';
 import { SkipLink } from '@/components/skip-link';
 
 export const metadata = {
-  title: 'André Silva · Not Found',
+  title: 'Page not found · André Silva',
 };
 
 /*

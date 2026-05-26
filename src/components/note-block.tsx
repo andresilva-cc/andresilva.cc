@@ -22,39 +22,45 @@ const mdxComponents = {
 
 export interface NoteBlockProps {
   note: Note;
-  showPermalink?: boolean;
-  titleAs?: 'p' | 'h2';
+  surface?: 'list' | 'detail';
 }
 
-export async function NoteBlock({ note, showPermalink = true, titleAs = 'p' }: NoteBlockProps) {
+export async function NoteBlock({ note, surface = 'list' }: NoteBlockProps) {
   const mdxModule = await run(note.body, { ...jsxRuntime, baseUrl: import.meta.url });
   const Content = mdxModule.default as ComponentType<{ components: typeof mdxComponents }>;
 
   const formattedDate = formatDate(note.publishedAt);
+  const isDetail = surface === 'detail';
 
-  return (
-    <article id={note.slug}>
-      <Text variant="meta" as="p" className="inline-flex flex-wrap items-baseline gap-2 text-fg-subtle mb-0">
-        <time dateTime={note.publishedAt} className="text-fg-muted">
-          { formattedDate }
-        </time>
-        <span aria-hidden="true">·</span>
-        <span>{ note.kind }</span>
-      </Text>
+  const meta = (
+    <Text variant="meta" as="p" className="inline-flex flex-wrap items-baseline gap-2 text-fg-subtle mb-0">
+      <time dateTime={note.publishedAt} className="text-fg-muted">
+        { formattedDate }
+      </time>
+      <span aria-hidden="true">·</span>
+      <span>{ note.kind }</span>
+    </Text>
+  );
+
+  const content = (
+    <>
+      { !isDetail && meta }
 
       <Text
-        variant="h3"
-        as={titleAs}
-        className="mt-3 mb-0 text-fg"
+        variant={isDetail ? 'h2' : 'h3'}
+        as={isDetail ? 'h2' : 'p'}
+        className={`${isDetail ? 'mt-0' : 'mt-3'} mb-0 text-fg`}
       >
         { note.title }
       </Text>
+
+      { isDetail && <div className="mt-3">{ meta }</div> }
 
       <div className="mt-4 max-w-prose-wide article-prose">
         <Content components={mdxComponents} />
       </div>
 
-      { showPermalink && (
+      { !isDetail && (
         <ArrowLink
           href={`/notes/${note.slug}`}
           aria-label={`permalink to ${note.title}`}
@@ -63,6 +69,10 @@ export async function NoteBlock({ note, showPermalink = true, titleAs = 'p' }: N
           permalink
         </ArrowLink>
       ) }
-    </article>
+    </>
   );
+
+  if (isDetail) return content;
+
+  return <article id={note.slug}>{ content }</article>;
 }

@@ -21,7 +21,7 @@ export async function generateMetadata({
   const note = notesRepository.getBySlug(slug);
   if (!note) return {};
   return {
-    title: `${note.title} | André Silva`,
+    title: `${note.title} · André Silva`,
     alternates: {
       canonical: `${SITE_ORIGIN}/notes/${note.slug}`,
     },
@@ -69,7 +69,7 @@ export default async function NotePage({
       </div>
 
       <div className="mt-8">
-        <NoteBlock note={note} showPermalink={false} titleAs="h2" />
+        <NoteBlock note={note} surface="detail" />
       </div>
 
       <div className="mt-8 pb-12">
