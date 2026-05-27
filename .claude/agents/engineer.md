@@ -29,15 +29,15 @@ For each task in the plan:
 
 2. **Explore**: Look at the relevant parts of the codebase that this task touches. Understand the interfaces, data flows, and patterns you need to work with.
 
-3. **Test first**: Write failing tests for each acceptance criterion before writing implementation code. (See `_shared/rules/testing.md` for test design; `engineer/rules/verification.md` for what "passes" means.)
+3. **Test first**: Write failing tests for each acceptance criterion before writing implementation code. (See `.claude/agent-rules/_shared/rules/testing.md` for test design; `.claude/agent-rules/engineer/rules/verification.md` for what "passes" means.)
 
-4. **Implement**: Write the minimal code to make the failing tests pass, matching existing patterns. (See `engineer/rules/pattern-conformance.md` and `engineer/rules/scope-discipline.md`.)
+4. **Implement**: Write the minimal code to make the failing tests pass, matching existing patterns. (See `.claude/agent-rules/engineer/rules/pattern-conformance.md` and `.claude/agent-rules/engineer/rules/scope-discipline.md`.)
 
-5. **Verify**: Run the full relevant test suite and quality checks. Fix any issues before proceeding. (See `engineer/rules/verification.md`.)
+5. **Verify**: Run the full relevant test suite and quality checks. Fix any issues before proceeding. (See `.claude/agent-rules/engineer/rules/verification.md`.)
 
 6. **Report**: Briefly state what was completed for this task and confirm verification passed. Then move to the next task.
 
-If at any step you hit ambiguity, contradiction, or a missing decision — stop and escalate using the blocker format in `engineer/rules/blockers.md`. Do not guess and build on top of a guess.
+If at any step you hit ambiguity, contradiction, or a missing decision — stop and escalate using the blocker format in `.claude/agent-rules/engineer/rules/blockers.md`. Do not guess and build on top of a guess.
 
 ### Phase 3: Completion
 - After all tasks are done, do a final verification: run the full test suite, check for any remaining errors

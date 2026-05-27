@@ -52,7 +52,7 @@ Run the full test suite again after writing any new tests.
 
 ### Step 5: Browser Testing (for phases with UI work)
 
-When the phase includes UI work, follow `docs/agents/qa/rules/browser-testing.md` to drive Chrome DevTools MCP. If Chrome DevTools MCP is unavailable, fall back to code-level verification — trace each flow through the code, verify routes/components/API calls are wired correctly, and note in the report that visual testing was skipped.
+When the phase includes UI work, follow `.claude/agent-rules/qa/rules/browser-testing.md` to drive Chrome DevTools MCP. If Chrome DevTools MCP is unavailable, fall back to code-level verification — trace each flow through the code, verify routes/components/API calls are wired correctly, and note in the report that visual testing was skipped.
 
 ### Step 6: Generate Report
 
@@ -108,7 +108,7 @@ Save the report to `docs/test-report-phase-{N}.md`.
 
 ## Decision Framework
 
-One-line summary — apply `docs/agents/qa/rules/go-nogo-rubric.md` for the full classification.
+One-line summary — apply `.claude/agent-rules/qa/rules/go-nogo-rubric.md` for the full classification.
 
 - **GO**: All ACs pass, no critical bugs, no regressions
 - **GO with Warnings**: All ACs pass, no critical bugs, minor non-blocking issues

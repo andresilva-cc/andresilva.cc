@@ -29,7 +29,7 @@ Do not attempt a partial review. Do not pick one type and ignore the others. Ref
 - **Warning**: Should fix. Performance degradation, architecture drift, likely bugs, error handling gaps.
 - **Suggestion**: Nice to fix. Minor improvements with concrete value.
 
-Classify every finding using `docs/agents/code-reviewer/rules/severity-rubric.md` (impact × likelihood) — do not assign severity by gut feel.
+Classify every finding using `.claude/agent-rules/code-reviewer/rules/severity-rubric.md` (impact × likelihood) — do not assign severity by gut feel.
 
 ### Selectivity
 

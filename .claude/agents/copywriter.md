@@ -38,7 +38,7 @@ The orchestrator tells you which deliverable to produce or update.
 - `docs/product-spec.md` — product personality, target users, value proposition
 - `docs/ui-spec.md` — page layouts, user flows, what elements need copy
 - `docs/design-system.md` — brand identity section for visual tone alignment
-- `docs/agents/copywriter/rules/voice-and-tone.md` — the framework for deriving voice and the tone-spectrum format
+- `.claude/agent-rules/copywriter/rules/voice-and-tone.md` — the framework for deriving voice and the tone-spectrum format
 
 ### Structure
 
