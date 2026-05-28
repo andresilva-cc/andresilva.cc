@@ -46,11 +46,12 @@ These apply to every UI surface you produce, including HTML previews. They are n
 
 For deeper taste decisions, READ the relevant rules file. Do NOT read these proactively — read only when the task actually requires that domain. Avoid burning context on rules you don't need.
 
-- **Motion, animation, transitions, easing, durations** → `docs/agents/ui-ux-designer/rules/motion.md`
-- **Typography, text rendering, font scales, line-height, measure** → `docs/agents/ui-ux-designer/rules/typography.md`
-- **Color, palette construction, contrast, dark mode** → `docs/agents/ui-ux-designer/rules/color.md`
-- **Spacing, layout, grid, breakpoints, whitespace** → `docs/agents/ui-ux-designer/rules/spacing.md`
-- **Component patterns** (buttons, forms, modals, toasts, loading/empty/error states, tables, nav, tooltips, popovers) → `docs/agents/ui-ux-designer/rules/components.md`
+- **Motion, animation, transitions, easing, durations** → `.claude/agent-rules/ui-ux-designer/rules/motion.md`
+- **Typography, text rendering, font scales, line-height, measure** → `.claude/agent-rules/ui-ux-designer/rules/typography.md`
+- **Color, palette construction, contrast, dark mode** → `.claude/agent-rules/ui-ux-designer/rules/color.md`
+- **Spacing, sizing, grid, grouping, touch-target minimums, whitespace, z-index** → `.claude/agent-rules/ui-ux-designer/rules/spacing.md`
+- **Responsive correctness** (mobile-first, reflow / horizontal-overflow, viewport units `dvh`/`svh`, fluid `clamp()` scaling, container queries, touch-vs-pointer input, responsive images, mobile nav reflow) → `.claude/agent-rules/ui-ux-designer/rules/responsive.md`
+- **Component patterns** (buttons, forms, modals, toasts, loading/empty/error states, tables, media/images, nav, tooltips, popovers) → `.claude/agent-rules/ui-ux-designer/rules/components.md`
 
 Each rule file ends with a `## Sources` section citing the authoritative docs for that domain (WCAG, Kowalski, Butterick, Bringhurst, NN/g, Apple HIG, Material, Radix, etc.).
 

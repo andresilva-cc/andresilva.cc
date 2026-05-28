@@ -124,6 +124,11 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 **Applies to:** Modal open with header + body + actions; list reveals; nav menu opens; hero sections.
 **Why:** Simultaneous motion reads as mechanical/scripted; offset timing reads as organic. Stagger also clarifies hierarchy (primary → secondary).
 
+### Rule: Bind stagger delay to entry only — never leak `transition-delay` into hover
+**Numeric baseline:** Apply the stagger offset via `animation-delay` on a keyframe, or scope `transition-delay` to the entry property only, or reset `transition-delay: 0s` on `:hover`/`:focus`. Never put an inline `transition-delay` on an element that also has hover transitions.
+**Applies to:** Staggered card/list grids whose items also have hover transitions.
+**Why:** An inline `transition-delay` (e.g. `style="transition-delay: calc(var(--stagger-base) * 3)"`) applies to *every* transition on the element, including `:hover`. The third card then waits 3×80ms before its hover responds — the experience silently degrades the further down the grid you go, and because each card works in isolation the bug is easy to miss.
+
 ### Rule: Anchor scale/rotate via `transform-origin`
 **Numeric baseline:** Popovers: `transform-origin: var(--radix-popover-content-transform-origin)`. Modals: `transform-origin: center`.
 **Applies to:** Popovers, tooltips, context menus, modal-from-card transitions, expanded cards, dropdown menus.

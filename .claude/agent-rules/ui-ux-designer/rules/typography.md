@@ -93,6 +93,10 @@ This domain governs how text is sized, spaced, weighted, and rendered — contra
 **Applies to:** Hero h1, marketing landing headlines, any oversized single-statement block.
 **Why:** Display sizes are tuned for short, dense statements. Short statements can take the full display size; longer statements step down. Headlines beyond roughly 90 characters are usually wrong as display type and should be rewritten or treated as deck/subhead. The fix is almost always shorter copy, not bigger type.
 
+### Rule: Brand wordmarks must not break mid-word
+**Applies to:** Brand-name display text set at hero size (the wordmark). Distinct from generic display text (marketing line, section title), where `overflow-wrap: anywhere` remains the correct overflow mitigation — see `responsive.md`.
+**Why:** A wordmark broken across two lines — "BRANDNA / ME" — reads as a layout bug and loses brand recognizability, so `word-break: break-word` / `overflow-wrap: anywhere` are NOT acceptable mitigations for `clamp()` overflow on a wordmark. Correct fixes: (a) lower the `clamp()` max until the word fits at 375px even at its heaviest weight; (b) auto-shrink with `font-size: min(<fluid-target>, 100vw / <character-count>)`; (c) commit to a deliberately stacked-words treatment that breaks at hand-set positions.
+
 ---
 
 ## Caps, tracking, micro-typography
