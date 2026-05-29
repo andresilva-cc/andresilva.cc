@@ -90,49 +90,14 @@ This domain governs the underlying geometry of UI: how elements are sized, how t
 
 ---
 
-## Responsive and breakpoints
-
-### Rule: Design mobile-first — unprefixed for smallest viewport
-**Applies to:** CSS architecture, design tokens.
-**Why:** Progressive enhancement. Mobile constraints are the hardest; widening is additive. Avoids desktop-down design-then-squeeze failure mode.
+## Breakpoints
 
 ### Rule: Use a standard breakpoint set — detect existing tokens and conform
 **Numeric baseline:** Tailwind: sm=640, md=768, lg=1024, xl=1280, 2xl=1536 (px). Material: compact <600, medium 600–839, expanded 840–1199, large 1200–1599, extra-large ≥1600 (dp).
 **Applies to:** Responsive tokens, layout systems.
 **Why:** No universal standard — pick a convention and stay consistent. Mixing two systems in one product produces unexplained gaps.
 
-### Rule: Content must reflow at 320 CSS px without horizontal scroll
-**Numeric baseline:** 320 CSS px minimum. Verify at 320, 375, 414, and 768 CSS px.
-**Applies to:** All layout.
-**Why:** WCAG 1.4.10. Low-vision users zoom or use narrow viewports; fixed-width containers exclude them. The four checkpoints map to the real-world failure modes: 320 (smallest supported), 375 (iPhone SE/mini class), 414 (iPhone Pro Max class), 768 (iPad portrait, common tablet breakpoint).
-
-### Rule: Use `dvh` / `svh` / `lvh` instead of `vh` for full-height layouts
-**Numeric baseline:** `height: 100dvh` (dynamic), `100svh` (small/URL-bar-visible), `100lvh` (large/URL-bar-hidden). Never `100vh` for layouts that must fit the visible viewport.
-**Applies to:** Full-height heroes, full-screen modals, mobile drawers, anything sized to "one screen".
-**Why:** On older mobile browsers, `100vh` is computed against the largest viewport (URL bar hidden), so a `100vh` hero on iOS Safari extends below the visible area when the URL bar is showing — and the size doesn't update when the URL bar retracts, leaving an over-tall section. The dynamic viewport units (`dvh`, `svh`, `lvh`, plus `dvw` etc.) account for browser chrome. Use `dvh` for layout that should track chrome changes; `svh` when you want a guaranteed-fits-on-load size.
-
-### Rule: Avoid `100vw` for widths — use `100%`
-**Applies to:** Full-bleed sections, banners, anything spanning the viewport.
-**Why:** `100vw` includes the scrollbar width on desktop browsers that reserve scrollbar space, causing horizontal overflow equal to the scrollbar (~15px). `width: 100%` with the parent at the viewport width is the safe equivalent.
-
-### Rule: Use `minmax(0, 1fr)` on grid tracks containing images or wide intrinsic content
-**Numeric baseline:** `grid-template-columns: minmax(0, 1fr) ...` (not bare `1fr`) wherever a track may hold an `<img>`, `<picture>`, `<pre>`, or other element with large intrinsic width.
-**Applies to:** CSS Grid track definitions, especially in card grids, galleries, code-block layouts.
-**Why:** A bare `1fr` resolves to `minmax(auto, 1fr)`, where the `auto` minimum is the track's largest intrinsic content size. A 1024px-native image inside a `1fr` track forces a 1024px minimum, pushing the grid past viewport on phones and producing horizontal scroll. `minmax(0, 1fr)` lets the track shrink below content size.
-
----
-
-## Overflow containment
-
-### Rule: Use `overflow-x: clip` (not `hidden`) on `html` and `body` to contain overflow
-**Numeric baseline:** `html, body { overflow-x: clip; }`.
-**Applies to:** Root-level horizontal overflow containment; any element that intentionally overflows its parent (full-bleed sections, oversized headlines, decorative figures past column edges).
-**Why:** `overflow-x: hidden` creates a new scroll container, which breaks `position: sticky` and `position: fixed` on descendants and can trap focus on overflowing inputs. `overflow-x: clip` prevents horizontal scroll without establishing a scroll context, so sticky and fixed positioning continue to work. Older Safari requires both `html` and `body` for the fallback.
-
-### Rule: Apply `overflow-wrap: anywhere; min-width: 0` to display-size text and long-string containers
-**Numeric baseline:** `overflow-wrap: anywhere; min-width: 0` on `h1`, hero/display headings, and any container that may hold URLs, code, or long unbroken strings.
-**Applies to:** Headings ≥ ~32px, slug/URL displays, code blocks inline in prose, anywhere user-supplied strings render.
-**Why:** Default `overflow-wrap: normal` only breaks at whitespace and hyphens, so long compounds ("state-of-the-art"), uppercase brand names, and URLs overflow narrow viewports. `anywhere` lets the engine break mid-word as a last resort. `min-width: 0` is required when the container is a flex/grid item, because flex/grid items default to `min-width: auto` (= intrinsic content size), which can prevent the wrap from taking effect.
+> **Responsive correctness lives in `responsive.md`.** Mobile-first authoring, reflow / no-horizontal-overflow (`minmax(0, 1fr)`, `width: 100%` over `100vw`, `overflow-x: clip`, `overflow-wrap: anywhere`), viewport units (`dvh`/`svh`/`lvh`), fluid `clamp()` scaling, container queries, and input-modality (`hover`/`pointer`) detection all live there. This file owns sizing geometry, grouping, and scales — the touch-target *minimums* below included; `responsive.md` owns cross-viewport / cross-input behavior and references those minimums for coarse-pointer sizing.
 
 ---
 
@@ -152,7 +117,6 @@ This domain governs the underlying geometry of UI: how elements are sized, how t
 
 - [W3C — WCAG 2.2 2.5.8 Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
 - [W3C — WCAG 2.2 2.5.5 Target Size (Enhanced)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html)
-- [W3C — WCAG 2.2 1.4.10 Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html)
 - [W3C — WCAG 2.2 2.3.3 Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html)
 - [Apple HIG — Accessibility](https://developer.apple.com/design/human-interface-guidelines/accessibility)
 - [Material Design — Spacing methods](https://m2.material.io/design/layout/spacing-methods.html)
@@ -165,8 +129,4 @@ This domain governs the underlying geometry of UI: how elements are sized, how t
 - [Laws of UX — Fitts's Law](https://lawsofux.com/fittss-law/)
 - [NN/g — Form Design White Space](https://www.nngroup.com/articles/form-design-white-space/)
 - [Emil Kowalski — Agents with Taste](https://emilkowal.ski/ui/agents-with-taste)
-- [MDN — overflow-x](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-x)
-- [MDN — overflow-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap)
 - [MDN — CSS Logical Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
-- [web.dev — The large, small, and dynamic viewport units](https://web.dev/blog/viewport-units)
-- [CSS-Tricks — Preventing a Grid Blowout](https://css-tricks.com/preventing-a-grid-blowout/)

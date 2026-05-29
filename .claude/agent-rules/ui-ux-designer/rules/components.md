@@ -58,6 +58,11 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 **Applies to:** Command palettes, keyboard shortcuts, rapid-fire inputs.
 **Why:** Power users' perceived speed is set by the animation, not the underlying work. Every ms of animation is a tax paid per keystroke.
 
+### Rule: Primary CTAs default to full-width at mobile
+**Numeric baseline:** `width: 100%` for primary (and any secondary sibling) CTAs below 768px.
+**Applies to:** Primary call-to-action buttons on phone-sized viewports.
+**Why:** Full-width matches the tap target to the column and reads as decisive — the modern mobile convention users are trained to expect. An intrinsic-width button left-aligned with empty space to its right reads as a desktop button shrunk down. Exception: editorial / technical / manifesto registers (research instrument, ledger, printed paper) where a consumer-app button would break the typographic discipline — there, keep intrinsic width but group the buttons in a row (`flex-direction: row; gap`) so the leftover space is shared whitespace, not asymmetric drift, and document the choice.
+
 ---
 
 ## Forms + inputs
@@ -272,6 +277,14 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 
 ---
 
+## Media (images)
+
+### Rule: Photos in fixed-aspect-ratio containers default to `object-fit: cover`
+**Applies to:** An `<img>` inside a fixed-aspect-ratio container — gallery tile, archive card, lookbook frame, masthead photo.
+**Why:** The container's aspect ratio is the page's compositional commitment; the photo should fill it. `object-fit: contain` letterboxes the image inside the card with the card background showing as margins, which reads as "the image didn't load fully," not as deliberate framing. Use `contain` only when the full frame *is* the point (product-on-white, technical illustration, archival scan, UI screenshot), and document the choice. (For serving the right resolution per viewport, see `responsive.md`.)
+
+---
+
 ## Navigation
 
 ### Rule: Breadcrumbs show hierarchical location, not session history — current page is not a link
@@ -286,6 +299,10 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 **Numeric baseline:** 3–5 tabs.
 **Applies to:** Mobile apps, mobile web.
 **Why:** Bottom tabs are thumb-reachable and always-visible; hamburger hides destinations, hurting discoverability. Serial Position Effect: place the most-used and most-differentiating items at first/last positions.
+
+### Rule: Group the menu trigger (and secondary header items) with a sibling — don't `space-between` everything
+**Applies to:** Three-element headers (brand + menu trigger + CTA) and headers carrying secondary items (version tag, breadcrumbs, eyebrow meta).
+**Why:** `justify-content: space-between` across brand · trigger · CTA pushes the trigger into an empty middle band, reading as a control dropped at a coordinate rather than belonging to anything. Cluster it: left = brand (optionally + trigger), right = CTA (optionally + trigger) — the trigger should read as part of a navigation cluster. `space-between` on every element reads as "I didn't decide how to group these." (For keeping nav reachable and reflowing the header at mobile, see `responsive.md`.)
 
 ### Rule: Keyboard focus must not be obscured by sticky headers/footers
 **Applies to:** All sticky chrome.
@@ -366,3 +383,4 @@ This file covers component-level patterns. Motion/typography/color/spacing unive
 - [Laws of UX — Serial Position Effect](https://lawsofux.com/serial-position-effect/)
 - [Baymard — Dropdown Hover Delay](https://baymard.com/blog/dropdown-menu-flickering-issue)
 - [MDN — font-variant-numeric](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric)
+- [MDN — object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit)
