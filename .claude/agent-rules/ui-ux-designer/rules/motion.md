@@ -57,6 +57,11 @@ This domain governs perceptual timing (how fast / slow a change should be), easi
 **Applies to:** Buttons, toggles, cards, any tappable/clickable element on pointer-capable devices.
 **Why:** Mimics the physical button press and confirms input before server/logic responds. Buttons that don't depress feel dead.
 
+### Rule: Proximity falloff for rows of equal peers (optional, advanced)
+**Numeric baseline:** Single `pointermove` listener; weight `t = max(0, 1 - dist/R)` with falloff radius `R ≈ 120px`; drive `scale`/`opacity`/`brightness` (e.g. `1 + t*0.5`).
+**Applies to:** Docks, feature-grid rows, nav item rows, project/agent card grids — any row of equal-sized peers near the pointer. Not for disparate element types or dense lists.
+**Why:** Continuous distance-weighted feedback confirms intent *during* approach, before the cursor lands — a richer signal than binary hover. Mac dock magnification is the canonical case. Gate behind `prefers-reduced-motion: no-preference`; drive only `transform`/`opacity`/`filter` to stay compositor-bound.
+
 ### Rule: No overshoot/elastic easings on standard UI chrome
 **Numeric baseline:** Forbidden on buttons, modals, dropdowns, tooltips, menus: curves with y-values > 1 such as `cubic-bezier(0.34, 1.56, 0.64, 1)`. Reserve overshoot for genuinely physical interactions (drag release, swipe-snap, picker wheel).
 **Applies to:** All chrome and content-level UI motion. Allowed: gesture-release physics where overshoot communicates momentum.
