@@ -29,6 +29,7 @@ export class StaticProjectsRepository implements ProjectsRepository {
         description: 'Images as code — write JSX compositions, export as images',
         links: [
           { name: 'site', url: 'https://grafex.dev/' },
+          { name: 'github', url: 'https://github.com/grafex-dev/grafex' },
         ],
         featured: true,
         technologies: ['TypeScript', 'Node.js'],
@@ -64,7 +65,10 @@ export class StaticProjectsRepository implements ProjectsRepository {
       {
         title: 'CustomBurger',
         description: 'A small project for building your own burger from layered ingredients',
-        links: [{ name: 'site', url: 'https://customburger.andresilva.cc/' }],
+        links: [
+          { name: 'site', url: 'https://customburger.andresilva.cc/' },
+          { name: 'github', url: 'https://github.com/andresilva-cc/customburger' },
+        ],
         featured: false,
         technologies: ['TypeScript', 'Vue.js', 'Nuxt', 'Tailwind CSS'],
       },
