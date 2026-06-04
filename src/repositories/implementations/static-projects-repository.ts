@@ -4,6 +4,13 @@ export class StaticProjectsRepository implements ProjectsRepository {
   getAll(): Array<ProjectsRepositoryResponse> {
     return [
       {
+        title: 'claude-code-multi-account',
+        description: 'Auto-switches Claude Code accounts by directory — no keychain writes',
+        links: [{ name: 'github', url: 'https://github.com/andresilva-cc/claude-code-multi-account' }],
+        featured: false,
+        technologies: ['Shell Script'],
+      },
+      {
         title: 'Infinity',
         description: 'AI experts that join your Google Meet calls and contribute live',
         links: [{ name: 'site', url: 'https://meet.agentairforce.com' }],
