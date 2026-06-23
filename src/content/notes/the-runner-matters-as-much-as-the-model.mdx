@@ -1,0 +1,21 @@
+---
+title: The runner matters as much as the model
+publishedAt: 2026-06-23
+kind: til
+---
+
+Lately I've been running local LLMs through LM Studio, which is super fun. I started with the GGUF format and got great results with MoE models. They are way faster than dense ones, since they only activate part of the network per token.
+
+Then I tried Apple's own format, MLX. It's supposed to be faster on Apple Silicon, which is what I'm on. But running the same prompt in LM Studio, MLX came out slower than GGUF. Weird, right?
+
+Digging in, I discovered that LM Studio's MLX engine has known rough edges, including a KV-caching bug that re-prefills the whole prompt on every request ([#1319](https://github.com/lmstudio-ai/lmstudio-bug-tracker/issues/1319)). I wasn't really testing MLX there, I was testing a rough runner.
+
+So I tried oMLX, a macOS-native MLX server built for Apple Silicon. Re-ran the exact same prompt:
+
+| **Stack** | **Tok/sec** |
+| --- | --- |
+| GGUF (LM Studio) | ~84 |
+| MLX (LM Studio) | ~70 |
+| MLX (oMLX) | ~95 |
+
+MLX done right wins. The lesson: before you benchmark models, make sure you're benchmarking them fairly. **The runner matters as much as the model.**
