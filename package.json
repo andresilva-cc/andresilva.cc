@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "og:generate": "node scripts/og/generate.mjs",
-    "postinstall": "playwright install webkit"
+    "postinstall": "[ -n \"$VERCEL\" ] || playwright install webkit"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.0",
@@ -54,24 +54,6 @@
     "jackspeak": "2.1.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "grafex",
-      "@playwright/test",
-      "playwright"
-    ],
-    "overrides": {
-      "minimatch@<3.1.4": ">=3.1.4",
-      "flatted@<3.4.2": ">=3.4.2",
-      "picomatch@<2.3.2": ">=2.3.2",
-      "micromatch>picomatch": ">=4.0.4",
-      "esbuild@<0.25.0": ">=0.25.0",
-      "brace-expansion@<1.1.13": "^1.1.13",
-      "js-yaml@<4.2.0": ">=4.2.0",
-      "@babel/core@<7.29.6": ">=7.29.6",
-      "postcss@<8.5.10": ">=8.5.10"
-    }
   },
   "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065"
 }
