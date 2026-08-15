@@ -290,6 +290,11 @@ both are safe. It is a one-line change and the rest of the system is unaffected.
 
 ## 3. Typography
 
+> **Revised by §5.** The single-column proposal changes four values in this
+> section: the name size, the summary measure cap, bullet leading, and the
+> technologies-list justification. Everything else below stands. §5 lists the
+> deltas explicitly.
+
 ### Recommendation: all-mono. JetBrains Mono, four upright instances, nothing else.
 
 **Stack:** `'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`
@@ -458,3 +463,278 @@ Font facts were verified rather than assumed:
 Contrast ratios and greyscale values in §1 were computed from the WCAG 2.x
 relative-luminance formula and Rec. 601 luma respectively, not sampled from a
 tool.
+
+---
+
+# 5. Single-column density proposal
+
+> Layout and density only. The §1 palette ships unchanged. This section revises
+> four values in §3 and supersedes nothing else.
+
+## 5.0 Verdict, up front
+
+**A single-column layout is the right format, and it gets to 809pt against 780pt
+of printable page. It does not reach one page on its own — it is ~29pt over,
+which is between two and three bullet lines.**
+
+Single column is worth doing regardless of the page count: it is the only format
+that keeps default-mode `pdftotext` linear, and it cuts the body from 37 rendered
+bullet lines to 25 without touching a word of André's copy. That is a 146pt
+reduction from line-length economics alone.
+
+The last 29pt cannot be found in layout. I am not closing it by dropping below
+9pt body, because §1's entire ink ramp is built on the assumption that this
+document gets photocopied and scanned — shrinking the type to win the page count
+undoes the reasoning the palette was built on. §5.5 names the three specific
+bullets to cut instead. Cutting three lands one page with 13pt of slack.
+
+If André cuts nothing, §5.7 has the honest fallback.
+
+---
+
+## 5.1 The governing insight
+
+The 68ch summary cap and the 8pt technologies floor from §3 were both consequences
+of narrow columns. Both are renegotiable — but not for the same reason, and not by
+the same amount, so it is worth being precise about what a measure limit is
+actually protecting.
+
+**Measure limits exist to protect the return sweep** — the eye's jump from the end
+of one line to the start of the next, which is where line-skipping and re-reading
+errors happen. A text block that occupies exactly one line has no return sweep.
+The classical 65–75ch ceiling therefore does not apply to single-line items at
+all; it applies to the summary paragraph, and to bullets long enough to wrap.
+
+This is what makes full-width single column safe rather than reckless. At a
+96-character measure, **24 of André's 25 bullet lines are single-line items** —
+the measure is wide precisely to the degree that it eliminates the return sweep
+rather than lengthening it. The one bullet that still wraps is the one flagged for
+trimming in §5.5.
+
+The summary is the opposite case: five sentences of genuine running prose with
+seven return sweeps. It gets a cap, and the cap is defended in §5.6.
+
+---
+
+## 5.2 The layout
+
+Single column, full width, DOM order = reading order = extraction order.
+
+**Structural compaction (no prose touched):**
+
+1. **Role, employer, and dates collapse onto one line.** Currently the dates are a
+   separate `<p>` costing `2pt + 11.2pt + 4pt` per job. Inline, they cost nothing:
+   `Senior Engineer @ MPA (formerly Healthy Labs) · Apr 2025 – Present`. Saves
+   17.2pt × 6 = **103pt**.
+2. **Technologies becomes inline wrapped text**, not a two-column grid. 29 items,
+   202 characters of names plus 28 `·` separators = 286 characters, which sets in
+   3 lines at 8pt. The grid form was 15 rows.
+3. **Education entries** collapse the same way as jobs: institution + dates on one
+   line, detail beneath.
+4. **The QR moves to the header's top-right** and costs **0pt of page height**. It
+   is a pure-vector graphic with no text content, so it is invisible to
+   `pdftotext` and cannot interleave anything, and at 60pt it fits inside the
+   62pt name/role/contact stack it now sits beside. It also lands directly
+   opposite the `andresilva.cc` contact line it encodes, which reads better than
+   the orphaned bottom-right placement.
+5. **Margins 14mm → 11mm.** Gains 17pt of height and widens the measure from 93 to
+   96 characters, which is what pulls one more bullet onto a single line. 11mm is
+   still clear of the 4–6mm unprintable margin on consumer and office lasers.
+
+**Separator note.** The `·` in both the job header line and the technologies list
+is correct per the site's established rule: the middle dot joins fragments *within
+one field value* rendered in one element (as in the About page's
+`agentic workflows · user-facing AI · developer tooling` and the article-card meta
+strip), and is not used between sibling destinations. Role, employer, and dates
+are fragments of one statement about one job. Technologies is one field.
+
+**Why the dates are inline rather than right-aligned on a rail.** A right-aligned
+date rail is visually cleaner and I would normally specify it. I am not, because
+6 job rows plus 2 education rows with a consistent ~100pt whitespace gap and a
+consistent right-hand text band is *precisely* the signature Poppler's default
+block-detection heuristic looks for — the same heuristic that was verified to
+break every two-column construction tried. The inline form has no gap, no band,
+and no heuristic to trip. If someone wants the rail, it is a testable change:
+render it, run default-mode `pdftotext`, and confirm the dates stay on the job's
+line. Until that test passes, inline is the default.
+
+---
+
+## 5.3 Height budget
+
+A4 = 841.89pt tall × 595.28pt wide. At 11mm (31.18pt) margins:
+**printable height 779.53pt, column width 532.9pt.**
+
+At 9pt, JetBrains Mono advances 5.4pt/character (600 design units). Column width
+532.9pt − 11.7pt bullet indent = 521.2pt ÷ 5.4 = **96 characters per line.**
+
+### Bullet line counts at 96ch
+
+Character counts are of André's actual strings, unmodified.
+
+| Role | Bullet lengths (chars) | Lines |
+|---|---|---|
+| Senior Engineer @ MPA | 78, 89, 50, 63 | 4 |
+| Senior Front-end Engineer @ Atlas | 70, 37, 34, 56, 68 | 5 |
+| Front-end Engineering Consultant @ Atlas | 63, 43, 89, 59 | 4 |
+| Front-end Engineer @ Atlas | 96, 52, 51, 47 | 4 |
+| CEO & Co-Founder @ Nuxstep | 60, 58, 74 | 3 |
+| Software Development Intern @ Gmaes | 93, **99**, 76, 62 | 5 |
+| **Total** | **24 bullets** | **25 lines** |
+
+Only one bullet (99 chars) still wraps. The current two-column build renders the
+same 24 bullets as **37 lines** with 13 wrapping. The format change alone removes
+12 lines.
+
+### Budget
+
+| Block | Computation | pt |
+|---|---|---|
+| Name | 24pt × 1.05 | 25.20 |
+| Role line | 2 + (13 × 1.20) | 17.60 |
+| Contact row | 8 + (8 × 1.40) | 19.20 |
+| Summary | 10 + (7 lines × 9 × 1.45) | 101.35 |
+| QR (header top-right, 60pt) | fits inside the 62pt stack | 0.00 |
+| *gap* | | 10.00 |
+| **EXPERIENCE** head | (10.5 × 1.25) + 2 + 0.5 + 6 | 21.63 |
+| 6 job header lines | 6 × ((9.5 × 1.30) + 3) | 92.10 |
+| 25 bullet lines | 25 × (9 × 1.35) | 303.75 |
+| 18 bullet gaps | 18 × 2 | 36.00 |
+| 5 inter-job gaps | 5 × 6 | 30.00 |
+| *gap* | | 10.00 |
+| **EDUCATION** head | | 21.63 |
+| 2 entries | 2 × ((9.5 × 1.30) + (9 × 1.35)) | 49.00 |
+| 1 entry gap | | 6.00 |
+| *gap* | | 10.00 |
+| **TECHNOLOGIES** head | | 21.63 |
+| Inline list | 3 lines × (8 × 1.40) | 33.60 |
+| | **TOTAL** | **808.69** |
+| | **Available** | **779.53** |
+| | **Over by** | **29.16** |
+
+For reference, the same content in the shipped two-column build measures ~966pt
+(header 197 + Experience column 770). The proposal removes 157pt.
+
+### What it would take to fit with zero cuts
+
+- **Margins alone:** needs 841.89 − 808.69 = 33.2pt total, i.e. **5.9mm per side**.
+  That is inside the unprintable margin on most office lasers — the page would
+  clip or auto-scale. Not viable.
+- **Type alone:** 9pt → 8.5pt body recovers ~17pt, still short, and breaks the
+  floor. Rejected in §5.6.
+
+---
+
+## 5.4 Where the 29pt comes from
+
+Three whole-bullet cuts, chosen because each is either a duplicate, a wrapping
+outlier, or the lowest-signal line in its block. **These are deletions, not
+rewrites** — no sentence of André's gets reworded.
+
+Each cut bullet saves one line plus its item gap: **14.15pt.**
+
+| # | Cut | Why | Saves |
+|---|---|---|---|
+| 1 | **Atlas Consultant** — "Analyzed and developed project improvements" | The weakest bullet on the page: generic, unmeasured, and boxed in by three specific siblings (mentoring, a Lerna component library, the Nuxt migration). | 14.15pt |
+| 2 | **Atlas Senior FE** — "Migrated pages to a Nuxt 3 project" *or* **Atlas Consultant** — "Contributed to the migration of key pages to a Nuxt project" | Near-duplicates across two consecutive roles at the same employer. Keeping both reads as padding, not as range. Keep the Consultant one — it is the more specific of the two. | 14.15pt |
+| 3 | **Atlas FE** — "Tracked and organized tasks in Jira using Scrum" | Table stakes in 2026; the lowest-signal line on the page and the only one that describes process rather than output. | 14.15pt |
+
+**Three cuts = 42.45pt → 766.24pt against 779.53pt available. One page, 13.3pt of
+slack.**
+
+Two cuts lands at 780.39pt — 0.9pt over. That is not a fit; it is a coin flip on
+font-metric rounding, and no print workflow should ship on it. **Cut three.**
+
+If a different third bullet is preferred, the only requirement is that it saves a
+full line. The one remaining candidate with a structural argument is the Gmaes
+CONFEA bullet (99 chars, the single bullet that still wraps): deleting the
+parenthetical `(CONFEA)` drops it to 90 characters and one line for 12.15pt. That
+is technically a copy edit rather than a deletion, so it is listed last — but it
+is the smallest possible edit that buys a line.
+
+---
+
+## 5.5 Questions posed, answered
+
+**Does every section need equal typographic weight?** Yes — keep all three section
+heads identical. Demoting Education and Technologies saves ~10pt each and costs
+more than it returns: ATS section detection keys on those heading strings, and
+inconsistent treatment risks one being skipped; and the section head is the one
+composed component this document has (the collapsed eyebrow from §2), so breaking
+two of its three instances breaks the component. 20pt does not change the verdict
+anyway — cuts are still needed.
+
+**Is the 8pt technologies floor renegotiable?** It is no longer *forced* — the
+70pt sidebar column that forced it is gone — but it stays at 8pt, now by choice.
+At 9pt the inline list runs 4 lines instead of 3 (+18.6pt) for a keyword index
+that nobody reads linearly and that ATS extracts from the text layer regardless.
+8pt/500 in `ink-body` is 11.96:1, inside every floor in §1. The constraint is the
+same; the reason changed.
+
+**Is the 68ch summary cap renegotiable?** Partly. See §5.6.
+
+---
+
+## 5.6 What I am not doing, and why
+
+**Body stays at 9pt.** §1 sets the entire ink ramp on the premise that this
+document gets photocopied, scanned at ~200dpi by an ATS pipeline, and printed at
+low toner — that premise is why `ink-body` sits at 11.96:1 instead of mirroring
+the site's 7.92:1. Sub-9pt monospace is where stroke dropout starts under exactly
+those conditions. Shrinking the type to win a page count would invalidate the
+reasoning the palette was built on. 8.5pt would recover ~17pt and still leave the
+page 12pt over, so it does not even work.
+
+**Summary leading stays at 1.45.** It is the only sustained-reading passage on the
+page.
+
+**Bullet leading drops to 1.35** — and this is not a quiet abandonment of the §3
+floor, it is applying that floor correctly. §3's stated reason for 1.45 was that
+"monospace needs marginally more leading than a proportional face because the
+uniform rhythm makes line-tracking harder." Line-tracking is a return-sweep
+problem. In this layout 24 of 25 bullet lines are single-line items with no return
+sweep, each separated by its own 2pt item gap. The rationale does not apply to
+them. It does apply to the summary, which keeps 1.45.
+
+**Summary measure goes 68ch → 80ch, not to the full 96ch.** 80ch is the widest
+measure I will defend for five sentences of running prose. Going to the full
+column measure would buy exactly one more line (13pt) and would push the only
+return-sweep-heavy block on the page past 95 characters. That is the one place
+where the density push would cost real readability, so it does not happen. The
+move from 68ch is justified: 68ch was chosen to relate the summary to a 63-char
+main column that no longer exists.
+
+---
+
+## 5.7 If André cuts nothing
+
+Then it is two pages, and that is an acceptable outcome — but make it *deliberately*
+two pages rather than an overflow:
+
+- Page 1: header, Experience through the Nuxstep role.
+- Page 2: the Gmaes role, Education, Technologies.
+- Keep `break-inside: avoid` on job blocks so no role splits across the fold.
+
+Single column is still the right format in this case. The layout change fixes the
+actual problem André raised — `pdftotext` reading order — independently of page
+count, and a clean 2-page single-column resume extracts correctly where the
+current 1.3-page two-column one does not.
+
+Do not solve this by deleting the summary paragraph to save 101pt. It is the block
+a human reader actually reads.
+
+---
+
+## 5.8 Deltas to §3
+
+Four values change. Everything else in §3 — the face, the four weights, the
+no-italic rule, the tracking values, the section-head derivation — stands.
+
+| §3 value | Was | Now | Reason |
+|---|---|---|---|
+| `p-display` size | 30pt | **24pt** | 30pt was sized against a 4× body ratio borrowed from the screen scale. On a one-page document at this density it is disproportionate; 24pt is still 2.7× body and unambiguously dominant. |
+| Summary measure | 68ch | **80ch** | 68ch related the summary to a 63-char main column that the single-column layout removes. 80ch is the defended ceiling for running prose. |
+| Bullet leading | 1.45 | **1.35** | The 1.45 rationale is a return-sweep argument; single-line bullets have no return sweep. Summary keeps 1.45. |
+| Technologies list | 2-col grid, 8pt | **inline wrapped, 8pt** | Same size, different justification — see §5.5. |
+
+Palette: **unchanged.** All six tokens ship as specified in §1.

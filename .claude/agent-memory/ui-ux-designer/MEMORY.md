@@ -26,6 +26,8 @@ The live site is a brutalist-mono direction:
   photography container treatment.
 - [Middle-dot separator](patterns_middot_separator.md) — `·` is a within-a-value
   conjunction, not a between-links separator.
+- [Light substrate & PDF/ATS constraints](patterns_light_substrate.md) — lime is fill-only
+  on white; no 2-col layout survives `pdftotext`; measure limits protect the return sweep.
 
 ## Enduring design principles
 
