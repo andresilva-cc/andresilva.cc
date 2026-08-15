@@ -1,0 +1,11 @@
+/*
+ * @page is document-level CSS — it cannot be scoped by a class selector,
+ * so it must not live in the shared globals.css (it would apply to every
+ * route on the site, not just /resume). Imported only from
+ * src/app/resume/page.tsx so it's bundled into the /resume route chunk
+ * alone.
+ */
+@page {
+  size: A4;
+  margin: 0;
+}

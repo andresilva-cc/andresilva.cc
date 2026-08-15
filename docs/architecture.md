@@ -9,13 +9,15 @@ This document describes **what is**, not what should be. Treat the code as the s
 ## 1. Overview
 
 - **Domain**: https://andresilva.cc
-- **Purpose**: Personal site — home, about, career, projects, articles, and notes authored in the repo.
+- **Purpose**: Personal site — home, about, career, projects, articles, and notes authored in the repo, plus a print-oriented `/resume` route that is the source for the committed `public/resume.pdf`.
 - **Shape**: Next.js App Router app, Server Components by default, with four `'use client'` islands: `nav.tsx` (route-aware active highlighting), `stipple-art.tsx` (loads the external ASCII-art Web Component), `mdx/youtube-swap.tsx` (click-to-load YouTube embed inside article prose), and `mdx/copy-button.tsx` (code-block copy button with local clipboard state).
 - **Visual reference**: the shipped code is the source of truth — the token block in `src/styles/globals.css` and the components in `src/components/`, live-rendered at the `/design-system` route. `docs/redesign-log.md` is the decision log.
 - **Data**: Content is either hard-coded in "static" repositories or authored as MDX files in `src/content/articles/` and `src/content/notes/` and compiled at build time by Velite. The dev.to integration has been removed — `ForemArticlesRepository` and `axios` are no longer in the codebase. The site is the canonical home for articles; dev.to is a syndicated mirror (with `canonical_url` pointing back here). There is no database, no auth, no backend of our own, and no user-generated content.
 - **Deployment**: Vercel, auto-deploy from `main`.
 
 > Articles content pipeline: see `docs/articles-decision-log.md` for the rationale behind the MDX-in-repo design (collection schema, OG image generation, RSS, JSON-LD, content migration).
+
+> Resume print theme: see `docs/resume-print-theme.md` for the paper palette, type scale, and glyph rules the `/resume` route implements. This document covers only the architecture of that route (§4, §5, §7, §8, §11, §12).
 
 ---
 
@@ -31,10 +33,12 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Icons                   | Hand-rolled inline SVG components (`icon-arrow.tsx`, `icon-heart.tsx`) — no icon-library dependency |
 | HTTP client             | None — no runtime HTTP. All content is hard-coded or compiled from MDX at build time.      |
 | Content pipeline        | **Velite** + **@mdx-js/mdx** + **rehype-pretty-code** + **shiki** (+ Velite's built-in GFM via `remark-gfm`) — MDX collections under `src/content/`, emitted to `.velite/` (devDeps) |
-| OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/` and per-note PNGs into `public/og/notes/`. Playwright/WebKit ships as a transitive dep of grafex. |
+| OG image generation     | **grafex** (build-time WebKit rendering via Playwright) — runs in `prebuild` to emit per-article PNGs into `public/og/articles/` and per-note PNGs into `public/og/notes/`. |
+| PDF export              | **Playwright Chromium** driving `page.pdf()` against a local `next start` — manual `pnpm resume:pdf` only, never part of the build (see §7, §12). `playwright` is a **direct** devDependency (was transitive via grafex); `postinstall` installs `webkit chromium`. |
+| QR generation           | `qrcode` — `QRCode.create()` is synchronous, so `/resume`'s QR block renders as server-side SVG `<rect>`s (no canvas, no raster, no client JS) |
 | Class utilities         | `clsx`                                                                                     |
 | Analytics               | Vercel Analytics via `@vercel/analytics/next` — `<Analytics />` in root layout             |
-| Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`     |
+| Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`; plus route-local **static** JetBrains Mono `.woff2` files via `next/font/local` on `/resume` only (see §8) |
 | Package manager         | pnpm **10.27.0**                                                                           |
 | Lint                    | ESLint **9** flat config: `eslint-config-next/core-web-vitals` + `@stylistic/eslint-plugin`, airbnb base |
 | Hosting                 | Vercel (auto-deploy from `main`)                                                           |
@@ -57,7 +61,7 @@ andresilva.cc/
 │   └── architecture.md            # this file
 ├── public/
 │   ├── me.jpg                     # about-page portrait
-│   ├── resume.pdf                 # /resume.pdf link target
+│   ├── resume.pdf                 # COMMITTED — manual export of /resume via `pnpm resume:pdf`; the about page's download target
 │   ├── logo.svg
 │   ├── robots.txt                 # allow-all
 │   ├── docs/teseu.pdf
@@ -88,10 +92,16 @@ andresilva.cc/
 │   │   │   │   └── [slug]/page.tsx # /notes/<slug> (canonical detail — SSG via generateStaticParams)
 │   │   │   ├── career/page.tsx
 │   │   │   └── projects/page.tsx
-│   │   └── design-system/         # separate route — outside the (site) group
-│   │       ├── layout.tsx         # bare shell: max-w-shell container + <main> only
-│   │       ├── page.tsx           # /design-system — living reference page
-│   │       └── _components/       # band sections, private to this route
+│   │   ├── design-system/         # separate route — outside the (site) group
+│   │   │   ├── layout.tsx         # bare shell: max-w-shell container + <main> only
+│   │   │   ├── page.tsx           # /design-system — living reference page
+│   │   │   └── _components/       # band sections, private to this route
+│   │   └── resume/                # separate route — outside the (site) group, no layout of its own
+│   │       ├── page.tsx           # /resume — print-themed resume (noindex, absent from sitemap)
+│   │       ├── fonts.ts           # next/font/local — STATIC per-weight JetBrains Mono, /resume only (see §8)
+│   │       ├── _fonts/            # the four vendored .woff2 static instances
+│   │       ├── print.css          # @page { size: A4; margin: 0 } — nothing else (see §5)
+│   │       └── _components/       # section-heading, contact-icons, resume-qr — private to this route
 │   ├── components/                # presentational + client components (the redesign vocabulary)
 │   │   ├── note-block.tsx         # server component — renders one note (meta + body) inline
 │   │   └── mdx/                   # custom MDX components used in article + note prose
@@ -134,7 +144,8 @@ andresilva.cc/
 │   │       ├── static-footer-repository.ts
 │   │       ├── static-jobs-repository.tsx
 │   │       ├── static-menu-repository.ts
-│   │       └── static-projects-repository.ts
+│   │       ├── static-projects-repository.ts
+│   │       └── static-resume-repository.ts    # resume content as typed data
 │   └── styles/
 │       ├── globals.css            # Tailwind import + @theme inline token block
 │       └── shiki/
@@ -143,8 +154,9 @@ andresilva.cc/
 │   ├── og.tsx                     # home OG card
 │   ├── og-article.tsx             # per-article OG card
 │   └── og-note.tsx                # per-note OG card
-├── scripts/og/
-│   └── generate.mjs               # prebuild step — iterates articles + notes + invokes grafex
+├── scripts/
+│   ├── og/generate.mjs            # prebuild step — iterates articles + notes + invokes grafex
+│   └── resume/generate.mjs        # MANUAL (`pnpm resume:pdf`) — next start + Playwright Chromium → public/resume.pdf
 ├── .velite/                       # GENERATED (gitignored) — Velite compiled output (typed + JSON)
 ├── velite.config.ts               # Velite collection schema for articles + notes
 ├── eslint.config.mjs
@@ -159,18 +171,18 @@ Path alias: `@/*` resolves to `src/*`.
 
 ### Role of each top-level `src/` directory
 
-- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout; `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` and `notes/rss.xml/route.ts` are static Route Handlers that live outside the `(site)` group because they return XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
+- **`src/app/`** — App Router routes. The root `layout.tsx` is bare (`<html>`/`<body>` + fonts + GA only); the page shell lives one level down. The `(site)` route group holds the content routes under a shared shell `layout.tsx`; `design-system/` is a separate route with its own bare layout and `resume/` is a separate route with no layout at all (root layout only); `not-found.tsx` sits at the root and replicates the shell; `articles/rss.xml/route.ts` and `notes/rss.xml/route.ts` are static Route Handlers that live outside the `(site)` group because they return XML, not HTML. Each `page.tsx` is a Server Component unless explicitly marked `'use client'`. See §4.
 - **`src/components/`** — Every UI component, from primitives (button, link, tag) to page sections (project-card, role-card, article-card, note-block). Names mirror the component vocabulary documented in `docs/design-system.md`. The `mdx/` subdirectory holds components that render inside article and note prose (`YouTube`, `Figure`, `FigureCaption`, `ImageMdx`, `PreShiki`, `CopyButton`). The nested `mdx/rss/` subdirectory holds HTML-only React mirrors of the page-side MDX components (`youtube`, `figure`, `image-mdx`, `inline-link`, `pre-shiki`) — no client JS, used solely by the RSS renderer to produce inert markup for feed readers.
 - **`src/content/`** — Authored content. Two collections: `articles/<slug>/index.mdx` (one folder per article, with optional co-located `images/`) and `notes/<slug>.mdx` (flat — one file per note; rare local media goes in `notes/_assets/<slug>/`). Velite reads both trees at build time. See §7.
 - **`src/lib/`** — Pure, framework-agnostic utility modules with no React or Next dependency (the one exception being `rss-renderer.tsx`, which uses React only at build time to stringify HTML). Eight modules today: `safe-href.ts` (a URL allowlist guard accepting only http/https, relative, fragment, `mailto:`, and `tel:` schemes), `format-date.ts` (the `formatMonthYear` / `formatDateRange` / `formatDate` date formatters), `reading-time.ts` (word count + reading-time estimator at 220 WPM, used by Velite's transform), `config.ts` (exports `SITE_ORIGIN`, the canonical origin used wherever absolute URLs are emitted — RSS items, sitemap entries, JSON-LD, OG meta), `mdx-jsx-allowlist.ts` (exports `MDX_JSX_ALLOWLIST` — the single source of truth for which MDX JSX components are permitted; enforced at Velite build time, mirrored in the RSS component map), `rss-url.ts` (exports `absolutize(url, basePath)` — the URL absolutization helper for RSS HTML output, where `basePath` is the full path segment `articles/<slug>` or `notes/<slug>`; handles `http(s):`, protocol-relative `//`, `mailto:` / `tel:`, absolute `/path`, fragment `#hash`, and relative `./` forms), `rss-helpers.ts` (exports `escapeXml` / `toRfc822` / `escapeCdata` — the shared serialization helpers used by both RSS Route Handlers), and `rss-renderer.tsx` (exports a shared `renderEntryHtml(body, basePath)` core plus two thin wrappers, `renderArticleHtml(article)` and `renderNoteHtml(note)` — the build-time MDX→HTML renderer used by both the articles and notes RSS feeds; runs the compiled MDX body through `@mdx-js/mdx`'s `run()` with an RSS-specific component map and stringifies via `react-dom/server.edge.renderToStaticMarkup`).
 - **`src/repositories/`** — Data-access seam. `index.ts` exports the `getRepositories()` factory; interfaces at the top level; concrete implementations under `implementations/`. See §7.
-- **`src/styles/`** — `globals.css` (Tailwind import + `@theme inline` token block) plus `shiki/brutalist-mono.json` (the custom Shiki theme loaded by `rehype-pretty-code`). There are no other CSS files in `src/` after the redesign — the multi-theme `themes/*.css` system has been removed.
+- **`src/styles/`** — `globals.css` (Tailwind import + `@theme inline` token block + the `.resume`-scoped print theme) plus `shiki/brutalist-mono.json` (the custom Shiki theme loaded by `rehype-pretty-code`). The multi-theme `themes/*.css` system has been removed. Exactly one CSS file lives outside this directory: `src/app/resume/print.css`, which holds a single `@page` rule and nothing else — see §5.
 
 ---
 
 ## 4. Routing & Rendering
 
-App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes/page/[page]`), two Route Handlers (`/articles/rss.xml` and `/notes/rss.xml`), no parallel/intercepting routes, no middleware. The `(site)` route group carries the content routes under a shared shell layout; `design-system` is a separate route outside that group with its own bare layout; the RSS Route Handlers live outside `(site)` because they return XML rather than the HTML shell.
+App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes/page/[page]`), two Route Handlers (`/articles/rss.xml` and `/notes/rss.xml`), no parallel/intercepting routes, no middleware. The `(site)` route group carries the content routes under a shared shell layout; `design-system` and `resume` are separate routes outside that group; the RSS Route Handlers live outside `(site)` because they return XML rather than the HTML shell.
 
 | Path                  | File                                          | Rendering                                                |
 | --------------------- | --------------------------------------------- | -------------------------------------------------------- |
@@ -186,13 +198,16 @@ App Router. Three dynamic segments (`/articles/[slug]`, `/notes/[slug]`, `/notes
 | `/career`             | `src/app/(site)/career/page.tsx`              | Server (static)                                          |
 | `/projects`           | `src/app/(site)/projects/page.tsx`            | Server (static)                                          |
 | `/design-system`      | `src/app/design-system/page.tsx`              | Server (static)                                          |
+| `/resume`             | `src/app/resume/page.tsx`                     | Server (static) — reads `StaticResumeRepository`         |
 | `*` (404)             | `src/app/not-found.tsx`                       | Server (static)                                          |
 
 `/design-system` is a live public route but is an internal living-reference page (it renders every production component to validate the system). It is excluded from `sitemap.ts` and sets `robots: { index: false }` in its `metadata`, so it stays out of search indexes.
 
+`/resume` follows the same noindex pattern, for a different reason: it renders a phone number and email as plain text, and there is no value in a second indexable copy of a document already published as `/resume.pdf`. It sets `robots: { index: false }` and is deliberately absent from the `staticRoutes` array in `sitemap.ts`. Nothing on the site links to it — the about page's "Download resume" button points at `/resume.pdf`, the exported artifact. The route exists to be *rendered into* that artifact (see §7); browsing it is a side effect. The noindex default can be flipped later if the contact block ever moves behind an obfuscation; it is not a permanent decision.
+
 ### Layout arrangement
 
-The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `<Analytics />`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the content routes inside the `(site)` group. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
+The root `src/app/layout.tsx` is bare — `<html>` + `<body>` + fonts + `<Analytics />`, nothing else. The page shell (SkipLink + Header + `<main>` + Footer inside the `max-w-shell` container) lives in `src/app/(site)/layout.tsx`, so it wraps only the content routes inside the `(site)` group. `src/app/design-system/layout.tsx` is a separate bare layout — just the `max-w-shell` container and `<main>`, no Header/Footer/SkipLink — because the design-system page is a reference surface, not part of the site chrome. `/resume` goes one step further and declares **no** layout of its own: it inherits only the bare root layout, and its page component *is* the `<main class="resume">` element. Any shared chrome would have to be print-hidden again for the PDF export, so the route never opts into it. Since the root layout is bare and route-group layouts don't wrap root-level files, `src/app/not-found.tsx` replicates the shell (SkipLink + Header + Footer + container) itself.
 
 ### Server-first, client where needed
 
@@ -258,6 +273,18 @@ The styling rule is unambiguous:
 
 Tokens are documented (with names, intended use, and contrast notes) in `docs/design-system.md`.
 
+### The `/resume` print theme — a scoped exception
+
+`/resume` is the one surface that does not speak the site's visual vocabulary, and the exception is deliberate: it targets white paper, not a dark screen, and the accent lime is unusable as print text or rules. Its styles live in `globals.css` like everything else, but inside a self-contained block scoped under the `.resume` class — six print tokens (`--resume-paper`, `--resume-ink`, `--resume-ink-body`, `--resume-ink-subtle`, `--resume-rule`, `--resume-accent`) plus BEM-ish `resume__*` element classes. Nothing outside `.resume` references those tokens, and the resume page uses no Tailwind utilities, so the two systems never interleave. `docs/resume-print-theme.md` is the spec they implement.
+
+**`@page` cannot live in `globals.css`.** `src/app/resume/print.css` exists solely to hold:
+
+```css
+@page { size: A4; margin: 0 }
+```
+
+`@page` is document-level CSS with no class-scoping mechanism — there is no `.resume @page`. Placed in `globals.css` it would set A4-with-zero-margin print formatting for **every** route on the site, silently breaking anyone who prints an article. Keeping it in a route-local file imported only by `src/app/resume/page.tsx` confines it to the `/resume` chunk; this containment was verified in the build output. That file holds no class rules, so the "no CSS classes outside `globals.css`" rule above still stands as written.
+
 ---
 
 ## 6. Component Vocabulary
@@ -307,8 +334,10 @@ No arrow leaves the build boundary. There is no runtime HTTP fetch from any repo
 
 There are two kinds of implementations:
 
-1. **Static repositories** — data is hard-coded in the class. The content for the career page, projects page, footer social links, and site menu all live here. Changes ship as code commits.
+1. **Static repositories** — data is hard-coded in the class. The content for the career page, projects page, footer social links, site menu, and resume all live here. Changes ship as code commits.
    - `StaticJobsRepository` is written as `.tsx` because the `description` field is JSX (nested `<ul>`/`<li>`/`<p>`).
+   - `StaticResumeRepository` returns a single `ResumeRepositoryResponse` object (`get()`, not `getAll()`) — name, role, contact block, summary, `experience[]`, `education[]`, `technologies[]`, all plain strings. Routing resume content through a repository rather than inlining it in the page is what makes the copy editable without touching print layout, which is the whole point of the route.
+   - It overlaps with `StaticJobsRepository` (same employment history) but does **not** share it, because the shapes genuinely differ: the career page wants JSX descriptions, `Date` objects, a `formerly` field, and per-role technology lists; the resume wants flat one-line strings, pre-formatted date labels (`"Apr 2025"`), and one global technologies list. The two can drift — if a role changes, both files need editing. Accepted as the cheaper side of the trade against a shared model that would have to serve both.
 2. **Local file-system repositories** — `LocalArticlesRepository` and `LocalNotesRepository` both read pre-built MDX collections emitted by Velite (`.velite/article.json` and `.velite/note.json`, surfaced as the typed `article` and `note` arrays exported from `@/.velite`). Their interfaces are synchronous (`getAll(): Article[] | Note[]`, `getBySlug(slug): Article | Note | undefined`) — there is no async data source. `getAll()` sorts by `publishedAt` descending so callers don't re-sort.
 
 ### Why keep the repository pattern
@@ -367,6 +396,34 @@ LocalNotesRepository (sync)  ──▶  /notes, /notes/page/<n>, /notes/<slug>, 
 - **OG image (per-note)**: `tools/og-note.tsx` is the per-note OG template — same brutalist-mono layout as `tools/og-article.tsx`, but with eyebrow `// note` and a simplified meta strip (date only, no read time, no cover art). Props: `{ title, publishedAt }`. Generated by the same `scripts/og/generate.mjs` prebuild step as articles (see §7 above) and written to `public/og/notes/<slug>.png`. Same idempotency rule, same `SKIP_OG_BUILD` escape hatch, same commit-the-PNGs decision (PNGs ship in git because Playwright/WebKit can't run on Vercel's build container — see §12).
 - **Authoring ergonomics (optional)**: a `pnpm notes:new <slug>` scaffolder may create a stub `src/content/notes/<slug>.mdx` with today's date and a `kind` prompt. Author-side convenience only — no architectural significance, no counter, no slug allocator. Slugs are author-chosen kebab-case.
 
+### Resume PDF pipeline
+
+Unlike the article and note pipelines, this one is **manual and human-triggered**. The route is the source; the PDF is a committed artifact.
+
+```
+static-resume-repository.ts        (typed data — the content source of truth)
+            │
+            ▼
+       /resume (static route)  ──▶  rendered HTML + .resume print theme
+            │
+            │   pnpm resume:pdf   (MANUAL — never runs in the build)
+            ▼
+next build → next start on 127.0.0.1 → Playwright Chromium page.pdf()
+            │
+            ▼
+    public/resume.pdf.tmp  ──▶  validate  ──▶  rename  ──▶  public/resume.pdf  (COMMITTED)
+```
+
+- **Chromium, not WebKit.** Playwright's `page.pdf()` is Chromium-only, so this script cannot reuse the WebKit browser grafex already needs for OG images. `playwright` was therefore promoted from a transitive dependency of grafex to a direct devDependency, and `postinstall` now installs `webkit chromium` rather than WebKit alone.
+- **Loopback, not a static export.** The script runs a real `next build` and boots `next start` bound to `127.0.0.1` (port overridable via `RESUME_PDF_PORT`), then navigates Chromium to it. Rendering the production build is what guarantees the PDF reflects what ships, including the route-local font loading and the `@page` rule; a dev-server render or a raw HTML file would not.
+- **Write to a temp path, validate, then rename.** `page.pdf()` writes `public/resume.pdf.tmp`, which is validated before an atomic same-directory `renameSync` moves it into place. Writing straight to `public/resume.pdf` would clobber a known-good committed artifact the instant a broken render succeeded at the file-writing level.
+- **Validation is the point, not a nicety.** Three poppler checks gate the rename: page count against a pinned `EXPECTED_PAGE_COUNT`, `pdffonts` output containing no `Type 3` font (the exact defect this route exists to fix — see §8), and `pdftotext` containing a hardcoded list of durable strings (name, contact details, one employer, one job title, one institution). Those strings are deliberately **not** read from the repository — deriving expectations from the data being validated would let a corrupted data file pass its own check. Bullet text is excluded because ordinary copy edits change it. Requires poppler locally (`brew install poppler`).
+- **The committed PDF can drift.** `public/resume.pdf` is tracked in git (it is *not* gitignored, unlike `.velite/` or `public/static/`) and nothing regenerates it automatically. Editing `static-resume-repository.ts` or the print theme changes `/resume` on the next deploy but leaves the downloadable PDF — the file the about page actually links to — untouched until someone runs `pnpm resume:pdf` and commits the result. This is the standing hazard of the design; the script's header comment and the repository's own comment both call it out.
+
+The export runs with `preferCSSPageSize: true` (so the `@page` rule in `print.css` — not a Playwright argument — is what defines A4 and zero margins), `printBackground: true` (the accent fills are load-bearing), and `tagged: true`.
+
+**Accepted limitations** (decided, not open bugs): the resume renders as **two** A4 pages — this content at the print spec's type scale does not fit one, and `EXPECTED_PAGE_COUNT = 2` pins that reality rather than hiding it; bump it deliberately after a real layout change, never to silence a regression. And default-mode `pdftotext` interleaves the two-column Experience/sidebar layout, while `pdftotext -raw` reads linearly — DOM order is authored PDF-text-layer-first (header → Experience → Education → Technologies) and CSS grid only repositions visually, so the linear reading is the correct one. A separate format exploration is queued; neither is tracked as a defect.
+
 ### Data fetching
 
 - All article routes (`/articles`, `/articles/[slug]`, `/articles/rss.xml`) are statically generated at build time. `[slug]/page.tsx` uses `generateStaticParams` to pre-render every article. The RSS route handler sets `export const dynamic = 'force-static'`.
@@ -387,6 +444,19 @@ See `docs/articles-decision-log.md` for the rationale behind this pipeline (MDX 
 
 Both CSS variables are forwarded to the Tailwind `@theme` block so any `font-mono` / `font-display` utility class resolves to the loaded face. The previous Fira Sans / Fira Code pair has been removed.
 
+### Route-local static fonts (`/resume`) — deliberate duplication, do not consolidate
+
+`src/app/resume/fonts.ts` loads **JetBrains Mono a second time**, from four vendored `.woff2` files in `src/app/resume/_fonts/` (weights 400/500/600/700) via `next/font/local`, exposed as `--font-resume-mono` and applied only inside `.resume`. This looks like an obvious cleanup target. It is not — removing it silently breaks the PDF.
+
+The reason: Google Fonts only ships JetBrains Mono as a **variable-font master**, so `next/font/google` gives the site a variable font. On screen that is invisible and strictly better. But when Chromium exports a PDF, a variable-font instance pinned via `font-variation-settings` is embedded as a **Type 3** font — a bitmap/procedural glyph format that destroys text extraction (an ATS or `pdftotext` gets garbage) and inflates the file. That is precisely the defect the `/resume` route was built to fix. Genuinely static per-weight faces embed as properly subsetted CID TrueType instead.
+
+Consequences worth knowing before touching this:
+
+- The four files were copied from `@fontsource/jetbrains-mono` and verified with fontTools to carry **no `fvar` table** — i.e. they are real static instances, not a variable font pinned to one axis position. A pinned variable font would look identical in the repo and still produce Type 3 output. If these files are ever replaced, re-verify that.
+- `.resume`'s `font-family` in `globals.css` names `var(--font-resume-mono)`, never the site's `--ff-mono`. Pointing it at the site variable "to avoid loading the font twice" reintroduces the bug.
+- The duplication costs four extra `.woff2` files served on exactly one noindexed route. That is the whole price.
+- The regression is caught rather than trusted: `pnpm resume:pdf` fails the export if `pdffonts` reports any Type 3 font (see §7).
+
 ---
 
 ## 9. Accessibility
@@ -405,7 +475,7 @@ Both CSS variables are forwarded to the Tailwind `@theme` block so any `font-mon
 | Service              | How it's used                                                        | Configuration                                  |
 | -------------------- | -------------------------------------------------------------------- | ---------------------------------------------- |
 | **Vercel Analytics** | Page-view and Web Vitals tracking via `@vercel/analytics/next`       | No configuration — Vercel project auto-detects  |
-| **Google Fonts**     | JetBrains Mono + VT323, self-hosted by Next through `next/font`      | `src/app/fonts.ts`                             |
+| **Google Fonts**     | JetBrains Mono + VT323, self-hosted by Next through `next/font`      | `src/app/fonts.ts`. Not involved on `/resume` — that route's faces are `.woff2` files vendored into the repo (`src/app/resume/_fonts/`, see §8) |
 | **YouTube**          | Click-to-load embed for in-prose `<YouTube />`; thumbnails from `i.ytimg.com`, iframe from `youtube.com/embed/<id>` only after click | No keys, no SDK                                |
 
 No other external services (no CMS, no database, no auth provider, no email, no payments). **dev.to** is a syndication target for articles (not an integration): published articles are manually mirrored to dev.to with `canonical_url` pointing back to this site. The site never reads from or writes to dev.to at runtime.
@@ -423,6 +493,8 @@ No other external services (no CMS, no database, no auth provider, no email, no 
 | `pnpm build`       | `next build`                       | Triggers `prebuild` first via npm's lifecycle hook.                                    |
 | `pnpm start`       | `next start`                       |                                                                                        |
 | `pnpm lint`        | `eslint .`                         |                                                                                        |
+| `pnpm resume:pdf`  | `node scripts/resume/generate.mjs` | **Manual only** — never wired into `prebuild`. Builds, boots `next start` on `127.0.0.1`, renders `/resume` with Playwright Chromium, validates, writes `public/resume.pdf`. Commit the result. Needs poppler (`pdfinfo`/`pdffonts`/`pdftotext`) installed locally. See §7. |
+| `postinstall`      | `[ -n "$VERCEL" ] \|\| playwright install webkit chromium` | Installs both browser binaries locally — WebKit for grafex's OG rendering, Chromium for the resume PDF (`page.pdf()` is Chromium-only). Skipped entirely on Vercel, where `$VERCEL` is set and neither browser can run. |
 | `pnpm og:generate` | `node scripts/og/generate.mjs`     | Manual per-article and per-note OG regeneration. Idempotent — skips any PNG whose mtime is newer than the max of its source MDX, the relevant template (`tools/og-article.tsx` for articles, `tools/og-note.tsx` for notes), and this generator script. Editing either template or the generator therefore invalidates every PNG of that kind. The home/standard OG (`tools/og.tsx`) is **not** wired into this script — regenerate it manually when needed. |
 
 ### ESLint
@@ -444,16 +516,17 @@ Flat config (`eslint.config.mjs`):
 - `target: es5` (Next's compiler downlevels; this target is essentially inert for modern Next builds)
 - `exclude: ["node_modules", "tools"]` — grafex compositions in `tools/` use a different runtime resolution and are excluded from the main TS project. They are picked up by grafex at build time.
 
-### Generated artifacts (gitignored)
+### Generated artifacts
 
-Three trees under the repo root are build outputs, not source:
+These paths under the repo root are outputs, not source. The first two are gitignored; the rest are generated *and* committed, because the tool that produces them cannot run on Vercel's build container (see §12).
 
 - **`/.velite`** — Velite's compiled content (typed `article.d.ts` + `article.json` + `note.d.ts` + `note.json`). Regenerated on every dev/build run. Never edit by hand.
 - **`/public/static`** — content-hashed copies of MDX-referenced images, emitted by Velite's asset handler. Regenerated alongside `.velite`.
 - **`/public/og/articles`** — per-article OG PNGs, emitted by `scripts/og/generate.mjs`. Regenerated by the `prebuild` step. Committed only if the grafex escape hatch is active (see §12).
 - **`/public/og/notes`** — per-note OG PNGs, emitted by the same script alongside articles. Same regeneration and commit behavior.
+- **`/public/resume.pdf`** — the exported resume, produced by `scripts/resume/generate.mjs` (`pnpm resume:pdf`). **Tracked in git and never regenerated automatically** — no build step touches it. Re-run the script and commit after any change to `static-resume-repository.ts`, the `/resume` page, or the print theme, or the downloadable PDF drifts from the route (see §7).
 
-All three are listed in `.gitignore`.
+`.velite/` and `public/static/` are listed in `.gitignore`; the OG PNGs and `resume.pdf` are committed.
 
 ### Pre-commit hooks
 
@@ -466,6 +539,7 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 - **Platform**: Vercel, connected to the GitHub repo `andresilva-cc/andresilva.cc`. Auto-deploy from `main`; preview deploys per PR.
 - **Build**: `pnpm install` → `pnpm build`, which fires the `prebuild` script (`scripts/og/generate.mjs`) and then `next build`. The `next.config.mjs` pins `turbopack.root` and calls `await build()` from Velite at the top level so `.velite/` is populated before any module resolves `@/.velite`. Otherwise default Next output, image optimization, and runtime.
 - **OG generation on Vercel is currently disabled via the §6.1.2 escape hatch.** Vercel's build container is missing ~40 system libs that WebKit needs (libgtk-4, libgstreamer, libvulkan, libgraphene, …) and the container doesn't allow `apt install`. So `SKIP_OG_BUILD=1` is set in Vercel project env vars — the prebuild script exits before grafex is imported, and Vercel serves the per-article PNGs committed under `public/og/articles/` and the per-note PNGs committed under `public/og/notes/`. Local flow: regenerate after editing article/note frontmatter or either OG template (`tools/og-article.tsx`, `tools/og-note.tsx`) with `pnpm og:generate` (or `pnpm build` — both run the same script), then commit the updated PNGs.
+- **The resume PDF is never generated on Vercel.** Same underlying constraint as OG generation, one step worse: `page.pdf()` requires Chromium, and Vercel's build container has no browser binary at all — `postinstall` short-circuits on `$VERCEL` and installs neither WebKit nor Chromium. `pnpm resume:pdf` is therefore a local, human-run export whose output (`public/resume.pdf`) ships in git and is served as a static file. Wiring it into `prebuild` would break every deploy, and it also runs its own `next build`, which would recurse.
 - **Environment variables**: there are no required env vars for the site to build or render. Analytics has no config (Vercel auto-detects). Required on Vercel: `SKIP_OG_BUILD=1` (see above — disables the OG prebuild that can't run on Vercel's container).
 - **Domain / DNS**: `andresilva.cc`, managed via Vercel.
 - **CI**: deployment status is visible via the deployments badge in `README.md`; there is no `.github/workflows/` directory — CI is whatever Vercel runs on push/PR.
@@ -478,6 +552,7 @@ There are no pre-commit hooks configured: no `lint-staged`, no Prettier, no `.hu
 - **Tokens-only styling.** Every visual value resolves to a token in `globals.css`. No arbitrary values, no inline literals.
 - **The `/design-system` route is the visual contract.** When implementing or changing a component, it must render correctly on that route; it is the live reference each component implements.
 - **Repository pattern is the data seam.** Pages depend on interfaces, never on concrete implementations.
+- **Route-private code lives in `src/app/<route>/_components/`** (Next's private-folder convention). `src/components/` is for the shared vocabulary; anything only one route can use — the design-system bands, the resume's section heading, contact icons, and QR block — stays next to its page and is not part of the component inventory in §6.
 - **Card lists are `<ul>`/`<li>`.** Card titles are non-heading elements; sections are labeled with `aria-label` on single-band pages.
 - **Curly punctuation in prose.** U+2019 for apostrophes, U+201C/U+201D for double quotes.
 - **External links auto-detected** in link primitives (`href.startsWith('http')` → `target="_blank"`).
@@ -502,4 +577,5 @@ Noting these so nobody goes hunting:
 - No CMS — content is either code-hard-coded or authored as MDX in `src/content/`.
 - No image pipeline beyond Next's default `<Image>` optimizer (consumed through `ImageMdx` for in-article images) and Velite's build-time copy-and-hash of MDX-referenced assets into `public/static/`. Runtime image surface is `/me.jpg`, the per-article OG PNGs in `public/og/articles/`, the per-note OG PNGs in `public/og/notes/`, and the Velite-emitted MDX images in `public/static/`.
 - No error-tracking/observability service — Vercel logs only.
+- No automated PDF generation. `public/resume.pdf` is exported by hand (`pnpm resume:pdf`) and committed; no build step, CI job, or hook regenerates it. Also no headless browser at runtime — Playwright is a local-only devDependency, used by the OG and resume scripts.
 - **No merged `/feed.xml`.** Articles and notes ship as two separate full-content feeds (`/articles/rss.xml`, `/notes/rss.xml`) rather than one combined feed — notes are own-site-only while articles syndicate to dev.to, so the two surfaces have different audiences. A merged feed can be added later if readers request it. Notes are **not** syndicated to dev.to.

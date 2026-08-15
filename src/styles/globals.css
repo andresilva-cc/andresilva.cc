@@ -476,3 +476,281 @@ pre {
     aspect-ratio: 4 / 3;
   }
 }
+
+/* ============================================================
+   Resume print theme — class-scoped styles for the /resume route.
+   Palette + type scale per docs/resume-print-theme.md, a
+   print-specific system deliberately separate from the site's
+   @theme tokens above (lime is unusable as print text/rule —
+   see that doc §0). Nothing here is used outside .resume, and
+   nothing on the site references these tokens.
+
+   Everything below is scoped under the `.resume` class selector,
+   so it only ever applies where that class is present. The one
+   exception is `@page`, which is document-level and CANNOT be
+   scoped by a class — it lives in src/app/resume/print.css
+   instead, imported only by the /resume route, so it doesn't leak
+   A4-with-zero-margin print formatting onto every other page.
+   ============================================================ */
+.resume {
+  /* Six print tokens — see docs/resume-print-theme.md §1. */
+  --resume-paper: #FFFFFF;
+  --resume-ink: #0B0F0A;
+  --resume-ink-body: #2E3A2B;
+  --resume-ink-subtle: #5C6B58;
+  --resume-rule: #849380;
+  --resume-accent: #C8FF3D;
+
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 14mm;
+  background-color: var(--resume-paper);
+  color: var(--resume-ink-body);
+  /* Static per-weight instances (see src/app/resume/fonts.ts) — not
+     the site's --font-mono, which is a variable-font master that
+     Chromium's PDF export embeds as Type 3. */
+  font-family: var(--font-resume-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-rendering: geometricPrecision;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.resume * {
+  box-sizing: border-box;
+}
+
+/* @page lives in src/app/resume/print.css, not here — see the block
+   comment above. */
+
+/* Header — name, role line, contact row, summary. */
+.resume__header {
+  margin-bottom: 10pt;
+}
+.resume__name {
+  margin: 0;
+  font-size: 30pt;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--resume-ink);
+}
+.resume__role {
+  margin: 2pt 0 0;
+  font-size: 13pt;
+  font-weight: 500;
+  line-height: 1.20;
+  color: var(--resume-ink-body);
+}
+.resume__contact {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 18pt;
+  row-gap: 4pt;
+  margin: 8pt 0 0;
+  padding: 0;
+}
+.resume__contact li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5pt;
+  font-size: 8pt;
+  font-weight: 500;
+  line-height: 1.40;
+  color: var(--resume-ink-body);
+  white-space: nowrap;
+}
+.resume__contact svg {
+  width: 9pt;
+  height: 9pt;
+  flex: none;
+  color: var(--resume-ink-subtle);
+}
+.resume__contact a {
+  color: inherit;
+  text-decoration: none;
+}
+.resume__summary {
+  margin: 10pt 0 0;
+  max-width: var(--max-width-prose-wide);
+  font-size: 9pt;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--resume-ink-body);
+}
+
+/* Section heading — collapsed eyebrow: case + tracking on the heading
+   itself, accent on the mark, rule retained. See spec §2 derivation. */
+.resume__section + .resume__section {
+  margin-top: 14pt;
+}
+.resume__section-heading {
+  display: flex;
+  align-items: center;
+  gap: 6pt;
+  margin: 0;
+}
+.resume__section-mark {
+  width: 6pt;
+  height: 6pt;
+  flex: none;
+  background-color: var(--resume-accent);
+}
+.resume__section-heading-text {
+  font-size: 10.5pt;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--resume-ink);
+}
+.resume__section-rule {
+  border: 0;
+  border-top: 0.5pt solid var(--resume-rule);
+  margin: 3pt 0 8pt;
+}
+
+/* Two-column body — Experience (main) then Education + Technologies
+   (sidebar). DOM order already reads main-then-sidebar; this grid only
+   changes placement, never source order, so the PDF text layer stays
+   linear. */
+.resume__body {
+  display: grid;
+  grid-template-columns: 1fr 155pt;
+  column-gap: 20pt;
+  margin-top: 14pt;
+}
+.resume__sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Experience — one job per block. */
+.resume__job {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.resume__job + .resume__job {
+  margin-top: 8pt;
+}
+.resume__job-heading {
+  margin: 0;
+  font-size: 9.5pt;
+  font-weight: 600;
+  line-height: 1.30;
+  color: var(--resume-ink-body);
+}
+.resume__job-connector {
+  font-weight: 400;
+  color: var(--resume-ink-subtle);
+}
+.resume__job-employer {
+  color: var(--resume-ink);
+}
+.resume__job-dates {
+  margin: 2pt 0 4pt;
+  font-size: 8pt;
+  font-weight: 500;
+  line-height: 1.40;
+  color: var(--resume-ink-subtle);
+}
+.resume__bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.resume__bullets li {
+  position: relative;
+  padding-left: 1.3em;
+  margin-top: 2.5pt;
+  font-size: 9pt;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--resume-ink-body);
+}
+.resume__bullets li:first-child {
+  margin-top: 0;
+}
+.resume__bullets li::before {
+  content: '+';
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+  color: var(--resume-ink);
+}
+
+/* Education */
+.resume__edu {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.resume__edu + .resume__edu {
+  margin-top: 8pt;
+}
+.resume__edu-heading {
+  margin: 0;
+  font-size: 9.5pt;
+  font-weight: 600;
+  line-height: 1.30;
+  color: var(--resume-ink);
+}
+.resume__edu-dates {
+  margin: 2pt 0 4pt;
+  font-size: 8pt;
+  font-weight: 500;
+  line-height: 1.40;
+  color: var(--resume-ink-subtle);
+}
+.resume__edu-detail {
+  margin: 0;
+  font-size: 9pt;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--resume-ink-body);
+}
+
+/* Technologies — flat list, split into two columns by the page
+   component (not stored as layout in content data). Each <ul> is one
+   grid item, so items inside stay in simple DOM/block order. */
+.resume__tech-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10pt;
+}
+.resume__tech-columns ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.resume__tech-columns li {
+  font-size: 8pt;
+  font-weight: 500;
+  line-height: 1.40;
+  color: var(--resume-ink-body);
+  white-space: nowrap;
+}
+.resume__tech-columns li + li {
+  margin-top: 2pt;
+}
+
+/* QR — the one moment the paper turns lime, bottom-right of the
+   sidebar. Fill-only per spec §1 "accent" — the ink QR modules stay
+   independently legible against paper if the fill fails to print. */
+.resume__qr {
+  margin-top: auto;
+  padding-top: 14pt;
+  display: flex;
+  justify-content: flex-end;
+}
+.resume__qr-plate {
+  display: block;
+  line-height: 0;
+  background-color: var(--resume-accent);
+}
+.resume__qr-plate svg {
+  display: block;
+  width: 72pt;
+  height: 72pt;
+  color: var(--resume-ink);
+}

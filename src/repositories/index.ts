@@ -4,6 +4,7 @@ import { StaticFooterRepository } from '@/repositories/implementations/static-fo
 import { StaticJobsRepository } from '@/repositories/implementations/static-jobs-repository';
 import { StaticMenuRepository } from '@/repositories/implementations/static-menu-repository';
 import { StaticProjectsRepository } from '@/repositories/implementations/static-projects-repository';
+import { StaticResumeRepository } from '@/repositories/implementations/static-resume-repository';
 
 /*
  * Repository factory — returns fresh instances of every static + async
@@ -20,5 +21,6 @@ export function getRepositories() {
     jobsRepository: new StaticJobsRepository(),
     menuRepository: new StaticMenuRepository(),
     projectsRepository: new StaticProjectsRepository(),
+    resumeRepository: new StaticResumeRepository(),
   };
 }
