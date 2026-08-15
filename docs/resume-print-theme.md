@@ -738,3 +738,359 @@ no-italic rule, the tracking values, the section-head derivation — stands.
 | Technologies list | 2-col grid, 8pt | **inline wrapped, 8pt** | Same size, different justification — see §5.5. |
 
 Palette: **unchanged.** All six tokens ship as specified in §1.
+
+---
+
+# 6. Two-page layout — revised spec
+
+> **Supersedes §5's one-page conclusion.** §5's reasoning stands and is what got
+> here; only its verdict changes. André chose two pages deliberately and declined
+> the §5.4 bullet cuts, so **no copy is cut**. Palette from §1 ships unchanged
+> except for one correction in §6.3.
+
+## 6.0 What changed
+
+| §5 said | §6 says | Why |
+|---|---|---|
+| One page, needs 3 bullet cuts | **Two pages, zero cuts** | André's call. §5.7's fallback becomes the plan. |
+| Summary capped 80ch | **Full column measure (97ch)**, leading 1.45 → **1.55** | André: "in a resume we need to use the whole space." Wider measure gets the classical compensation — more leading — rather than nothing. |
+| Contact row with icons | **Text only, no icons, spacing-only separation** | Matches the site. Verified in §6.1. |
+| Job/education dates joined with `·` | **Confirmed correct** | Verified in §6.1. |
+| Technologies as inline `·` text | **Outlined chips** | The `·` rule caps at 3 atoms and forbids wrapping; a 12–16 item list breaks both. The site uses chips. §6.1. |
+| Bullet leading 1.35 | **1.45** | 1.35 was the permissible floor under a page constraint that no longer exists. |
+| Name 24pt | **28pt** | Same reason. 28pt is also the site's `--text-h1`. |
+| Section mark: 6pt lime square | **6pt `ink` square** | Defect André caught. §6.3. |
+| Margins 11mm | **12mm, via `@page`** | Scraping is over. Uniform `@page` margin also fixes the page-2 defect. |
+| Date range en dash `–` | **em dash `—`** | Verified against the site. §6.8. |
+
+---
+
+## 6.1 Separator verification
+
+André was right to make me check. **My §5 contact-row proposal was wrong.**
+
+**What the site actually does** — three files, read directly:
+
+- `src/components/footer.tsx:11–18` — *"Footer — a centered row of lowercase
+  social links, separated by **spacing only. No dot separators**: the footer is a
+  nav-style row of discrete links (like the header), not an inline list of
+  fragments — the `·` separator belongs to within-a-value lists (Facts, article
+  meta), not between sibling links."* Rendered with `gap-x-4` (16px) at
+  `variant="micro"` (11px), i.e. ~1.45 em of spacing and nothing else
+  (`footer.tsx:31`).
+- `src/components/article-card.tsx:35–36` — *"The `·` separator is reserved for
+  within-a-value short conjunctions (**1–3 atoms, never wraps**); sibling-link
+  lists like tags use chips."*
+- `src/repositories/implementations/static-footer-repository.ts:6–11` — link text
+  is the **platform name** (`github`, `linkedin`, `dev.to`, `x`, `instagram`,
+  `email`), not a URL and not an icon.
+
+**Applied to the resume:**
+
+| Element | Verdict | Reason |
+|---|---|---|
+| **Contact row** | **No dots. Spacing only.** | Four discrete destinations (mailto, tel, site, GitHub) — structurally the footer's case, a nav-style row of links. Also 4 atoms, over the 1–3 ceiling. |
+| **Job header line** — `Role @ Employer · Dates` | **`·` is correct.** | 2 atoms, one non-interactive element, fragments of one statement, and it never wraps (longest is 410pt in a 527pt column — verified in §6.6). Passes the article-card test exactly. |
+| **Education line** — `Institution · Dates` | **`·` is correct**, with a direct precedent. | `src/app/(site)/about/page.tsx:18` renders `institution: 'UNIVALI · 2015 — 2019'` and `:23` renders `'Full Cycle · 2024 — 2025'`. The site already dot-joins institution to dates in a single value. This is the same string. |
+| **Technologies list** | **`·` is wrong. Use chips.** | 12–16 items is far past 3 atoms and will certainly wrap, breaking both halves of the rule. `article-card.tsx:36` names chips as the correct form for sibling lists, and `role-card.tsx:57–61` renders career technologies as `<Tag>` chips. §6.4. |
+
+My memory note said the `·` rule was about "within-a-value conjunction vs
+between-links separator," which was right as far as it went but missed the
+**1–3 atoms, never wraps** ceiling that `article-card.tsx:36` adds. That ceiling
+is what disqualifies the technologies list, and I would have shipped it wrong.
+
+---
+
+## 6.2 Contact row
+
+Four values, no icons, no separators, one line.
+
+```
+jobs@andresilva.cc      +55 47 99900-1415      andresilva.cc      github.com/andresilva-cc
+```
+
+| Property | Value |
+|---|---|
+| Type | 8pt / 500 / 1.40, tracking 0 |
+| Colour | `ink-body` (`#2E3A2B`, 11.96 : 1) |
+| Separation | **14pt inter-item gap, nothing else** |
+| Link styling | none — no colour change, no underline |
+
+The site names platforms because its link text can't be the value (a footer of
+raw URLs would be unreadable). A resume inverts that: the recruiter needs to read
+and copy the actual address, and each value is self-identifying — the email has
+an `@`, the phone has a `+55`, the URLs have domains. So the resume shows values
+with no label and no icon, which honours both the site's structure (discrete
+links, spacing only) and the document's job.
+
+**14pt gap, not the site's 1.45 em.** At 8pt the site's ratio would be 11.6pt.
+Print gets a little more because there is no hover state and no colour
+differentiation to help the eye find the boundaries — spacing is carrying the
+entire separation load. 14pt is 1.75 em at 8pt. Row measures 387.6pt in a
+527.24pt column, so there is 140pt of headroom if a value gets longer.
+
+---
+
+## 6.3 Section mark — correction to §1
+
+**André found a real defect and he is right.** §1 specified the accent as
+"fill only" and then placed one of those fills — the 6pt section-mark square —
+with nothing on top of it. A bare lime fill against paper is 1.18 : 1 at its edge
+in colour and 1.43 : 1 in greyscale. §1 even flagged it as formally decorative.
+But "decorative" was doing too much work: an element that is invisible is not
+decoration, it is a rendering artifact, and three of them run down the page.
+
+The fix is not to darken the lime — §0 rejects that, and nothing about that
+analysis has changed. The fix is to stop putting lime where it cannot carry ink.
+
+### Revised rule (amends §1 `accent`)
+
+> **Lime appears only with `ink` set on top of it. Never as a bare fill.**
+
+This is the generalisation of the 16.40 : 1 pairing that §0 is built on: the pair
+works because the ink is *on* the lime. Remove the ink and there is no pair, just
+a 1.18 : 1 edge. Every future light-substrate placement gets tested against this
+one line.
+
+### Consequences
+
+| Element | Was | Now |
+|---|---|---|
+| Section mark | 6pt `accent` square | **6pt `ink` square** (`#0B0F0A`, 19.32 : 1) |
+| QR plate | `accent` fill, `ink` modules | **unchanged** — this is the placement that earns it |
+
+Lime now appears **once on the document**, on the QR plate, where ink-on-lime is
+16.40 : 1 in colour and 13.6 : 1 in greyscale and the fill is doing real work
+(it is the code's light field). That is a reduction from §1's two placements, and
+it is the correct number: one pointed accent on a two-page document, at the exact
+point where the paper hands the reader back to andresilva.cc.
+
+**Keep the mark.** With the accent gone it carries rhythm rather than colour, but
+it is the residue of the collapsed eyebrow from §2 — without it the section head
+is generic uppercase-plus-rule and stops being this system's component. It also
+now matches the `+` bullet markers, which are already `ink`: one marker family,
+one colour, two glyphs (`■` for sections, `+` for bullets).
+
+**QR stays in the page-1 header top-right.** Page 1 is the surface that gets read
+and the one that survives if the pages separate; the return path belongs there.
+
+---
+
+## 6.4 Technologies slot
+
+Curated list arrives from the brand strategist; budget **12–16 items**.
+
+| Property | Value |
+|---|---|
+| Form | Outlined chips, wrapped — the site's `<Tag>` (`src/components/tag.tsx`) |
+| Type | 8pt / 500, tracking 0 |
+| Text colour | `ink-body` |
+| Border | **0.5pt `rule`** (`#849380`) — the light-substrate mapping of the site's `--accent-muted` chip border, per §1 |
+| Fill | none (transparent, as on the site) |
+| Padding | 4pt horizontal, 1.5pt vertical |
+| Chip height | 15pt |
+| Gap | 4pt both axes (the site's symmetric chip-strip gap) |
+| **Slot** | **2 rows, 34pt total** |
+| Position | Page 2, final block, below Education |
+
+Sizing: at 8pt a chip is `(chars × 4.8) + 9pt`. An 8-character average name gives
+a 51.4pt pitch including the gap, so ~10 chips fit the 527.24pt column and 12–16
+items land in **2 rows**. Budget 2 rows; if the curated list comes back short
+enough to fit 1, the 15pt recovers into page-2 slack, which there is plenty of.
+
+At 12–16 items the chip form is affordable on paper — §1's objection was to 45
+outlined chips, which is a toner-heavy grid. At this count each chip reads as a
+discrete scannable unit, which is better for a skimming recruiter than a dot-run,
+and it is the site's actual component rather than an invention.
+
+`pdftotext` safety: chips are inline-block spans in DOM order on a shared Y band
+with a 4pt gap — far below any column-detection threshold. Extraction is
+left-to-right, row by row, space-separated. The borders are vector and contribute
+nothing to the text layer.
+
+---
+
+## 6.5 Full-width measure and its leading implication
+
+At 12mm margins the column is **527.24pt = 97 characters** at 9pt.
+
+**Bullets: 26 rendered lines from 24 bullets.** Two still wrap — the Atlas FE
+"20M monthly visits" bullet (96 chars) and the Gmaes CONFEA bullet (99 chars).
+Every other bullet is a single line with no return sweep, which is the §5.1
+condition that makes a wide measure safe.
+
+**Bullet leading returns to 1.45.** §5.6 argued 1.35 was *permissible* for
+single-line items, not preferable. With the page constraint gone there is no
+reason to sit on a floor.
+
+**Summary: measure cap removed, leading 1.45 → 1.55.** The cap goes per André's
+call. Running 5 sentences at 97 characters is past the point where the return
+sweep starts costing accuracy, and the textbook compensation for a wide measure
+is more leading, so the summary gets it — 1.55 instead of 1.45, costing 5.4pt for
+6 lines. This is the one place on the document where the full-width decision has
+a real readability cost, and the extra leading is the available mitigation rather
+than a fix. Bullets do **not** take 1.55; they have no return sweep to protect.
+
+Summary sets in **6 lines** at full measure, down from 8 in the shipped build.
+
+---
+
+## 6.6 Height budget and fold
+
+**Geometry.** `@page { size: A4; margin: 12mm }` — uniform, both pages. This is
+also the engineering fix for the 5.1mm page-2 top margin: the margin must live on
+`@page`, not on element padding, because element padding does not repeat per page.
+
+A4 = 841.89 × 595.28pt. At 12mm (34.02pt): **content 527.24 × 773.85pt per page.**
+
+### Page 1 — header + Experience
+
+| Block | Computation | pt | Cumulative |
+|---|---|---|---|
+| Name | 28 × 1.05 | 29.40 | 29.40 |
+| Role line | 2 + (13 × 1.20) | 17.60 | 47.00 |
+| Contact row | 8 + (8 × 1.40) | 19.20 | 66.20 |
+| Summary | 10 + (6 × 9 × 1.55) | 93.70 | 159.90 |
+| QR, 60pt, header top-right | fits inside the 66.2pt stack | 0.00 | 159.90 |
+| *gap* | | 14.00 | 173.90 |
+| **EXPERIENCE** head | (10.5 × 1.25) + 3 + 0.5 + 8 | 24.63 | 198.53 |
+| MPA | hdr 16.35 + (4 × 13.05) + (3 × 2.5) | 76.05 | 274.58 |
+| *gap* | | 8.00 | 282.58 |
+| Atlas — Senior FE | hdr 16.35 + (5 × 13.05) + (4 × 2.5) | 91.60 | 374.18 |
+| *gap* | | 8.00 | 382.18 |
+| Atlas — Consultant | hdr 16.35 + (4 × 13.05) + (3 × 2.5) | 76.05 | 458.23 |
+| *gap* | | 8.00 | 466.23 |
+| Atlas — FE | hdr 16.35 + (5 × 13.05) + (3 × 2.5) | 89.10 | 555.33 |
+| *gap* | | 8.00 | 563.33 |
+| Nuxstep | hdr 16.35 + (3 × 13.05) + (2 × 2.5) | 60.50 | 623.83 |
+| *gap* | | 8.00 | 631.83 |
+| Gmaes | hdr 16.35 + (5 × 13.05) + (3 × 2.5) | 89.10 | **720.93** |
+
+**Page 1 = 720.93pt of 773.85pt — 93.2% full, 52.92pt slack.**
+
+### The fold is forced, not chosen
+
+Placing even the first Education entry needs `gap 14 + head 24.63 + entry 25.40 =
+64.03pt`. Only 52.92pt remain. **The break lands after the last role, and it is
+the arithmetic that puts it there.**
+
+Spec it as an explicit `break-before: page` on the Education section rather than
+letting Chromium find it, so the fold does not drift when the technologies list
+or a bullet changes length. Keep `break-inside: avoid` on job blocks.
+
+### Page 2 — Education + Technologies
+
+| Block | Computation | pt | Cumulative |
+|---|---|---|---|
+| Continuation head | (8 × 1.40) + 2 + 0.5 + 8 | 21.70 | 21.70 |
+| *gap* | | 14.00 | 35.70 |
+| **EDUCATION** head | | 24.63 | 60.33 |
+| Full Cycle | (9.5 × 1.30) + (9 × 1.45) | 25.40 | 85.73 |
+| *gap* | | 6.00 | 91.73 |
+| UNIVALI | | 25.40 | 117.13 |
+| *gap* | | 14.00 | 131.13 |
+| **TECHNOLOGIES** head | | 24.63 | 155.76 |
+| Chips | 2 rows × 15 + 4 gap | 34.00 | **189.76** |
+
+**Page 2 = 189.76pt of 773.85pt — 24.5% full.**
+
+**Document total: 910.69pt of 1547.70pt capacity — 58.8%.**
+
+### Continuation head (page 2)
+
+Pages get physically separated. Page 2 opens with one line identifying the
+document, then a `rule` hairline:
+
+```
+André Luiz da Silva · Senior Software Engineer · page 2 of 2
+```
+
+8pt / 500 / 1.40, `ink-subtle`, 0.5pt `rule` beneath. Three atoms in one
+non-interactive value that never wraps (288pt in a 527pt column) — inside the
+`·` rule verified in §6.1.
+
+This is a plain block element placed after the forced break, **not** an `@page`
+margin box — Chromium's support for `@page` margin boxes is unreliable, and this
+needs to render deterministically.
+
+### Fold alternative considered and rejected
+
+Breaking after the fourth role instead would balance the pages at 72% / 47%
+rather than 93% / 25%. Rejected: a complete work history on page 1 is worth more
+than a balanced spread, because page 1 is the page that reliably gets read, and a
+72%-full page 1 reads as padded where a 93%-full one reads as dense. Education
+and Technologies as clean back matter is a legible structure; two roles stranded
+at the top of page 2 is not.
+
+---
+
+## 6.7 Page 2 runs a quarter full — stating it plainly
+
+At 24.5%, page 2 is a short back-matter page, not a second full page. That is the
+honest consequence of the decision and it is worth naming rather than papering
+over: six roles of bullets exceed one page, and the two sections that follow them
+are short.
+
+**Do not fill it.** Adding a "Languages" block, an "Interests" block, a
+references line, or a decorative panel to balance the spread is exactly the
+"app-UI chrome a portfolio doesn't need" failure — invented content solving a
+visual problem the reader does not have. A sparse final page on a deliberately
+two-page resume is normal and reads as finished, not as short.
+
+The only lever that changes the ratio is the one André already declined: the three
+bullet deletions in §5.4 return the document to one page with 13pt of slack. That
+trade stays open and is his to reopen; it is not re-litigated here.
+
+---
+
+## 6.8 Date glyph correction (amends §2)
+
+§2's glyph note specified an **en dash** for date ranges on the grounds that it
+"matches current" — i.e. it matched the legacy PDF. Checking the site instead:
+
+- `src/components/role-card.tsx:10` — *"Pre-formatted date range string (e.g.
+  `"apr 2025 — now"`). Lowercase month abbreviations, **em-dash with spaces**."*
+- `src/app/(site)/about/page.tsx:18,23` — `'UNIVALI · 2015 — 2019'`,
+  `'Full Cycle · 2024 — 2025'`.
+
+The site uses an **em dash**. Both glyphs are defensible typography for a range,
+so there is no substrate argument for diverging — this was drift, not a decision.
+**Switch to em dash `—` (U+2014), spaced.**
+
+Two related divergences that **are** justified and stay:
+
+- **Title-case months and "Present"**, not the site's lowercase and "now."
+  Lowercase months read as affectation in a hiring document, and "Present" is the
+  convention ATS keyword sets and recruiters expect.
+- **`MPA (formerly Healthy Labs)` as a parenthetical**, not the site's
+  `// formerly X` treatment (`role-card.tsx:52`). A `//` code-comment glyph is
+  register-appropriate on the site and not in a resume.
+
+---
+
+## 6.9 Consolidated deltas
+
+Everything not listed is unchanged from §1–§5.
+
+| Property | Value |
+|---|---|
+| `@page` | `size: A4; margin: 12mm` — uniform both pages |
+| Column | 527.24pt · 97 chars at 9pt · 95 chars inside the bullet indent |
+| Name | 28pt / 700 / 1.05 / −0.01em |
+| Summary | 9pt / 400 / **1.55** / full measure, **no cap** |
+| Bullets | 9pt / 400 / **1.45** / 2.5pt item gap / 1.3em indent |
+| Inter-job gap | 8pt |
+| Section gap | 14pt |
+| Section head | 10.5pt / 600 / 1.25 / +0.16em / uppercase, `ink` |
+| Section mark | **6pt `ink` square** |
+| Section rule | 0.5pt `rule`, 3pt above / 8pt below |
+| Job header | one line, `Role @ Employer · Dates`, em dash in the range |
+| Contact row | 8pt / 500, `ink-body`, **no icons, no dots, 14pt gaps** |
+| Technologies | outlined chips, 8pt / 500, 0.5pt `rule` border, 4pt gap, 2-row slot |
+| QR | 60pt plate, page-1 header top-right, `accent` fill + `ink` modules |
+| Continuation head | page 2 only, 8pt / 500 / `ink-subtle` + 0.5pt rule |
+| Fold | `break-before: page` on Education |
+| Lime placements | **one** — the QR plate |
+
+Palette: **unchanged**. All six §1 tokens ship as specified. The only colour
+change in §6 is *which token* the section mark uses.

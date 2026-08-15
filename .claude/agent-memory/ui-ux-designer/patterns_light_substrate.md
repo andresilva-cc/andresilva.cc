@@ -18,10 +18,15 @@ inverting the dark site produces an unreadable page.
 
 **How to apply:**
 
-1. **Accent is fill-only on light.** Lime never becomes text, a stroke, or a rule
-   on a light substrate. It appears as a solid fill with `#0B0F0A` on top —
-   which measures **16.40 : 1**, byte-identical to `--accent` on `--bg` on the
-   site. Same pair, read from the other side.
+1. **Lime appears ONLY with `ink` set on top of it. Never as a bare fill.** It is
+   never text, a stroke, or a rule on light — but "fill-only" is not sufficient
+   either. A bare lime fill is 1.18 : 1 against paper (1.43 : 1 in greyscale), so
+   it is invisible, and calling it "decorative" does not rescue it — an invisible
+   element is a rendering artifact, not decoration. The 16.40 : 1 pairing works
+   *because the ink is on the lime*; remove the ink and there is no pair.
+   **Learned the hard way:** the shipped resume's 6pt lime section-mark squares
+   vanished on white and André flagged them unprompted (2026-08-15). Fixed to
+   `ink`. Test every light-substrate lime placement against this one line.
 2. **Never darken the lime to make it legible.** `#4A5D0C` reaches 7.34 : 1 but
    reads as military olive (chartreuse is a high-lightness hue by construction),
    and it collapses to ~69% K in greyscale — within 10 points of the body ink.
