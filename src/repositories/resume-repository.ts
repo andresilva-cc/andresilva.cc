@@ -1,10 +1,9 @@
 export interface ResumeRoleEntry {
   title: string;
   employer: string;
-  /** Pre-formatted, e.g. "Apr 2025". */
-  start: string;
+  startDate: Date;
   /** Undefined for the current role — renders as "Present". */
-  end?: string;
+  endDate?: Date;
   bullets: Array<string>;
 }
 

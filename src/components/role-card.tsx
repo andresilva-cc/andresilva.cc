@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { Text } from '@/components/text';
@@ -15,8 +14,7 @@ export interface RoleCardProps {
   company: string;
   /** Optional "formerly X" note for renamed/acquired employers. */
   formerly?: string;
-  /** Rich content — bullets, paragraphs, etc. */
-  description: ReactNode;
+  bullets: Array<string>;
   technologies: Array<string>;
   /** Optional external reference links rendered after the technologies strip. */
   links?: Array<{ name: string; url: string }>;
@@ -32,7 +30,7 @@ export interface RoleCardProps {
  * with the date gutter above the content, separated by a bottom rule.
  */
 export function RoleCard({
-  dates, isCurrent = false, title, company, formerly, description, technologies, links, className,
+  dates, isCurrent = false, title, company, formerly, bullets, technologies, links, className,
 }: RoleCardProps) {
   return (
     <li className={clsx('grid grid-cols-1 md:grid-cols-role border-b border-rule last:border-b-0', className)}>
@@ -51,9 +49,9 @@ export function RoleCard({
         { formerly && (
           <Text variant="meta" className="mt-1 text-fg-subtle italic font-normal">{ `// formerly ${formerly}` }</Text>
         ) }
-        <div className="mt-3 font-mono text-fg-muted text-body max-w-prose-wide [&_ul]:list-none [&_ul]:p-0 [&_ul]:m-0 [&_li]:relative [&_li]:pl-[2ch] [&_li]:mb-2 [&_li:last-child]:mb-0 [&_li]:before:content-['+'] [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:text-accent [&_li]:before:font-semibold [&_strong]:text-fg [&_strong]:font-semibold">
-          { description }
-        </div>
+        <ul className="mt-3 list-none p-0 m-0 font-mono text-fg-muted text-body max-w-prose-wide [&_li]:relative [&_li]:pl-[2ch] [&_li]:mb-2 [&_li:last-child]:mb-0 [&_li]:before:content-['+'] [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:text-accent [&_li]:before:font-semibold">
+          { bullets.map((bullet) => <li key={bullet}>{ bullet }</li>) }
+        </ul>
         <div className="mt-4 flex flex-wrap gap-1.5 max-w-prose-wide">
           { technologies.map((tech) => (
             <Tag key={tech}>{ tech }</Tag>

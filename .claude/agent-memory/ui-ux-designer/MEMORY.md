@@ -28,6 +28,8 @@ The live site is a brutalist-mono direction:
   conjunction AND capped at 1–3 non-wrapping atoms; past that, use chips.
 - [Verify against source](feedback_verify_against_source.md) — read the component code
   and cite file:line before claiming "the site does X". Docs and memory are indexes.
+- [Case & ornament](patterns_case_and_ornament.md) — role governs case, not size; the
+  system has no ornamental marks; on print, decoration is never a text node.
 - [Light substrate & PDF/ATS constraints](patterns_light_substrate.md) — lime is fill-only
   on white; no 2-col layout survives `pdftotext`; measure limits protect the return sweep.
 

@@ -71,3 +71,36 @@ limitation, (b) dropping to single-column, or (c) a completely different
 PDF-generation pipeline that doesn't go through a browser's print engine
 (e.g. an actual PDF-authoring library with full content-stream control) —
 none of which are a CSS-only fix.
+
+## public/resume.pdf can silently drift from source after a copy/data fix
+
+`pnpm resume:pdf` (`scripts/resume/generate.ts`) is NOT wired into any
+build/CI step — it's manual-only. If a task fixes a rendered string in
+`src/app/resume/page.tsx` or the shared data source but the PDF isn't
+regenerated afterward, `public/resume.pdf` keeps shipping the pre-fix
+text even though the source code is already correct. Always check
+`pdftotext public/resume.pdf -` against current source before assuming a
+"still wrong in the PDF" report means the source is wrong — it may just
+need `pnpm resume:pdf` re-run.
+
+## /resume and /career share one dataset (`employment-history.ts`) with a text/short split
+
+`src/repositories/implementations/employment-history.ts` is the single
+source of truth for both routes' **experience** entries. Each bullet is
+`{ text, short? }` — `text` is full wording (rendered verbatim on
+`/career` via `StaticJobsRepository`), `short` is a condensed variant for
+the print-constrained `/resume` (rendered as `short ?? text` via
+`StaticResumeRepository`). Education and the About page's own education
+card are NOT part of this shared dataset — each is authored directly
+and independently (see the header comment in
+`static-resume-repository.ts` and `about/page.tsx`'s `educationItems`).
+When touching employment data, verify `/career` still renders `text`,
+not a leaked `short` truncation.
+
+## Curly apostrophe (`’`) is correct even where main used `&apos;`
+
+`docs/copy-guide.md` mandates curly apostrophes (`’`, U+2019) everywhere,
+including in plain JS/TS string literals — `&apos;s` (a JSX-only
+straight-quote entity) in old code was the deviation, not the
+convention. Don't flag a JSX-entity → curly-apostrophe diff as a content
+regression when comparing against `main`.

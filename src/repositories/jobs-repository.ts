@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 export interface JobsRepositoryResponse {
   title: string;
   company: string;
@@ -8,7 +6,7 @@ export interface JobsRepositoryResponse {
   endDate?: Date;
   /** Prior name of the employer (e.g. "Healthy Labs" for MPA). */
   formerly?: string;
-  description: ReactNode;
+  bullets: Array<string>;
   technologies: Array<string>;
   /** External references for the role (e.g. notable project shipped during tenure). */
   links?: Array<{ name: string; url: string }>;

@@ -1,110 +1,58 @@
 import type { ResumeRepository, ResumeRepositoryResponse } from '../resume-repository';
+import { EMPLOYMENT_HISTORY, type EmploymentRole } from './employment-history';
 
 /*
- * Content transcribed verbatim from public/resume.pdf — the content
- * source of truth. Two deliberate changes only:
- *  - "Healthy Labs" → "MPA (formerly Healthy Labs)" (employer rename)
- *  - Role line → "Senior Software Engineer" (matches the site hero)
- * Everything else, including copy the engineer might otherwise tighten,
- * is left exactly as the source PDF reads.
+ * Experience content derives from EMPLOYMENT_HISTORY (employment-history.ts),
+ * the dataset shared with StaticJobsRepository — see that file for the
+ * unification rationale. Dates stay Date objects here too (not
+ * pre-formatted strings) — the page formats them through the same
+ * `formatMonthYear`/`formatDateRange` helpers /career uses
+ * (src/lib/format-date.ts), so the two surfaces can't drift on
+ * case or dash glyph the way they previously did.
+ *
+ * Everything else here (contact, summary, education, technologies) has
+ * no shared upstream source and is authored directly.
  *
  * Editing this file does NOT regenerate public/resume.pdf by itself —
  * the PDF is a committed, manually-exported artifact (see
- * scripts/resume/generate.mjs). After changing anything here, run
+ * scripts/resume/generate.ts). After changing anything here, run
  * `pnpm resume:pdf` and commit the updated PDF, or the shipped file
  * silently drifts out of sync with this data.
  */
+
+function formatEmployer(role: EmploymentRole): string {
+  return role.formerly ? `${role.company} (formerly ${role.formerly})` : role.company;
+}
+
 export class StaticResumeRepository implements ResumeRepository {
   get(): ResumeRepositoryResponse {
     return {
       name: 'André Luiz da Silva',
       role: 'Senior Software Engineer',
       contact: {
-        email: 'jobs@andresilva.cc',
+        email: 'hello@andresilva.cc',
         phone: '+55 47 99900-1415',
         site: { label: 'andresilva.cc', url: 'https://andresilva.cc/' },
         github: { label: 'github.com/andresilva-cc', url: 'https://github.com/andresilva-cc' },
       },
       summary: 'Software engineer with 9+ years of experience building web platforms, internal tools, and developer tooling. Works end-to-end — from architecture and infrastructure to product features and integrations. Primarily works with TypeScript, Vue.js, Nuxt, React, and Node.js. Takes ownership of solutions while collaborating effectively with teams, quickly adapting to new technologies and challenges. Holds a BS in Computer Science and a specialization certificate in Technical Leadership.',
-      experience: [
-        {
-          title: 'Senior Engineer',
-          employer: 'MPA (formerly Healthy Labs)',
-          start: 'Apr 2025',
-          bullets: [
-            'Developed a multi-agent AI assistant for internal CMS operations and workflows',
-            'Built a preview orchestration server using WebSockets and Docker for instant CMS previews',
-            'Built core modules of an in-browser devtools panel',
-            'Implemented lead compliance integrations (TrustedForm, Jornaya)',
-          ],
-        },
-        {
-          title: 'Senior Front-end Engineer',
-          employer: 'Atlas Technologies',
-          start: 'Jan 2024',
-          end: 'Apr 2025',
-          bullets: [
-            'Worked on performance and DX improvements as part of the platform team',
-            'Upgraded projects to Vue 3 and Nuxt 3',
-            'Migrated pages to a Nuxt 3 project',
-            'Achieved a 74% increase in the performance of a key page',
-            'Improved logging in a Nuxt 3 project for better observability and DX',
-          ],
-        },
-        {
-          title: 'Front-end Engineering Consultant',
-          employer: 'Atlas Technologies',
-          start: 'Mar 2022',
-          end: 'Jan 2024',
-          bullets: [
-            'Mentored and provided technical guidance to front-end engineers',
-            'Analyzed and developed project improvements',
-            'Contributed to the development of a component library using Lerna, TypeScript, and Vue.js',
-            'Contributed to the migration of key pages to a Nuxt project',
-          ],
-        },
-        {
-          title: 'Front-end Engineer',
-          employer: 'Atlas Technologies',
-          start: 'Nov 2021',
-          end: 'Mar 2022',
-          bullets: [
-            'Contributed to the development of a security feature for a platform with over 20M monthly visits',
-            'Deployed and monitored front-end tasks in production',
-            'Contributed with code reviews across multiple teams',
-            'Tracked and organized tasks in Jira using Scrum',
-          ],
-        },
-        {
-          title: 'CEO & Co-Founder',
-          employer: 'Nuxstep',
-          start: 'Jun 2018',
-          end: 'Oct 2021',
-          bullets: [
-            'Planned, developed, and deployed web and mobile applications',
-            'Contributed to the execution of IT infrastructure projects',
-            'Developed a NativeScript plugin integrating Spotify’s SDK using TypeScript',
-          ],
-        },
-        {
-          title: 'Software Development Intern',
-          employer: 'Gmaes Telecom',
-          start: 'Mar 2017',
-          end: 'Dec 2018',
-          bullets: [
-            'Developed an inventory system for the City Hall of Francisco Beltrão using Vue.js and Laravel',
-            'Developed the new website for the Federal Council of Engineering and Agronomy (CONFEA) using Drupal',
-            'Developed an integration between Nuvemshop and SkyHub using Nuxt and Node.js',
-            'Deployed and managed applications on Linux and Windows servers',
-          ],
-        },
-      ],
+      experience: EMPLOYMENT_HISTORY.map((role) => ({
+        title: role.title,
+        employer: formatEmployer(role),
+        startDate: role.startDate,
+        endDate: role.endDate,
+        bullets: role.bullets.map((bullet) => bullet.short ?? bullet.text),
+      })),
+      // Independent of the About page's own education card
+      // (about/page.tsx's educationItems) and of /career (which has no
+      // education section at all) — not shared with either. See the file
+      // header for why.
       education: [
         {
           institution: 'Full Cycle',
           detail: 'Specialization Certificate in Technical Leadership',
-          start: 'Apr 2024',
-          end: 'Feb 2025',
+          start: '2024',
+          end: '2025',
         },
         {
           institution: 'UNIVALI - Universidade do Vale do Itajaí',
@@ -113,11 +61,13 @@ export class StaticResumeRepository implements ResumeRepository {
           end: '2019',
         },
       ],
+      // A curated ~15-item positioning list, not derived from
+      // EMPLOYMENT_HISTORY's per-job technologies — those are per-role
+      // detail, not a single "here's my stack" statement, so this stays
+      // hand-authored rather than a dedupe/union of the per-job arrays.
       technologies: [
-        'JavaScript', 'TypeScript', 'Vue.js', 'Vuex', 'Pinia', 'Nuxt', 'React', 'Next.js', 'TanStack',
-        'AI SDK', 'Sass', 'Vuetify', 'Tailwind CSS', 'Storybook', 'Drupal',
-        'PHP', 'Laravel', 'Node.js', 'Express', 'Jest', 'Vitest', 'Lerna', 'SQL', 'NativeScript',
-        'Adobe XD', 'Figma', 'Shell Script', 'Linux', 'Windows Server',
+        'TypeScript', 'JavaScript', 'Vue.js', 'Nuxt', 'React', 'Next.js', 'Node.js', 'TanStack', 'Pinia',
+        'Tailwind CSS', 'Storybook', 'Vitest', 'Docker', 'WebSockets', 'AI SDK',
       ],
     };
   }

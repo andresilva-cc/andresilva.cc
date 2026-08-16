@@ -19,6 +19,13 @@ a second condition my memory had dropped entirely — `article-card.tsx:35–36`
 treatment I had already spec'd. Two errors in one section, both from trusting a
 summary over the source.
 
+It happened again in the next round (same spec): I specced a 6pt section-mark
+square and UPPERCASE section headings. Neither exists on the site —
+`src/components/section-head.tsx:34–41` is eyebrow + h2 + `border-b border-rule`,
+and every section title in `src/app/(site)/about/page.tsx:41,100,113,125` is
+sentence case. André caught both. Three of my four errors across two rounds were
+*inventions I could have disproved by opening one component file.*
+
 The design-system doc says this itself in its opening line: *"the **source of
 truth** is the shipped code in `src/`."* Treat the doc and my memory as indexes
 that point at files, not as the rule.

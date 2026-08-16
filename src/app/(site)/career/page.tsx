@@ -25,7 +25,7 @@ export default function Career() {
               title={job.title}
               company={job.company}
               formerly={job.formerly}
-              description={job.description}
+              bullets={job.bullets}
               technologies={job.technologies}
               links={job.links}
             />

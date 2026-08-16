@@ -1,51 +1,20 @@
 ---
-name: Security conventions
-description: andresilva.cc security-relevant conventions — PII/indexing precedent, existing public-contact-info baseline
+name: security-conventions
+description: Recurring security baseline decisions for andresilva.cc — noindex precedent, accepted PII exposure, resume-pipeline trust boundary, subprocess pattern
 metadata:
   type: project
 ---
 
-## Indexing convention for non-content/utility routes
+Recurring security-relevant conventions confirmed across multiple review passes on this project.
 
-`src/app/design-system/page.tsx` sets `export const metadata = { robots: { index: false } }` for
-its non-content utility route. This is the established pattern in this codebase for pages that
-should be directly reachable but not search-indexed (living reference surfaces, direct-link-only
-distribution pages like `/resume`). When reviewing a new route that isn't meant for search
-discovery, check whether it uses this pattern before flagging missing `noindex` as novel — but
-also check it's actually applied, since it's opt-in per-route, not a global default.
+**`/resume` noindex precedent:** `robots: { index: false }` (`src/app/resume/page.tsx`) plus deliberate absence from `src/app/sitemap.ts` is the accepted pattern for utility routes that render otherwise-public identity/contact info in a denser format than intended for search discovery. `/career` (a related route sharing the same `employment-history.ts` dataset) is intentionally indexed and present in the sitemap — the noindex choice is per-route, not per-dataset.
+**Why:** André accepted the phone number / email on `/resume` as intentional, pre-existing surface — a resume is expected to carry that. It is not a leak to flag.
+**How to apply:** Don't re-flag phone/email presence on `/resume` as a PII finding. Do flag if a *new* route renders the same PII without an equivalent noindex/sitemap-exclusion decision, or if `/resume`'s noindex/sitemap-exclusion is ever removed without discussion.
 
-## Baseline PII exposure already on the site (pre-existing, not introduced by any single PR)
+**`scripts/resume/generate.ts` trust boundary:** This is a manual, local-only script (`pnpm resume:pdf`) — never wired into the Vercel build (Chromium isn't installed there; see the file's own header comment). It builds the site locally, boots a loopback-only `next start` (`HOST = '127.0.0.1'`), and processes `pdftotext`/`pdfinfo`/`pdffonts` output that the *same script* just generated from the site's own static data in the same process run.
+**Why:** No network-facing or user-submitted input ever reaches this script's regex/string operations — ReDoS and injection analysis on this file should note the input is not attacker-influenced, not just that the patterns happen to be safe shapes.
+**How to apply:** When reviewing changes to this script, subprocess calls must stay `execFileSync`/`spawn`/`spawnSync` with array-form args and no `shell` option (confirmed pattern as of the resume-route work). Regex/string checks added here (`REQUIRED_TEXT`, `FORBIDDEN_TEXT`, whitespace-normalizing checks) are content-drift guards, not security controls — don't apply attacker-input severity reasoning to them.
 
-- `src/components/footer.tsx` / `StaticFooterRepository` already publish `hello@andresilva.cc` in
-  plaintext, site-wide, on every indexed page (no noindex, no obfuscation). Any future finding
-  about "email address exposed in plaintext" should note this existing baseline rather than
-  treating email exposure as novel.
-- `public/resume.pdf` is a pre-existing, publicly linked (from `/about`, `target="_blank"`, no
-  `nofollow`), indexable static asset containing name/phone/`jobs@andresilva.cc` — the source of
-  truth `StaticResumeRepository` was transcribed from (see PR #18 / issue #18, the `/resume` HTML
-  route). Phone number exposure via this PDF predates the HTML route; a new HTML `/resume` route
-  duplicating that same data in plaintext HTML is an incremental (more scrapable) exposure, not a
-  wholly new category — factor this into severity when reviewing that surface again.
-
-## /resume noindex fix — verified effective (issue #18, 2026-08-15)
-
-`robots: { index: false }` in `src/app/resume/page.tsx` reaches the rendered
-`<meta name="robots">` tag: root `layout.tsx` sets no `robots` field at all, so
-there's no metadata-merge conflict, and the pattern mirrors the proven
-`design-system/page.tsx` precedent exactly. `/resume` is confirmed absent
-from `src/app/sitemap.ts` staticRoutes. Don't re-litigate this from scratch on
-future resume-route reviews — just confirm layout.tsx still doesn't add a
-conflicting `robots` field.
-
-## Subprocess invocation pattern — execFileSync with array args (safe)
-
-`scripts/resume/generate.mjs` (`runPopplerTool`) calls `execFileSync(cmd, args,
-{...})` with `cmd` a fixed literal (`pdfinfo`/`pdffonts`/`pdftotext`) and args
-an array containing only `OUT_PATH` — a hardcoded constant
-(`join(ROOT, 'public', 'resume.pdf')`), never derived from user/env/CLI input.
-`execFileSync` does not spawn a shell by default, so this is not
-shell-injectable even in principle. This is the reference-good pattern for
-local dev/export scripts in this repo that shell out to CLI tools — no
-finding, cite as precedent if a similar pattern shows up elsewhere.
-
-Related: [[design_system_conventions]]
+**`.claude/hooks/pre-commit-review-check.sh` staged-diff pattern matching:** The hook greps `git diff --cached` output and staged filenames against static, script-authored regex patterns to decide which review types / re-export steps a commit requires. Staged content is always the *searched* data (piped into `grep -q`, or matched via `echo "$var" | grep -qE "$STATIC_PATTERN"`), never interpolated into an `eval`, backtick, or unquoted command position.
+**Why:** This shape is immune to shell injection from staged file content by construction — worth confirming on every hook-pattern change rather than re-deriving from scratch each time.
+**How to apply:** When the hook's regex patterns are widened (new file-path alternatives, new content-marker keywords), verify the new pattern is still consumed only as grep's search pattern/input (not shell-expanded) — that check is usually a one-line confirmation, not a deep audit. See [[resume-route-conventions]] for what the current pattern additions cover.

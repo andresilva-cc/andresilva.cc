@@ -249,13 +249,11 @@ export function ComponentsBand() {
                   title="Senior Engineer"
                   company="MPA"
                   formerly="Healthy Labs"
-                  description={(
-                    <ul>
-                      <li>Developed a multi-agent AI assistant for internal CMS operations and workflows</li>
-                      <li>Built a preview orchestration server using WebSockets and Docker</li>
-                      <li>Implemented lead compliance integrations across CMS and consumer-facing platforms</li>
-                    </ul>
-                  )}
+                  bullets={[
+                    'Developed a multi-agent AI assistant for internal CMS operations and workflows',
+                    'Built a preview orchestration server using WebSockets and Docker',
+                    'Implemented lead compliance integrations across CMS and consumer-facing platforms',
+                  ]}
                   technologies={['TypeScript', 'Vue.js', 'Nuxt', 'React', 'TanStack', 'AI SDK']}
                 />
               </ul>

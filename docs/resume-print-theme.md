@@ -161,7 +161,11 @@ and a 61% K hairline reads as a heavy border rather than a hairline.
 **`rule` — `#849380` · 3.25 : 1 · 45% K**
 
 Usage: every hairline on the page — section-heading underlines, column dividers,
-any separator the layout pass introduces. Stroke weight **0.5pt** (never `0pt` or
+any separator the layout pass introduces. **After §6.3 removed the section mark,
+this token is the only thing marking a section boundary**, which is exactly what
+the site does (`src/components/section-head.tsx:35` — `border-b border-rule`). It
+carries more weight in the print theme than the token count suggests.
+Stroke weight **0.5pt** (never `0pt` or
 "hairline": PDF renders those at device minimum, which is one dot at 2400dpi on a
 platesetter and one dot at 300dpi on an inkjet — wildly inconsistent). The site
 uses 1px, which is 0.75pt at 96dpi; 0.5pt is the correct print equivalent because
@@ -182,8 +186,13 @@ is the right call.
 **`accent` — `#C8FF3D` · 1.18 : 1 · 15% K**
 
 The site accent, unmodified. **Fill only. Never text, never a stroke, never a
-rule.** Two placements on the page, both specified in §2: the QR plate and the
-section-heading square.
+rule.**
+
+> **Superseded in part by §6.3.** This entry originally listed two placements —
+> the QR plate and a section-heading square. The square is gone: a bare lime fill
+> is invisible on paper, so "fill only" was upgraded to **"only with `ink` set on
+> top of it."** Lime has **one** placement on the shipped document: the QR plate.
+> The contrast analysis below is unchanged and is what forced that conclusion.
 
 Contrast behaviour:
 - `ink` on `accent` = **16.40 : 1** — identical to `--accent` on `--bg` on the site.
@@ -196,8 +205,12 @@ Contrast behaviour:
 **Hard rule: no information may depend on the accent fill being visible.** Because
 its edge against paper is sub-3 : 1 in both colour and greyscale, the fill is
 formally decorative. Every element it sits behind must be independently legible
-against white. The QR modules and the section headings both satisfy this — they
-are `ink`, which reads at 19 : 1 on either substrate.
+against white. The QR modules satisfy this — they are `ink`, which reads at
+19 : 1 on either substrate.
+
+This rule turned out to be necessary but not sufficient: an element sitting
+*behind nothing* trivially satisfies it and is still invisible. §6.3 closes that
+hole.
 
 *Do not use for:* the name plate. A full lime rectangle behind a 30pt name is a
 structural colour field, not a pointed accent, and it puts the single most
@@ -236,8 +249,8 @@ sidebar.
 | **Contact row — icons** | `ink-subtle` | 8pt equivalent | — | Glyph/vector icons, stroke or fill in `ink-subtle`. |
 | **Contact row — values** | `ink-body` | 8pt / 500 / 1.40 | 0 | No colour is used to signal "link." If a link affordance is wanted on screen, a 0.5pt `ink-subtle` underline at 1.5pt offset — never a colour change. |
 | **Summary paragraph** | `ink-body` | 9pt / 400 / 1.45 | 0 | Measure capped at **68ch** (`--max-width-prose-wide`, ported verbatim). See §3 for why this is a readability gain, not just lineage. |
-| **Section headings** — Experience / Education / Technologies | `ink` | 10.5pt / 600 / 1.25 | **+0.16em**, UPPERCASE | Was ~15pt purple. See derivation below. |
-| **Section-heading mark** | `accent` fill | 6pt × 6pt solid square | — | Sits before the heading text, baseline-aligned to cap height. Three instances. |
+| **Section headings** — Experience / Education / Technologies | `ink` | 10.5pt / 600 / 1.25 | ~~+0.16em, UPPERCASE~~ → **0, sentence case** | Was ~15pt purple. **Superseded by §6.3** — see the rewritten derivation below. |
+| ~~**Section-heading mark**~~ | — | — | — | **Removed. Superseded by §6.3.** |
 | **Section-heading rule** | `rule` | 0.5pt, full column width | — | Under the heading. Placement is the layout pass's call; stroke and colour are fixed here. |
 | **Job title** — the role half of "Senior Engineer @ Healthy Labs" | `ink-body` | 9.5pt / 600 / 1.30 | 0 | |
 | **`@` connector** | `ink-subtle` | 9.5pt / 400 / 1.30 | 0 | Standing rule 11: inline connector glyphs inherit the parent's size and line-height and differentiate by colour and weight only. |
@@ -251,25 +264,28 @@ sidebar.
 | **Rules / dividers** | `rule` | 0.5pt | — | |
 | **QR modules** | `ink` | — | — | Currently purple: `#7C6BD9` modules on white is 4.1 : 1, which is marginal for phone scanners and degrades badly in greyscale. `ink` on `accent` is 16.4 : 1 in colour and 13.6 : 1 in greyscale. |
 | **QR plate** | `accent` fill | — | — | Solid lime rectangle behind the code, with a quiet zone of **≥4 modules** in `accent` on all four sides (the quiet zone must be the light value, which lime is). Square corners, no border. |
-| **QR caption** (if present) | `ink-subtle` | 7pt / 600 / 1.35 | **+0.12em**, UPPERCASE | Ports `--tracking-badge`. |
+| **QR caption** (if present) | `ink-subtle` | 7pt / 600 / 1.35 | **+0.12em**, UPPERCASE | Ports `--tracking-badge`. This uppercase **stays** after §6.3 — a caption is subordinate metadata, which is exactly the category the site tracks and uppercases (eyebrow, Facts keys, `th`). Section titles are not. |
 
 ### Section-heading derivation
 
-The site's section head is a two-line component: an uppercase, `+0.16em`-tracked,
+> **This derivation was wrong twice over and is superseded by §6.3.** It is kept
+> because the error is instructive: I treated the eyebrow's *case and tracking*
+> and its *accent colour* as properties that needed somewhere to go, and invented
+> two carriers for them. Both inventions failed — the square was invisible, and
+> the uppercase treatment misapplied a subordinate-label convention to a section
+> title. The original text follows; §6.3 has the corrected version.
+
+~~The site's section head is a two-line component: an uppercase, `+0.16em`-tracked,
 accent-coloured `//` comment-tag eyebrow, above a sentence-case 18px/600 H2, above
 a bottom rule. On paper the eyebrow's accent colour is impossible. Rather than
-drop the component, it **collapses to one line**:
+drop the component, it **collapses to one line**: the eyebrow's case and tracking
+migrate onto the heading itself, the eyebrow's accent colour migrates onto the 6pt
+square, and the bottom rule is retained in `rule`. Four independent signals
+separate the heading from the 9.5pt job titles: case, tracking, the rule, and the
+lime square.~~
 
-- the eyebrow's *case and tracking* migrate onto the heading itself,
-- the eyebrow's *accent colour* migrates onto the 6pt square,
-- the bottom rule is retained in `rule`.
-
-This is why section headings are 10.5pt — smaller than the current ~15pt — and
-still read a clear level above the 9.5pt job titles. Four independent signals
-separate them: case, tracking, the rule, and the lime square. That is more
-differentiation than the current purple provides on its own, in less vertical
-space, and it survives greyscale entirely (the square is the only element that
-fades, and it carries nothing).
+The part that survived: section headings are **10.5pt**, smaller than the legacy
+~15pt purple, and they still read a clear level above the 9.5pt job titles.
 
 ### Employer-vs-role emphasis
 
@@ -280,7 +296,8 @@ both are safe. It is a one-line change and the rest of the system is unaffected.
 
 ### Glyph notes
 
-- Date ranges: en dash `U+2013`, spaced — matches current.
+- ~~Date ranges: en dash `U+2013`, spaced — matches current.~~ **Superseded by
+  §6.8**: em dash `U+2014`, spaced, lowercase months, `present` for open ranges.
 - Bullet marker: `+` (see above), not a hyphen-minus.
 - Standing rule 9 applies to the resume's prose: curly apostrophe `U+2019`. Check
   "Spotify's SDK" in the Nuxstep block — it renders as a straight `'` in the
@@ -382,7 +399,7 @@ covers Latin-1 Supplement in its 209 glyphs. The constraint is non-binding for
 both faces.
 
 **What replaces its role.** VT323's job on the site is the per-page identity
-moment. On the resume that job is split: the **name at 30pt/700** carries the
+moment. On the resume that job is split: the **name at 28pt/700** carries the
 scale gesture, and the **lime QR plate** carries the brand colour — placed, not
 incidentally, at exactly the point where the paper hands the reader back to the
 website, which is where VT323 actually lives. If a display gesture beyond that is
@@ -392,14 +409,19 @@ design because it is a logo. Type is not.
 
 ### Scale
 
-All values in points. Line-height is unitless. All three tracking values are
-ported from existing site tokens; none is invented.
+All values in points. Line-height is unitless. Tracking values are ported from
+existing site tokens; none is invented.
+
+> **Two rows revised.** `p-display` is 28pt (§6.9), and `p-h2` lost its tracking
+> and uppercase (§6.3). After that change the theme uses **two** tracking values,
+> not three — both on subordinate labels, which is the only place the site tracks
+> type at all.
 
 | Print token | Size | Weight | Leading | Tracking | Site lineage | Applied to |
 |---|---|---|---|---|---|---|
-| `p-display` | 30pt | 700 | 1.05 | −0.01em (`--tracking-display`) | `--text-display` | Name |
+| `p-display` | ~~30pt~~ **28pt** | 700 | 1.05 | −0.01em (`--tracking-display`) | `--text-display` | Name |
 | `p-h1` | 13pt | 500 | 1.20 | 0 | — | Role line |
-| `p-h2` | 10.5pt | 600 | 1.25 | +0.16em (`--tracking-eyebrow`), UPPERCASE | `--text-h2` + eyebrow treatment | Section headings |
+| `p-h2` | 10.5pt | 600 | 1.25 | ~~+0.16em, UPPERCASE~~ **0, sentence case** | `--text-h2` | Section headings |
 | `p-h3` | 9.5pt | 600 | 1.30 | 0 | `--text-h3` | Job titles, employers, degrees, institutions |
 | `p-body` | 9pt | 400 | 1.45 | 0 | `--text-body` | Summary, bullets, education descriptions |
 | `p-meta` | 8pt | 500 | 1.40 | 0 | `--text-meta` | Dates, contact row, technologies list |
@@ -409,8 +431,9 @@ ported from existing site tokens; none is invented.
 and no weight below 400. This theme extends that ladder by **one step, at one
 element**: 700 on the name. Justification: on screen the identity heft comes from
 the display *face* (VT323); with that face removed, the weight axis has to absorb
-what the face axis gave up. 700 rather than 800 keeps the counters open at 30pt
-and avoids the shouty register. Every other element stays inside 400/500/600.
+what the face axis gave up. 700 rather than 800 keeps the counters open at
+display size and avoids the shouty register. Every other element stays inside
+400/500/600.
 
 **Leading.** The site's `--text-body` line-height is 1.65, which is right for a
 scrolling screen and wasteful on a one-page document. 1.45 is the print value:
@@ -438,7 +461,7 @@ one governing rule — accent lands on the surface's primary noun, and only ther
 survives verbatim; only its carrier changes from hue to value, because value is
 the axis that a photocopier, a 200dpi ATS scan, and a low-toner laser all
 preserve and hue is the axis they all destroy. The lime is not diluted, darkened,
-or approximated: it appears twice, at full strength, as a fill with `#0B0F0A` on
+or approximated: it appears once, at full strength, as a fill with `#0B0F0A` on
 top of it at 16.40 : 1 — the identical ratio the site reports for accent on
 canvas, because it is the identical pair, read from the other side. And it lands
 on the QR block, so the one moment the paper turns lime is the moment it hands
@@ -759,9 +782,11 @@ Palette: **unchanged.** All six tokens ship as specified in §1.
 | Technologies as inline `·` text | **Outlined chips** | The `·` rule caps at 3 atoms and forbids wrapping; a 12–16 item list breaks both. The site uses chips. §6.1. |
 | Bullet leading 1.35 | **1.45** | 1.35 was the permissible floor under a page constraint that no longer exists. |
 | Name 24pt | **28pt** | Same reason. 28pt is also the site's `--text-h1`. |
-| Section mark: 6pt lime square | **6pt `ink` square** | Defect André caught. §6.3. |
+| Section mark: 6pt lime square | **removed entirely** | Two rounds: lime → ink (defect André caught), then ink → gone (the site has no such mark). §6.3. |
+| Section headings UPPERCASE + 0.16em | **sentence case, no tracking** | §6.3. |
 | Margins 11mm | **12mm, via `@page`** | Scraping is over. Uniform `@page` margin also fixes the page-2 defect. |
-| Date range en dash `–` | **em dash `—`** | Verified against the site. §6.8. |
+| Date range en dash `–`, Title case, `Present` | **em dash `—`, lowercase, `present`** | Verified against the site. §6.8. |
+| Education dates `Apr 2024 — Feb 2025` | **years only: `2024 — 2025`** | §6.8. |
 
 ---
 
@@ -831,7 +856,10 @@ entire separation load. 14pt is 1.75 em at 8pt. Row measures 387.6pt in a
 
 ---
 
-## 6.3 Section mark — correction to §1
+## 6.3 Section head — corrections to §1 and §2
+
+Three corrections, in the order they were found: the mark's colour, the mark's
+existence, and the heading's case.
 
 **André found a real defect and he is right.** §1 specified the accent as
 "fill only" and then placed one of those fills — the 6pt section-mark square —
@@ -856,23 +884,103 @@ one line.
 
 | Element | Was | Now |
 |---|---|---|
-| Section mark | 6pt `accent` square | **6pt `ink` square** (`#0B0F0A`, 19.32 : 1) |
+| Section mark | 6pt `accent` square | **6pt `ink` square** — and then removed outright, below |
 | QR plate | `accent` fill, `ink` modules | **unchanged** — this is the placement that earns it |
 
-Lime now appears **once on the document**, on the QR plate, where ink-on-lime is
+Lime appears **once on the document**, on the QR plate, where ink-on-lime is
 16.40 : 1 in colour and 13.6 : 1 in greyscale and the fill is doing real work
 (it is the code's light field). That is a reduction from §1's two placements, and
 it is the correct number: one pointed accent on a two-page document, at the exact
 point where the paper hands the reader back to andresilva.cc.
 
-**Keep the mark.** With the accent gone it carries rhythm rather than colour, but
-it is the residue of the collapsed eyebrow from §2 — without it the section head
-is generic uppercase-plus-rule and stops being this system's component. It also
-now matches the `+` bullet markers, which are already `ink`: one marker family,
-one colour, two glyphs (`■` for sections, `+` for bullets).
-
 **QR stays in the page-1 header top-right.** Page 1 is the surface that gets read
 and the one that survives if the pages separate; the return path belongs there.
+
+---
+
+### Round two: the mark is removed entirely
+
+Recolouring the square to `ink` fixed its visibility and left a worse problem
+standing, which André caught: **nothing on the site uses a mark like this.** I
+had defended it as "the residue of the collapsed eyebrow," which was inventing a
+component the design system does not have and then treating the invention as
+lineage.
+
+What the site actually does — `src/components/section-head.tsx:34–35, 39–41`:
+
+```
+flex flex-col gap-2 pb-4 · mb-5 border-b border-rule
+  <Eyebrow>…</Eyebrow>
+  <Text variant="h2">…</Text>
+```
+
+Eyebrow, title, **bottom rule**. No square, no glyph, no bullet. The rule *is*
+the section-marking language.
+
+**Corrected derivation.** The print section head is a **subtraction** from the
+site's component, not a collapse of it:
+
+| Site element | Print treatment |
+|---|---|
+| Eyebrow (`// 01 / in my own words`) | **Dropped outright.** Its editorial `// nn / phrase` register does not belong on a resume, and it costs a line at a density that cannot spare one. |
+| H2 title | **Kept as-is**, shrunk to 10.5pt for print economy. |
+| `border-b border-rule` | **Kept**, as 0.5pt `rule`. |
+
+Nothing needed a new carrier. The eyebrow's properties did not have to "go
+somewhere" — the eyebrow was simply removed, and the rule that was already doing
+the marking on the site carries on doing it. This is what §2's derivation should
+have said.
+
+### Why not a `//` text glyph
+
+A text prefix like `// Experience` was considered as a lighter-weight way to keep
+the eyebrow's register, and rejected on a constraint specific to this artifact:
+
+> **On the resume, decoration must be CSS-drawn or vector — never a text node.**
+> Anything rendered as text becomes ATS input.
+
+`pdftotext` would extract `// Experience`, and that string is what a parser
+matches its section-header patterns against. A resume's headings are among the
+few strings in the document that a machine reads *structurally* rather than as
+keywords, so polluting them is a functional regression, not a stylistic one. A
+CSS-drawn square had no such problem — it just had the visibility problem. Having
+now removed both, the heading string is exactly `Experience`, which is the
+cleanest possible input on both channels.
+
+### Sentence case, no tracking
+
+§2 set the headings UPPERCASE with `+0.16em`. That is also wrong, and the reason
+is worth stating because I defended it from the wrong premise.
+
+I justified uppercase from the heading's **size** — at 10.5pt it needed help
+reading a level above the 9.5pt job titles. André's counter: its **role** is a
+section title, and role governs case. He is right, and the site is unambiguous
+about it.
+
+Every uppercase treatment on the site is subordinate metadata at `micro` size:
+
+- `src/components/eyebrow.tsx:24` — `uppercase tracking-eyebrow text-accent`, `variant="micro"`
+- `src/app/(site)/about/page.tsx:117` — Facts *keys*, `uppercase tracking-eyebrow text-fg-subtle`, `variant="micro"`
+- `src/styles/globals.css` `.article-prose th` — table headers, `text-transform: uppercase`, meta size
+
+Every section title is sentence case — `src/app/(site)/about/page.tsx:41, 100,
+113, 125` render `title="Bio"`, `"Education"`, `"Facts"`, `"Resume"`.
+
+The heading shrank to 10.5pt for print economy. **Shrinking a thing does not
+demote what it is.** A section title set small is still a section title, not a
+label.
+
+The `+0.16em` goes with the uppercase rather than surviving on its own:
+`--tracking-eyebrow` exists to open up uppercase runs, which lose their
+inter-letter rhythm without it. Sentence-case monospace at 10.5pt already has
+fixed 0.6 em advances and needs no help. Tracking it would just be drift.
+
+**Final section head:** `Experience` — 10.5pt / 600 / 1.25, sentence case,
+tracking 0, `ink` — over a 0.5pt `rule` hairline. Nothing else.
+
+**No height impact.** The mark sat inside the heading's 13.125pt line box
+(`10.5 × 1.25`) via `align-items: center`, and case and tracking do not affect
+line height. Every budget figure in §6.6 stands unchanged.
 
 ---
 
@@ -953,7 +1061,7 @@ A4 = 841.89 × 595.28pt. At 12mm (34.02pt): **content 527.24 × 773.85pt per pag
 | Summary | 10 + (6 × 9 × 1.55) | 93.70 | 159.90 |
 | QR, 60pt, header top-right | fits inside the 66.2pt stack | 0.00 | 159.90 |
 | *gap* | | 14.00 | 173.90 |
-| **EXPERIENCE** head | (10.5 × 1.25) + 3 + 0.5 + 8 | 24.63 | 198.53 |
+| **Experience** head | (10.5 × 1.25) + 3 + 0.5 + 8 | 24.63 | 198.53 |
 | MPA | hdr 16.35 + (4 × 13.05) + (3 × 2.5) | 76.05 | 274.58 |
 | *gap* | | 8.00 | 282.58 |
 | Atlas — Senior FE | hdr 16.35 + (5 × 13.05) + (4 × 2.5) | 91.60 | 374.18 |
@@ -984,12 +1092,12 @@ or a bullet changes length. Keep `break-inside: avoid` on job blocks.
 |---|---|---|---|
 | Continuation head | (8 × 1.40) + 2 + 0.5 + 8 | 21.70 | 21.70 |
 | *gap* | | 14.00 | 35.70 |
-| **EDUCATION** head | | 24.63 | 60.33 |
+| **Education** head | | 24.63 | 60.33 |
 | Full Cycle | (9.5 × 1.30) + (9 × 1.45) | 25.40 | 85.73 |
 | *gap* | | 6.00 | 91.73 |
 | UNIVALI | | 25.40 | 117.13 |
 | *gap* | | 14.00 | 131.13 |
-| **TECHNOLOGIES** head | | 24.63 | 155.76 |
+| **Technologies** head | | 24.63 | 155.76 |
 | Chips | 2 rows × 15 + 4 gap | 34.00 | **189.76** |
 
 **Page 2 = 189.76pt of 773.85pt — 24.5% full.**
@@ -1043,7 +1151,9 @@ trade stays open and is his to reopen; it is not re-litigated here.
 
 ---
 
-## 6.8 Date glyph correction (amends §2)
+## 6.8 Date convention (amends §2)
+
+Three corrections: the dash glyph, the case, and education granularity.
 
 §2's glyph note specified an **en dash** for date ranges on the grounds that it
 "matches current" — i.e. it matched the legacy PDF. Checking the site instead:
@@ -1057,14 +1167,76 @@ The site uses an **em dash**. Both glyphs are defensible typography for a range,
 so there is no substrate argument for diverging — this was drift, not a decision.
 **Switch to em dash `—` (U+2014), spaced.**
 
-Two related divergences that **are** justified and stay:
+### Case: also corrected — lowercase throughout
 
-- **Title-case months and "Present"**, not the site's lowercase and "now."
-  Lowercase months read as affectation in a hiring document, and "Present" is the
-  convention ATS keyword sets and recruiters expect.
-- **`MPA (formerly Healthy Labs)` as a parenthetical**, not the site's
-  `// formerly X` treatment (`role-card.tsx:52`). A `//` code-comment glyph is
-  register-appropriate on the site and not in a resume.
+§6.8 originally kept **Title-case months and `Present`**, arguing that lowercase
+"reads as affectation in a hiring document." André overruled it, and the
+reasoning holds up better than mine did.
+
+The site's convention is implemented in `src/lib/format-date.ts:1–4, 17–19`:
+lowercase three-letter months (`jan`…`dec`), joined with a spaced em dash at
+`:27–28`. The open-ended label is a parameter, not a hardcode — `formatMonthYear`
+takes `openLabel` defaulting to `'now'`, and the block comment at `:9–12` records
+exactly why:
+
+> *"Returns `openLabel` ("now" by default) when the date is omitted — /resume
+> passes "Present" here, the term recruiters and ATS parsers scan for; /career
+> keeps the default "now" (brand voice), which is why this is an optional param
+> rather than a fork."*
+
+**The shipped resume passes `'present'`, lowercase** (`src/app/resume/page.tsx:100`).
+That is the correct resolution of the two constraints:
+
+- The **word** matters to ATS — parsers pattern-match `present` to detect a
+  current role. `now` does not reliably hit those patterns, which is why
+  `/resume` overrides `/career`'s brand voice here.
+- The **case** does not. ATS matching is case-insensitive, so lowercase costs
+  nothing functionally and keeps the site's typographic convention intact.
+
+So the split is drawn at the only place it needs to be: `/career` says `now`,
+`/resume` says `present`, and both are lowercase with a spaced em dash. My
+original position gave up the site's convention to buy a benefit that
+case-insensitive matching already provides for free.
+
+**Result:** `apr 2025 — present`, `jan 2024 — apr 2025`.
+
+> Minor engineering nit, not a spec issue: the `format-date.ts:10` comment still
+> says */resume passes "Present"* with a capital P, while `page.tsx:100` passes
+> `'present'`. The comment is stale relative to the code.
+
+### Education dates: years only
+
+§6.6's budget and §6.2's examples showed education dates at month precision
+(`Apr 2024 — Feb 2025`) sitting beside a years-only entry (`2015 — 2019`). Mixed
+granularity in one two-row section reads as inconsistency rather than precision.
+
+**Both entries are years only: `Full Cycle · 2024 — 2025`,
+`UNIVALI - Universidade do Vale do Itajaí · 2015 — 2019`.**
+
+This matches the About page's education card, which already renders
+`'Full Cycle · 2024 — 2025'` at `src/app/(site)/about/page.tsx:23` — the same
+string, in the same dot-joined form verified in §6.1. It is also the right
+precision for the fact being stated: a degree or certificate is identified by the
+years it spans, not the month it was conferred. Month precision is meaningful for
+employment (it shows tenure and gaps) and noise for education.
+
+Implementation note: these are hand-authored strings joined locally rather than
+run through `formatDateRange`, because UNIVALI's range is years-only and has no
+month to format (`src/app/resume/page.tsx:20–23`). Same em dash either way.
+
+### Budget impact: none
+
+Monospace makes this free. `apr 2025 — present` and `Apr 2025 — Present` are the
+same 18 characters at the same 4.8pt advance, so every measure and every row in
+§6.6 stands. Education years-only *shortens* its line, which adds slack to page 2
+— already the emptier page, so nothing reflows.
+
+### Divergence that stays
+
+**`MPA (formerly Healthy Labs)` as a parenthetical**, not the site's
+`// formerly X` treatment (`role-card.tsx:52`). A `//` code-comment glyph is
+register-appropriate on the site and not in a resume — and per §6.3, it would
+also put `//` into the ATS text layer.
 
 ---
 
@@ -1081,10 +1253,12 @@ Everything not listed is unchanged from §1–§5.
 | Bullets | 9pt / 400 / **1.45** / 2.5pt item gap / 1.3em indent |
 | Inter-job gap | 8pt |
 | Section gap | 14pt |
-| Section head | 10.5pt / 600 / 1.25 / +0.16em / uppercase, `ink` |
-| Section mark | **6pt `ink` square** |
+| Section head | 10.5pt / 600 / 1.25, **sentence case, tracking 0**, `ink` |
+| Section mark | **none** — the rule alone marks the section |
 | Section rule | 0.5pt `rule`, 3pt above / 8pt below |
-| Job header | one line, `Role @ Employer · Dates`, em dash in the range |
+| Job header | one line, `Role @ Employer · Dates` |
+| Date ranges | **lowercase, spaced em dash, `present` for open ranges** — `apr 2025 — present` |
+| Education dates | **years only** — `2024 — 2025`, `2015 — 2019` |
 | Contact row | 8pt / 500, `ink-body`, **no icons, no dots, 14pt gaps** |
 | Technologies | outlined chips, 8pt / 500, 0.5pt `rule` border, 4pt gap, 2-row slot |
 | QR | 60pt plate, page-1 header top-right, `accent` fill + `ink` modules |

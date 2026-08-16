@@ -13,10 +13,11 @@ export interface ResumeQrProps {
  * image. `QRCode.create()` is synchronous (no network, no canvas), so
  * this stays a plain server component with no async data fetch.
  *
- * Modules render in `currentColor` (ink, set by .resume__qr-plate svg
- * in globals.css) with no fill for light modules — the plate's own
- * accent background shows through, satisfying "accent is fill-only,
- * ink sits on top" without duplicating the light color here.
+ * Modules render in `currentColor` (ink) with no fill for light
+ * modules — the plate's own accent background shows through,
+ * satisfying "accent is fill-only, ink sits on top" without
+ * duplicating the light color here. 60pt plate, header top-right per
+ * docs/resume-print-theme.md §6.6.
  */
 export function ResumeQr({ url }: ResumeQrProps) {
   const qr = QRCode.create(url, { errorCorrectionLevel: 'M' });
@@ -39,12 +40,17 @@ export function ResumeQr({ url }: ResumeQrProps) {
   }
 
   return (
-    <div className="resume__qr">
-      <div className="resume__qr-plate">
-        <svg viewBox={`0 0 ${dimension} ${dimension}`} shapeRendering="crispEdges" fill="currentColor" role="img" aria-label={`QR code linking to ${url}`}>
-          { cells }
-        </svg>
-      </div>
+    <div className="inline-block shrink-0 leading-none bg-resume-accent">
+      <svg
+        viewBox={`0 0 ${dimension} ${dimension}`}
+        shapeRendering="crispEdges"
+        fill="currentColor"
+        role="img"
+        aria-label={`QR code linking to ${url}`}
+        className="block h-[60pt] w-[60pt] text-resume-ink"
+      >
+        { cells }
+      </svg>
     </div>
   );
 }

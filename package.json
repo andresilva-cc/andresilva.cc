@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "og:generate": "node scripts/og/generate.mjs",
     "postinstall": "[ -n \"$VERCEL\" ] || playwright install webkit chromium",
-    "resume:pdf": "node scripts/resume/generate.mjs"
+    "resume:pdf": "node scripts/resume/generate.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.0",
