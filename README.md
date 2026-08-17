@@ -5,8 +5,9 @@
 My personal site — a brutalist-mono portfolio. Live at **[andresilva.cc](https://andresilva.cc/)**.
 
 Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · TypeScript. Server
-Components by default; content comes from static repositories plus the
-dev.to (Forem) API. Deployed on Vercel.
+Components by default; all content is local — static repositories for
+structured data, MDX compiled by Velite for articles and notes. Deployed
+on Vercel.
 
 ## Development
 
