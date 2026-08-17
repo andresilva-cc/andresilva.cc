@@ -75,6 +75,49 @@
   --grid-template-columns-role: 183px 1fr;
   --grid-template-columns-article: 200px 1fr;
   --grid-template-columns-article-card: 240px 1fr;
+
+  /* Resume print theme — /resume only. Lime is unusable as print
+     text/rule (docs/resume-print-theme.md §0), so the palette below is
+     self-contained, not a re-expression of the tokens above. Registered
+     here (not as scoped raw CSS) so /resume can be built from ordinary
+     Tailwind utilities — see that route's page.tsx.
+
+     Font: the raw CSS var is --font-resume-mono, set by
+     src/app/resume/fonts.ts's next/font/local instance and scoped to
+     /resume via resumeMono.variable on <main>. The theme token below is
+     named --font-resume (not --font-resume-mono) so it doesn't
+     self-reference that raw var — same indirection as the sitewide
+     --font-mono/--font-jetbrains-mono pair above. */
+  --font-resume: var(--font-resume-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-resume-paper: #FFFFFF;
+  --color-resume-ink: #0B0F0A;
+  --color-resume-ink-body: #2E3A2B;
+  --color-resume-ink-subtle: #5C6B58;
+  --color-resume-rule: #849380;
+  --color-resume-accent: #C8FF3D;
+
+  /* Resume print type scale — same rationale as the palette above:
+     /resume sets its own point-based scale (tuned to fit two A4 pages)
+     rather than reusing the site's px-based --text-* tokens. Previously
+     duplicated as arbitrary-bracket utilities (e.g. text-[9pt]
+     leading-[1.45]) across page.tsx and section-heading.tsx — named by
+     role, not by raw value, matching the --text-h1/h2/h3 convention
+     above. */
+  --text-resume-name: 28pt;
+  --text-resume-name--line-height: 1.05;
+  --text-resume-role: 13pt;
+  --text-resume-role--line-height: 1.20;
+  --text-resume-heading: 10.5pt;
+  --text-resume-heading--line-height: 1.25;
+  --text-resume-entry: 9.5pt;
+  --text-resume-entry--line-height: 1.30;
+  --text-resume-summary: 9pt;
+  --text-resume-summary--line-height: 1.55;
+  --text-resume-body: 9pt;
+  --text-resume-body--line-height: 1.45;
+  --text-resume-meta: 8pt;
+  --text-resume-meta--line-height: 1.40;
 }
 
 /* ============================================================
@@ -475,4 +518,29 @@ pre {
   .article-cover-art {
     aspect-ratio: 4 / 3;
   }
+}
+
+/* ============================================================
+   Resume print theme — /resume route exceptions.
+   Palette + type scale per docs/resume-print-theme.md now ship as
+   ordinary Tailwind utilities (`resume-*` colors registered in the
+   @theme block above, sizes/spacing as arbitrary-value utilities in
+   src/app/resume/page.tsx). The two rules below are the only things
+   that genuinely can't be a utility:
+
+   - `body:has(> main.resume)` forces a white page background for
+     this route specifically. `body` sets --color-canvas (dark) for
+     every other route, and `.resume`'s own white background is only
+     as tall as its content — with no element padding left (see
+     print.css and docs/resume-print-theme.md §6.6), page 2's mostly-
+     empty area would otherwise show the dark canvas bleeding through.
+     No Tailwind utility can reach an ancestor from inside the route's
+     own page component, so this stays scoped, targeted CSS.
+   - `@page` is document-level and CANNOT be scoped by a class — it
+     lives in src/app/resume/print.css instead, imported only by the
+     /resume route, so it doesn't leak A4 print formatting onto every
+     other page.
+   ============================================================ */
+body:has(> main.resume) {
+  background-color: #FFFFFF;
 }

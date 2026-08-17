@@ -1,0 +1,18 @@
+/*
+ * @page is document-level CSS — it cannot be scoped by a class selector,
+ * so it must not live in the shared globals.css (it would apply to every
+ * route on the site, not just /resume). Imported only from
+ * src/app/resume/page.tsx so it's bundled into the /resume route chunk
+ * alone.
+ *
+ * Uniform 12mm margin on every printed page — this, not element
+ * padding, is what makes page 1 and page 2's top margins match.
+ * Element padding only applies once to the whole flow (it doesn't
+ * repeat after a page break), which is why the previous `padding: 14mm`
+ * on `.resume` produced a 12.5mm page-1 top margin but a 5.1mm page-2
+ * top margin. See docs/resume-print-theme.md §6.6.
+ */
+@page {
+  size: A4;
+  margin: 12mm;
+}

@@ -3,6 +3,7 @@
 #
 # Blocks git commit if:
 # - git add and git commit are combined in one command (must be separate)
+# - Resume source is staged without a re-staged public/resume.pdf
 # - Source/test files are staged but required reviews are missing
 #
 # Review types required:
@@ -45,6 +46,53 @@ fi
 STAGED=$(git -C "$CWD" diff --cached --name-only --diff-filter=ACM 2>/dev/null)
 if [[ -z "$STAGED" ]]; then
   exit 0
+fi
+
+# Resume PDF drift guard — public/resume.pdf is a manually-exported,
+# committed artifact (`pnpm resume:pdf`); no build step regenerates it.
+# If content that feeds /resume changes without a matching re-export, the
+# shipped PDF silently drifts from the live data (this happened in
+# practice — see the issue #18 follow-up). Block staging resume source
+# without the regenerated PDF. Runs unconditionally, ahead of the
+# doc/config-only early exit below (print.css alone wouldn't set
+# HAS_SOURCE, but still must not skip this check).
+RESUME_SOURCE_PATTERN='^src/app/resume/|^src/repositories/resume-repository\.ts$|^src/repositories/implementations/static-resume-repository\.ts$|^src/repositories/implementations/employment-history\.ts$|^src/repositories/index\.ts$|^src/lib/format-date\.ts$'
+HAS_RESUME_SOURCE=false
+HAS_RESUME_PDF=false
+while IFS= read -r file; do
+  [[ -z "$file" ]] && continue
+  if echo "$file" | grep -qE "$RESUME_SOURCE_PATTERN"; then
+    HAS_RESUME_SOURCE=true
+  fi
+  if [[ "$file" == "public/resume.pdf" ]]; then
+    HAS_RESUME_PDF=true
+  fi
+done <<< "$STAGED"
+
+# globals.css also feeds the PDF — it holds the --color-resume-* and
+# --text-resume-* tokens, the --font-resume alias, and the
+# `body:has(> main.resume)` white-paper rule. Matching it by filename would
+# fire on every unrelated site-wide CSS edit and train a --no-verify habit,
+# so trigger only when the staged diff actually touches resume styling.
+# The bare `\.resume` arm is what catches selector rules that reference no
+# token at all — the white-paper rule was exactly that gap.
+if [[ "$HAS_RESUME_SOURCE" == "false" ]] && echo "$STAGED" | grep -q '^src/styles/globals\.css$'; then
+  if git -C "$CWD" diff --cached -- src/styles/globals.css \
+    | grep -qE '^[+-].*(--color-resume-|--text-resume-|--font-resume|\.resume)'; then
+    HAS_RESUME_SOURCE=true
+  fi
+fi
+
+if [[ "$HAS_RESUME_SOURCE" == "true" && "$HAS_RESUME_PDF" == "false" ]]; then
+  {
+    echo "BLOCKED: resume source changed but public/resume.pdf was not staged."
+    echo ""
+    echo "Run \`pnpm resume:pdf\` to regenerate the PDF, then stage it:"
+    echo "  git add public/resume.pdf"
+    echo ""
+    echo "To bypass: git commit --no-verify -m \"message\""
+  } >&2
+  exit 2
 fi
 
 # Classify staged files

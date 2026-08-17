@@ -25,14 +25,32 @@ fi
 
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-# Create markers for completed review types
+# Create or refresh markers for completed review types.
+#
+# A marker is refreshed only when its report is NEWER than the marker.
+# Two failure modes are being avoided at once:
+#
+#  - Never refreshing (the original `[[ ! -f "$marker" ]]` guard) meant a
+#    marker was written once and kept its first timestamp forever. Since
+#    the commit gate rejects markers older than 30 minutes, any cycle where
+#    review and commit were more than 30 minutes apart became permanently
+#    unsatisfiable — the stale marker blocked its own replacement. That
+#    also made markers inconsistent with the content hash below, which has
+#    always refreshed unconditionally.
+#
+#  - Always refreshing would be worse: this loop runs over every type with
+#    a report on disk, not just the type that finished, so one reviewer
+#    stopping would vouch for three types that never re-ran.
+#
+# Comparing mtimes gives the precise behaviour — a type is re-marked only
+# when its own report was actually rewritten.
 TYPES=("code-quality" "security" "testing" "architecture")
 for type in "${TYPES[@]}"; do
-  if ls "$REVIEWS_DIR"/${type}-*.md 1>/dev/null 2>&1; then
-    marker="$REVIEWS_DIR/marker-${type}.json"
-    if [[ ! -f "$marker" ]]; then
-      echo "{\"reviewed\": true, \"timestamp\": \"$TIMESTAMP\"}" > "$marker"
-    fi
+  report=$(ls -t "$REVIEWS_DIR"/${type}-*.md 2>/dev/null | head -1)
+  [[ -z "$report" ]] && continue
+  marker="$REVIEWS_DIR/marker-${type}.json"
+  if [[ ! -f "$marker" || "$report" -nt "$marker" ]]; then
+    echo "{\"reviewed\": true, \"timestamp\": \"$TIMESTAMP\"}" > "$marker"
   fi
 done
 
