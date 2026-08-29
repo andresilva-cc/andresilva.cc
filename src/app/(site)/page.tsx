@@ -2,7 +2,6 @@ import { Text } from '@/components/text';
 import { HeroArt } from '@/components/hero-art';
 import { SectionHead } from '@/components/section-head';
 import { LatestRow } from '@/components/latest-row';
-import { InlineLink } from '@/components/inline-link';
 import { getRepositories } from '@/repositories';
 
 export const metadata = {
@@ -56,17 +55,11 @@ export default function Home() {
           id="now-h"
         />
         <Text variant="body" className="m-0 text-fg-muted max-w-prose-wide">
-          These days, three builds in parallel:
-          {' '}
-          <InlineLink href="https://calcloak.com/"><strong>Calcloak</strong></InlineLink>
-          , a side project overdue for a finish line;
-          {' '}
-          <InlineLink href="https://meet.agentairforce.com"><strong>Infinity</strong></InlineLink>
-          , a collaboration; and the redesign of this site. Day job is at
+          Day job is at
           {' '}
           <strong>MPA</strong>
           {' '}
-          — shipping features end-to-end with Claude Code, which has rearranged how the work gets done more than any framework has.
+          — shipping features end-to-end with Claude Code, which has rearranged how the work gets done more than any framework has. Off the clock, nothing is shipping: the current project is a house. Same tools, different questions — appliance specs and plumbing, not code.
         </Text>
       </section>
 
