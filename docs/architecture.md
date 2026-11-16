@@ -240,7 +240,7 @@ Notes use the same MDX compile/run pipeline as articles (Velite-compiled body st
 Two surfaces render notes:
 
 - **`/notes` (index)** — every note on the current page is rendered in **full** inline as MDX, separated by hairline rules. Each note is wrapped in `<article id="<slug>">` so `/notes#<slug>` jumps to it in-page. Paginated at 50 notes/page; pages 2..N live at `/notes/page/<n>`. `<NoteBlock>` (server component) is the per-note renderer used here and on the detail page.
-- **`/notes/[slug]` (detail)** — canonical SEO/share target for each note. Renders `<NoteBlock surface="detail">` (which prepends a `// note` eyebrow, escalates the title to `<h1>` + `h1` visual variant in VT323, and moves the meta below the title) plus top and bottom "back to notes" links. `<link rel="canonical">` points to itself (not to the index hash), and the page emits a `BlogPosting` JSON-LD block (headline = `title`, `datePublished` = `publishedAt`, `image` = the per-note `/og/notes/<slug>.png`; no `wordCount` / `timeRequired`).
+- **`/notes/[slug]` (detail)** — canonical SEO/share target for each note. Renders `<NoteBlock surface="detail">` (which escalates the title to `<h1>` + `h1` visual variant in VT323, and moves the meta below the title) plus top and bottom "back to notes" links. `<link rel="canonical">` points to itself (not to the index hash), and the page emits a `BlogPosting` JSON-LD block (headline = `title`, `datePublished` = `publishedAt`, `image` = the per-note `/og/notes/<slug>.png`; no `wordCount` / `timeRequired`).
 
 **Perf watch-point**: at 50 notes per index page with multiple `<PreShiki>` blocks each, the index ships a large number of `CopyButton` client islands. Not a blocker today; if it bites, a future compact-mode flag on `PreShiki` (skip the copy island when rendered on the index) is the obvious fix. Tracked as a known watch-point, not work to do up front.
 
@@ -310,7 +310,7 @@ Two independent reasons that rule is where it is and says what it says:
 The component layer is a vocabulary of roughly 24 components, each a single visual concept:
 
 - **Layout chrome**: `header`, `footer`, `wordmark`, `nav` (route-aware client component), `skip-link`.
-- **Page structure**: `page-head`, `section-head`, `eyebrow`, `grid-frame`.
+- **Page structure**: `page-head`, `section-head`, `grid-frame`.
 - **Inline primitives**: `tag` / `badge`, `status-dot`, `link-arrow`, `button-cta`.
 - **Cards & rows**: `row` (home Latest), `project-card`, `role-card`, `article-card`, `note-block` (server component — renders one note inline; used on `/notes` and `/notes/[slug]`).
 - **Media**: `photo-wrap` (about portrait with the filter token), `hero-art` / `stipple-art` (the ASCII-art embed — home hero + article thumbnails).

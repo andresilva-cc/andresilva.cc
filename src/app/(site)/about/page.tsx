@@ -38,7 +38,7 @@ export default function About() {
       <PageHead name="ABOUT" />
 
       <section aria-labelledby="bio-h" className="py-8 border-b border-rule">
-        <SectionHead eyebrow="// 01 / in my own words" title="Bio" id="bio-h" />
+        <SectionHead title="Bio" id="bio-h" />
         <div className="grid grid-cols-1 lg:grid-cols-article gap-6 lg:gap-10 items-start">
           <Portrait
             src="/me.jpg"
@@ -97,7 +97,7 @@ export default function About() {
       </section>
 
       <section aria-labelledby="edu-h" className="py-8 border-b border-rule">
-        <SectionHead eyebrow="// 02 / where i studied" title="Education" id="edu-h" flush />
+        <SectionHead title="Education" id="edu-h" flush />
         <GridFrame as="div" className="grid-cols-1 md:grid-cols-2">
           { educationItems.map((item) => (
             <div key={item.title} className="flex flex-col">
@@ -110,7 +110,7 @@ export default function About() {
       </section>
 
       <section aria-labelledby="facts-h" className="py-8 border-b border-rule">
-        <SectionHead eyebrow="// 03 / at a glance" title="Facts" id="facts-h" flush />
+        <SectionHead title="Facts" id="facts-h" flush />
         <GridFrame as="div" className="grid-cols-1 md:grid-cols-2">
           { factsItems.map((item) => (
             <div key={item.key} className="flex flex-col gap-1">
@@ -122,7 +122,7 @@ export default function About() {
       </section>
 
       <section aria-labelledby="resume-h" className="py-8">
-        <SectionHead eyebrow="// 04 / full work history" title="Resume" id="resume-h" />
+        <SectionHead title="Resume" id="resume-h" />
         <Button asChild>
           <Link href="/resume.pdf" target="_blank" rel="noopener noreferrer">
             Download resume

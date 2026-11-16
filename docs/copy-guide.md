@@ -12,7 +12,7 @@ The guide is **descriptive** — it captures what is. When a surface comes up th
 
 - **Terse mono.** Short sentences, one clause where possible. The whole site is set in JetBrains Mono, and the prose is written to match — closer to a README than to a landing page.
 - **Technical-honest.** Achievements are stated, not sold. "Software engineer with 9+ years of experience..." — not "Welcome! I’m passionate about...". Numbers are real or they’re not used ("74% increase", "20 million monthly visits").
-- **First-person omitted.** On personal surfaces the subject ("André" / "I") is dropped; sentences start with the verb ("Works end-to-end…", "Holds a BS in Computer Science…"). Exceptions: about-page eyebrow `// 01 / in my own words` and `// 02 / where i studied` use the first person diegetically inside the eyebrow phrase (rendered lowercase per §2 casing).
+- **First-person omitted.** On personal surfaces the subject ("André" / "I") is dropped; sentences start with the verb ("Works end-to-end…", "Holds a BS in Computer Science…").
 - **Past tense for completed work; present tense for ongoing facts.** Career bullets are past tense ("Developed", "Migrated", "Achieved"). The About bio is present ("Works", "Takes", "Holds").
 - **State the fact and stop.** Once the fact is stated, end the sentence — no significance-closer clause, no "so-what" editorializing, no metaphor explaining why it matters. The bio says "Holds a BS in Computer Science" and trusts the reader to weigh it; copy that adds "— a foundation that shapes everything I build" has drifted into promotion. If a clause only exists to tell the reader the preceding fact is important, cut it.
 - **Three adjectives**: understated, concrete, technical-peer.
@@ -38,42 +38,9 @@ The guide is **descriptive** — it captures what is. When a surface comes up th
 
 ---
 
-## 2. Eyebrows — the `// NN / phrase` pattern
+## 2. No eyebrows
 
-Every section band on a page carries a small uppercase accent-colored eyebrow above the H2, rendered by `.comment-tag` with `letter-spacing: 0.12em–0.16em` and `text-transform: uppercase`. The source string is **lowercase** mono with a leading `// NN / ` prefix.
-
-### Format
-
-```
-// NN / phrase
-```
-
-- `NN` is a zero-padded two-digit section number, counted within the page (`01`, `02`, `03`, `04`). Numbering restarts per page.
-- A single space on each side of the inner slash.
-- `phrase` is short (2–6 words), lowercase, no terminal punctuation, an **evocative gloss** of the section’s purpose. Not a synonym for the H2.
-
-### Inventory (current)
-
-| Page | Eyebrow | H2 it precedes |
-|---|---|---|
-| home | `// 01 / current focus` | Now |
-| home | `// 02 / recent activity` | Latest |
-| about | `// 01 / in my own words` | Bio |
-| about | `// 02 / where i studied` | Education |
-| about | `// 03 / at a glance` | Facts |
-| about | `// 04 / full work history` | Resume |
-| design-system | `// 00 / how the site is built` | (cover) |
-| design-system | `// 01 / what we won’t compromise on` | Design principles |
-| design-system | `// 02 / how the page is colored` | Color |
-| design-system | `// 03 / how the words look` | Typography |
-
-### The "different from the title" rule
-
-The eyebrow must say something **semantically distinct** from the H2 it labels. A test: read the eyebrow aloud, then the H2. If the eyebrow is a synonym ("// 02 / education" → `Education`), rewrite. If it adds an angle ("// 02 / where i studied" → `Education`), keep.
-
-### Casing inside the phrase
-
-**Lowercase everywhere** — including the first-person pronoun (`i`, `i’m`, `i’ve`). The eyebrow reads as a system-voice mannerism, not standard prose. Contractions use the curly apostrophe. See §3.
+Section H2s, page titles, and article/note titles stand alone. No `// NN / phrase` labels above headings — they were removed site-wide (2026-11) because the numbered mono eyebrow reads as a generated-template tell and mostly restated the heading. Don't reintroduce them. OG cards (`tools/og-*.tsx`) still carry `// article` / `// note`; that's an image convention, not a site one.
 
 ---
 
@@ -105,13 +72,12 @@ Rationale: the accented form was dropped deliberately in the redesign. The plain
 
 ### Sentence case
 
-- **Eyebrows**: lowercase (rendered uppercase by CSS).
 - **Page titles in `<title>`** follow a **unified convention**:
   - **Home**: just `André Silva` — the brand alone, no page suffix (standard home-page convention).
   - **Every other page** (indexes and details alike): `{Page or Title} · André Silva` — **title-first, middle dot** (`·`, U+00B7) with one space on each side. The page word or content title leads; the brand follows.
   - **Paginated indexes**: `Notes (Page 2) · André Silva` — sub-page sits in parentheses inside the leading segment to avoid `· · ·` separator ambiguity.
 
-  Every browser tab leads with what the page *is*, and the middle dot matches the separator the rest of the site already uses (footer, meta lines, eyebrows). The pipe is dropped. Matches what `src/app/(site)/articles/[slug]/page.tsx` ships after the unification. When adding a new surface, use the suffix form unless it’s the home page.
+  Every browser tab leads with what the page *is*, and the middle dot matches the separator the rest of the site already uses (footer, meta lines). The pipe is dropped. Matches what `src/app/(site)/articles/[slug]/page.tsx` ships after the unification. When adding a new surface, use the suffix form unless it’s the home page.
 - **Nav labels**: lowercase, single word, in source. The active page is wrapped in square brackets (`[home]`) — that’s a render decoration, not a copy variant; the underlying string is still `home`.
 - **Page H1** (about/career/projects/articles): rendered as `<{NAME} />` using pixel font, with the page name in **uppercase** — e.g. `<ABOUT />`, `<CAREER />`. The angle braces are decorative (rendered via `.brace`) and the inner text is the literal page word in caps. Home’s H1 is the person’s name in pixel-display: `André Silva`.
 - **Section H2** (`Bio`, `Latest`, `Education`, `Facts`, `Resume`): title case if multi-word, sentence case for single words.
@@ -146,7 +112,6 @@ When adding new copy, ask: what is this surface’s primary noun? Tint that, not
 | Nav links | lowercase (`home`, `about`) | lowercase, active wrapped `[home]` |
 | Page H1 | UPPERCASE inside braces (`<ABOUT />`) | uppercase pixel |
 | Section H2 | Sentence/title case (`Bio`, `Featured Projects`) | as written |
-| Eyebrow | lowercase (`// 01 / current focus`) | uppercase mono |
 | Row badge (home Latest) | Title case (`Career`) | UPPERCASE |
 | Featured badge (projects) | Title case (`Featured`) | UPPERCASE |
 | Tech-stack chips | **canonical brand case** (`TypeScript`, `Vue.js`, `Node.js`, `Tailwind CSS`, `Next.js`) | as written |
@@ -287,7 +252,6 @@ The pitch is **canonical** — it is reused verbatim in the meta description and
 
 ### Home — Now
 
-- Section eyebrow: `// 01 / current focus`
 - Section H2: `Now`
 - Section body: a single `<Text variant="body">` prose paragraph — a **temporal snapshot of current parallel work**. Currently shipped:
 
@@ -299,17 +263,15 @@ Inline links: named projects link directly to their product sites via `<InlineLi
 
 No `Full bio →` CTA. The old Bio section carried one; Now does not — the section is self-contained.
 
-**Maintenance note.** This is the one section on the site whose copy goes stale by design. The body paragraph is **not canonical** — unlike the hero pitch (verbatim across meta/OG), the Now paragraph is meant to be rewritten as the current work changes. Refresh it when the parallel builds shift — roughly every 3–6 months. Because the eyebrow says `current focus` and the prose carries no calendar reference, a paragraph a few months out of date still reads true; a hard-dated one would not.
+**Maintenance note.** This is the one section on the site whose copy goes stale by design. The body paragraph is **not canonical** — unlike the hero pitch (verbatim across meta/OG), the Now paragraph is meant to be rewritten as the current work changes. Refresh it when the parallel builds shift — roughly every 3–6 months. Because the prose carries no calendar reference, a paragraph a few months out of date still reads true; a hard-dated one would not.
 
 ### Home Latest
 
-- Section eyebrow: `// 02 / recent activity`
 - Row badges (source → render): `Career` → `CAREER`, `Project` → `PROJECT`, `Article` → `ARTICLE`
 - Each row is the full click target; the arrow icon carries the affordance. No visible "Read more" text.
 
 ### About — resume section
 
-- Eyebrow: `// 04 / full work history`
 - Button label: `Download resume` (plain spelling, no accents — see §3)
 - Button arrow: `→`
 - The button source is sentence case; CSS uppercases it.
@@ -336,7 +298,7 @@ The middle dot `·` separates items in a single value.
 - Page H1: `<CAREER />`
 - Current role date string: `apr 2025 — now` (lowercase month abbreviation, lowercase "now"). Past roles: `jan 2024 — apr 2025`.
 - Status dot ARIA: `current role`.
-- "Formerly" marker: `// formerly Healthy Labs` — rendered italic and `--lo` muted, source lowercase, prefix mirrors the eyebrow `//`.
+- "Formerly" marker: `// formerly Healthy Labs` — rendered italic and `--lo` muted, source lowercase, `//` prefix in the code-comment register.
 - Bullet glyph: `+` in accent (CSS); the bullet text itself starts with a past-tense verb.
 
 ### Projects
@@ -357,7 +319,6 @@ The middle dot `·` separates items in a single value.
 
 - Page H1: `<NOTES />` (caps, brace-wrapped, mirrors `<ARTICLES />`).
 - Nav label: `notes` (lowercase, single word — slots into `home · about · career · projects · articles · notes`).
-- Detail-page eyebrow: `<Eyebrow>// note</Eyebrow>` — exact source string `// note`, lowercase, mirrors `// article` on article detail. Provides on-page "this is a note" framing for cold-link visitors (the kind labels in the meta line — `til` / `take` / `snippet` / `aside` — aren't self-identifying as kinds of notes to an uninitiated reader). Applies to the detail surface only; the list page (`/notes`) already frames via the `<NOTES />` page-head.
 - Latest row badge (home): source `Note` → renders `NOTE` (mirrors `Career` / `Project` / `Article`).
 - Meta line format: `{YYYY.MM.DD} · {kind}` — ISO date period-separated, middle dot (`·`, U+00B7) with single spaces, lowercase mono `kind` word.
   - Example: `2026.05.21 · til`
@@ -379,13 +340,12 @@ Six links, in that order. Lowercase, middle-dot separators (`·` colored `--lo`,
 
 ### 404 (Not Found)
 
-- Page H1 (brace head): `<NOT_FOUND />` — uppercase snake_case noun inside the brace pattern, mirroring the interior-page convention (`<ABOUT />`, `<CAREER />`). The HTTP status code lives in the eyebrow, not the H1, so the brace head reads as a real JSX-valid identifier (digits can’t lead a tag name) and the in-joke survives.
-- Section eyebrow: `// 01 / status 404`
+- Page H1 (brace head): `<NOT_FOUND />` — uppercase snake_case noun inside the brace pattern, mirroring the interior-page convention (`<ABOUT />`, `<CAREER />`). The brace head avoids the status code so it reads as a real JSX-valid identifier (digits can’t lead a tag name).
 - Section H2: `Page not found.`
 - Section body: `The URL didn’t match any page on this site. Try one of the surfaces below.`
 - Recovery CTA: a single `ArrowLink` reading `home` pointing to `/`. The header nav already exposes the other four destinations one tab away — repeating them inline as five arrow-links would be busy and off-register.
 
-Voice notes: the eyebrow names the *code* (`status 404`), the H2 names the *status text* spelled out (`Page not found.`). The two are semantically distinct, not synonymous — passes the eyebrow rule in §2. The body uses the system-voice word **surfaces** (per §5, "site" / "surfaces" is the site’s internal vocabulary). No "Oops", no exclamation, no "let’s build something together" energy. Period-terminated full sentences; the recovery link label is bare (no period).
+Voice notes: the body uses the system-voice word **surfaces** (per §5, "site" / "surfaces" is the site’s internal vocabulary). No "Oops", no exclamation, no "let’s build something together" energy. Period-terminated full sentences; the recovery link label is bare (no period).
 
 Replaces the legacy production copy (`404` headline + `Oops, this page doesn’t exist.`), which carried a casual register inconsistent with the redesign voice.
 
@@ -432,7 +392,7 @@ Every note carries exactly one `kind` in frontmatter. The four are a closed set 
 
 - **Required.** Every note has a title. No untitled drafts ship.
 - **2–7 words.** Brevity is the discipline — the title is the scannable identity in the feed, and 50+ notes in a column need to be glanceable.
-- **Sentence case.** Capitalize the first word and proper nouns only. Aligns with §3 (sentence case for everything that isn’t a brace H1, badge, or eyebrow).
+- **Sentence case.** Capitalize the first word and proper nouns only. Aligns with §3 (sentence case for everything that isn’t a brace H1 or badge).
 - **No terminal period.** Same rule as labels and card descriptions in §10.3.
 - **Readable, not clever.** `Specialists vs generalists` beats `On the eternal debate between depth and breadth`. The title states the noun; the body earns the angle.
 - **Don’t prefix with the kind.** The badge already names it. `Claude /btw command` beats `TIL: Claude has a /btw command`. `Specialists vs generalists` beats `Hot take: specialists vs generalists`. (See §8.4.)
@@ -481,8 +441,6 @@ Quick pattern matches for the most common slips:
 | `Connect with me` | `hello@andresilva.cc` | No funnel; the email address is the surface. |
 | `My personal website` | (data) `The personal website that you are seeing right now` | Protected verbatim copy from the static repo. |
 | `andresilva.cc — your future favorite portfolio` | `André Silva` (home) / `About · André Silva` (suffix page) / `Notes (Page 2) · André Silva` (paginated) | Unified `<title>` convention — brand alone on home; title-first middle-dot everywhere else; parens for paginated sub-pages (§3). |
-| `// 02 / latest` | `// 02 / recent activity` | Eyebrow must differ from the H2 it labels. |
-| `// 01 / About me` | `// 01 / in my own words` | Lowercase, evocative gloss, no terminal punctuation. |
 | `Read full bio →` | `Full bio →` | Page-section link arrow uses bare noun. |
 | `Healthy Labs (now MPA)` | `MPA` on identity surfaces + `// formerly Healthy Labs` on the career record | Rebrand convention; identity is current, record carries the trace. |
 | `Andre Silva` / `André L. Silva` | `André Silva` | Canonical full name; one accent; no middle initial on the site. |

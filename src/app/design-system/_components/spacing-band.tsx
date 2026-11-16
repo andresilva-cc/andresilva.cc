@@ -64,7 +64,7 @@ const componentSizing = [
 export function SpacingBand() {
   return (
     <section id="spacing" aria-labelledby="spacing-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 04 / how things breathe" title="Spacing" id="spacing-h" />
+      <SectionHead title="Spacing" id="spacing-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         A 4px base. Eleven tokens covering tight icon gaps through major layout breaks. Proximity
         signals grouping — adjacent elements with shared meaning sit one or two steps apart;

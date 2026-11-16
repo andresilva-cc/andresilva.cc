@@ -50,7 +50,6 @@ export default function Home() {
 
       <section aria-labelledby="now-h" className="py-8 border-b border-rule">
         <SectionHead
-          eyebrow="// 01 / current focus"
           title="Now"
           id="now-h"
         />
@@ -64,7 +63,7 @@ export default function Home() {
       </section>
 
       <section aria-labelledby="latest-h" className="py-8">
-        <SectionHead eyebrow="// 02 / recent activity" title="Latest" id="latest-h" />
+        <SectionHead title="Latest" id="latest-h" />
         <ul className="flex flex-col list-none p-0 m-0 [&>li:first-child>a]:border-t-0">
           { currentJob && (
             <LatestRow

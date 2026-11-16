@@ -27,7 +27,7 @@ const breakpoints = [
 export function LayoutBand() {
   return (
     <section id="layout" aria-labelledby="layout-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 07 / how a page is framed" title="Layout" id="layout-h" />
+      <SectionHead title="Layout" id="layout-h" />
 
       <Text variant="h3" as="h3" className="mt-8 mb-3 text-fg">Shell</Text>
       <div className="mt-4 overflow-x-auto">

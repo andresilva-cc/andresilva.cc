@@ -26,7 +26,7 @@ export type PreShikiProps = HTMLAttributes<HTMLPreElement> & DataLanguage & { ch
  * Language label (when present):
  *   header strip above <pre>          border border-rule border-b-0
  *   bg-surface                        same surface as the code block
- *   text-micro font-semibold          eyebrow recipe (see §4.7)
+ *   text-micro font-semibold          small uppercase label recipe
  *   uppercase tracking-eyebrow text-fg-subtle
  *   -mt-px on <pre>                   collapses the doubled border
  *

@@ -55,7 +55,7 @@ const standingRules = [
 export function MotionBand() {
   return (
     <section id="motion" aria-labelledby="motion-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 05 / how things move" title="Motion" id="motion-h" />
+      <SectionHead title="Motion" id="motion-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Two easing curves, two durations. Animate only
         {' '}
