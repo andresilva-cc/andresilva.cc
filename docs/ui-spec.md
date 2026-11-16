@@ -100,10 +100,10 @@ Footer is verbatim across all pages: a centered, wrapping row of lowercase socia
    - H2: `Bio`.
    - Two-column grid (`.about-grid`): portrait left (`.photo-wrap`, lime duotone with CRT scanline overlay, clears on focus/hover), three-paragraph bio right with technology nouns in `<strong>`.
    - Source: `src/app/about/page.tsx`. Portrait image: `public/me.jpg`.
-3. **Education band** (`aria-labelledby="edu-h"`, `.sec-head--flush`)
+3. **Education band** (`aria-labelledby="edu-h"`)
    - H2: `Education`.
    - `.grid-frame.grid-frame--2col` of 2 `.education-cell` items: BS in Computer Science (UNIVALI · 2015 — 2019) and Technical Leadership (Full Cycle · 2024 — 2025).
-4. **Facts band** (`aria-labelledby="facts-h"`, `.sec-head--flush`)
+4. **Facts band** (`aria-labelledby="facts-h"`)
    - H2: `Facts`.
    - `.grid-frame.grid-frame--2col` of 4 `.facts-cell` items: location (Florianópolis, BR), timezone (UTC-03), languages, interests.
 5. **Resume band** (`aria-labelledby="resume-h"`)
@@ -123,7 +123,6 @@ Footer is verbatim across all pages: a centered, wrapping row of lowercase socia
 ### Accessibility
 
 - `.photo-wrap` is `tabindex="0"` with `aria-label="Portrait of André Silva — focus or tap to reveal natural color"` so keyboard users can trigger the reveal.
-- `.sec-head--flush` on Education and Facts prevents the section head's bottom border from doubling with the grid-frame's top border (standing rule 07).
 - Focus order: skip-link → wordmark → 6 nav links → photo wrap → résumé button → footer links.
 
 ---

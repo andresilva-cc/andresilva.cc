@@ -177,7 +177,7 @@ Five tokens are consumed inside component-scoped CSS (in `globals.css`), not as 
 3. **Wordmark** — pixel-SVG "A" glyph in `--accent` + `andresilva.cc` text in `--hi`; always links home.
 4. **Primary nav** — active page wears literal `[brackets]` AND `aria-current="page"` for `--accent` color.
 5. **Page-head** — `<X />` brace pattern: `<` and `/>` in `--lo`, noun in `--accent`, VT323 28px.
-6. **Section head** — H2 + optional right-aligned CTA; `.sec-head--flush` zeros bottom border/margin to avoid doubled 2px seams.
+6. **Section head** — H2 in `--fg` + optional right-aligned CTA. No rule of its own.
 8. **Tags & badges** — outlined chips (`.tag.tag--chip`), corner badges (`.pr__badge`), row badges (`.row__badge`). All use `--accent` text on `--accent-mute` border. Chip strips wrap with a **symmetric 6px gap** on both axes (`gap-1.5`) — the border on each chip already supplies edge definition, so equal negative space lands cleaner than an asymmetric row/column rule.
 9. **Status dot** — 6px static lime square with a static `--shadow-status-dot` glow ring (no animation). Appears only on `/career`, marking the current role in the work-history list against the past roles.
 10. **Link arrow** — inline accent link + `→` SVG that nudges 2px right on hover.
@@ -209,7 +209,7 @@ Twenty load-bearing rules. Removing any would compromise consistency, accessibil
 4. **Card lists use `<li class="card-class">` directly.** No inner `<article>`. One landmark per visual card.
 5. **Tabular figures are unnecessary in monospace stacks.** JetBrains Mono and VT323 are fixed-width by construction. `tabular-nums` is a no-op here.
 6. **`:root` token blocks are canonical mirrors across all 5 pages.** No shared stylesheet. Tokens not consumed on a page are kept for parity, not pruned.
-7. **`.sec-head--flush` zeros both margin-bottom and border-bottom.** Prevents a doubled 2px line where the next element already provides a top rule.
+7. **One separator per section.** The section band's bottom border is the only rule between sections; `SectionHead` carries none, so a title is never boxed between two lines.
 8. **`--photo-filter-soft` is the touch-device variant of `--photo-filter`.** Slightly softer `contrast` / `brightness`; keep the two in step — re-tune both together.
 9. **Prose uses curly quotes and apostrophes.** `U+2019` for apostrophes, `U+201C / U+201D` for double quotes. Straight `'` and `"` are reserved for HTML attributes, CSS strings, and code.
 10. **Grid for identifier rows, list for content rows.** A row earns a grid when its value is being one of many comparable items at a glance — career, projects, education cells, facts cells. A row earns a list when its value is its own internal content — articles, where shrinking an item to fit a peer damages the read. The article surface stays flush-to-shell intentionally; wrapping it to match career exposes asymmetric internal whitespace instead of aligning the two.

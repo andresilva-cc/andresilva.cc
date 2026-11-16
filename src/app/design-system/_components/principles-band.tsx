@@ -137,17 +137,14 @@ export function PrinciplesBand() {
         <div className="py-5 border-b border-rule">
           <Text variant="body" as="p" className="font-semibold text-fg m-0">
             <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">07</Text>
-            <span className="text-accent">flush</span>
-            {' '}
-            on SectionHead zeros both margin-bottom and border-bottom.
+            One separator per section.
           </Text>
           <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
-            When the next element provides its own top rule (a
+            The section band&#x2019;s bottom border is the only rule between sections.
             {' '}
-            <code className="text-accent">&lt;GridFrame&gt;</code>
+            <code className="text-accent">&lt;SectionHead&gt;</code>
             {' '}
-            or a list with a top border), the section head&#x2019;s bottom border would otherwise stack
-            with it into a doubled 2px line at the seam. Zero both so the rule reads as a single 1px stroke.
+            carries none, so a title is never boxed between two lines.
           </Text>
         </div>
 

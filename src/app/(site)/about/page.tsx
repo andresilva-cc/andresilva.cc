@@ -97,7 +97,7 @@ export default function About() {
       </section>
 
       <section aria-labelledby="edu-h" className="py-8 border-b border-rule">
-        <SectionHead title="Education" id="edu-h" flush />
+        <SectionHead title="Education" id="edu-h" />
         <GridFrame as="div" className="grid-cols-1 md:grid-cols-2">
           { educationItems.map((item) => (
             <div key={item.title} className="flex flex-col">
@@ -110,7 +110,7 @@ export default function About() {
       </section>
 
       <section aria-labelledby="facts-h" className="py-8 border-b border-rule">
-        <SectionHead title="Facts" id="facts-h" flush />
+        <SectionHead title="Facts" id="facts-h" />
         <GridFrame as="div" className="grid-cols-1 md:grid-cols-2">
           { factsItems.map((item) => (
             <div key={item.key} className="flex flex-col gap-1">
