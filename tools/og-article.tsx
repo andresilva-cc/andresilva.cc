@@ -136,12 +136,12 @@ export default function OgArticle({
         }}
       />
 
-      {/* 3. Content cluster — title + meta, flex-column anchored at top:200 */}
+      {/* 3. Content cluster — title + meta, top:232 so title cap-height matches the home card's name */}
       <div
         style={{
           position: 'absolute',
           left: '64px',
-          top: '200px',
+          top: '232px',
           width: '1072px',
           display: 'flex',
           flexDirection: 'column',

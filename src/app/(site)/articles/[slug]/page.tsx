@@ -50,7 +50,7 @@ export async function generateMetadata({
       description: article.summary,
       type: 'article',
       publishedTime: article.publishedAt,
-      modifiedTime: article.updatedAt ?? article.publishedAt,
+      modifiedTime: article.publishedAt,
       url: `${SITE_ORIGIN}/articles/${article.slug}`,
       images: [{ url: article.ogImage, width: 1200, height: 630 }],
     },
@@ -81,7 +81,6 @@ export default async function ArticlePage({
   const Content = mdxModule.default as ComponentType<{ components: typeof mdxComponents }>;
 
   const formattedDate = formatDate(article.publishedAt);
-  const formattedUpdated = article.updatedAt ? formatDate(article.updatedAt) : null;
 
   // JSON-LD BlogPosting — per architecture §7.
   // consistent-as-needed quote-props: @-prefixed keys require quotes, so all
@@ -92,7 +91,7 @@ export default async function ArticlePage({
     'headline': article.title,
     'description': article.summary,
     'datePublished': article.publishedAt,
-    'dateModified': article.updatedAt ?? article.publishedAt,
+    'dateModified': article.publishedAt,
     'author': { '@type': 'Person', 'name': 'André Silva', 'url': `${SITE_ORIGIN}/about` },
     'url': `${SITE_ORIGIN}/articles/${article.slug}`,
     'image': `${SITE_ORIGIN}${article.ogImage}`,
@@ -102,8 +101,6 @@ export default async function ArticlePage({
     'inLanguage': 'en',
     'isPartOf': { '@type': 'Blog', 'name': 'andresilva.cc/articles' },
   };
-
-  const updatedPrefix = formattedUpdated ? `Last updated ${formattedUpdated}` : null;
 
   return (
     <article>
@@ -133,12 +130,6 @@ export default async function ArticlePage({
           <span aria-hidden="true"> · </span>
           {`${article.readingTime} min`}
         </Text>
-
-        { updatedPrefix && (
-          <Text variant="meta" as="p" className="mt-1 mb-0 text-fg-subtle italic">
-            { updatedPrefix }
-          </Text>
-        ) }
 
         { article.coverArt && (
           <>

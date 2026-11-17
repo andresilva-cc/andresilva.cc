@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const articleRoutes = articles.map((a) => ({
     url: `${SITE_ORIGIN}/articles/${a.slug}`,
-    lastModified: a.updatedAt ?? a.publishedAt,
+    lastModified: a.publishedAt,
   }));
 
   const noteRoutes = notes.map((n) => ({
