@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
     arrowParens: true,
     semi: true,
   }),
+  // @stylistic v6 enables list-style in the preset; it would reflow every wrapped prop list.
+  { rules: { '@stylistic/list-style': 'off' } },
 ]);
 
 export default eslintConfig;
