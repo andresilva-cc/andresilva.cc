@@ -63,8 +63,6 @@ export default function OgNote({
   publishedAt,
 }: Props) {
   const date = formatDate(publishedAt);
-  // Stored in a variable to prevent JSX from treating // as a comment node
-  const eyebrowText = '// note';
 
   return (
     <div
@@ -115,36 +113,20 @@ export default function OgNote({
         }}
       />
 
-      {/* 3. Content cluster — eyebrow + title + meta, flex-column anchored at top:200 */}
+      {/* 3. Content cluster — title + meta, top:232 so title cap-height matches the home card's name */}
       <div
         style={{
           position: 'absolute',
           left: '64px',
-          top: '200px',
+          top: '232px',
           width: '1072px',
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        {/* 3a. Eyebrow comment-tag "// note" — accent moment #1 */}
-        <span
-          style={{
-            fontFamily: '\'JetBrains Mono\', monospace',
-            fontSize: '17px',
-            fontWeight: 600,
-            color: '#C8FF3D',
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            lineHeight: 1.5,
-          }}
-        >
-          {eyebrowText}
-        </span>
-
-        {/* 3b. Title — VT323 80px, full width, 2-line clamp */}
+        {/* 3a. Title — VT323 80px, full width, 2-line clamp */}
         <div
           style={{
-            marginTop: '32px',
             fontFamily: '\'VT323\', monospace',
             fontSize: '80px',
             fontWeight: 400,
@@ -162,19 +144,22 @@ export default function OgNote({
           {title}
         </div>
 
-        {/* 3c. Meta line — date only */}
+        {/* 3b. Meta line — type · date */}
         <div
           style={{
             marginTop: '24px',
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'baseline',
+            gap: '8px',
             fontFamily: '\'JetBrains Mono\', monospace',
             fontSize: '22px',
             fontWeight: 500,
             lineHeight: 1.3,
           }}
         >
+          <span style={{ color: '#9DAA95' }}>Note</span>
+          <span style={{ color: '#7E8E76' }}>·</span>
           <span style={{ color: '#9DAA95' }}>{date}</span>
         </div>
       </div>

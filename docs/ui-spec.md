@@ -271,7 +271,7 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 2. **Identity cluster** (page header)
    - **H1 title** — `Text variant="h1"` in `--fg`. **Not** `t-display` / VT323 — the display register is reserved for the Home identity moment (standing rule). Article titles get the standard h1 mono treatment so 50+ posts at varying lengths read consistently.
    - **Summary** — `Text variant="body"`, `--fg-muted`, capped at `--prose-w-wide` (matches the body column below).
-   - **Meta strip** — single `<p>` with `<time dateTime>` (in `--fg-muted`) followed by `·` and `${readingTime} min` (in `--fg-subtle`). **No tags inline** (Q1 reversal — tags render as chips in the footer only). Optional second meta line `// last updated {date}` in italic `--fg-subtle` when `updatedAt` is set.
+   - **Meta strip** — single `<p>` with `<time dateTime>` (in `--fg-muted`) followed by `·` and `${readingTime} min` (in `--fg-subtle`). **No tags inline** (Q1 reversal — tags render as chips in the footer only).
 3. **Cover art** (optional — only when `article.coverArt` is present in frontmatter)
    - Preceded by a `<hr>` rule (8px top margin) to separate the identity cluster from the visual.
    - `<section aria-label="Cover art">` containing a `.article-cover-art` frame: `border border-rule bg-canvas`, `overflow-hidden`, `max-w-prose-wide`, aspect ratio `16 / 7` on desktop and `4 / 3` on mobile (set in `globals.css`). Standing rule 19 — identity surface keeps the border even though the art is transparent.
@@ -311,7 +311,7 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 
 - Article record: `articlesRepository.getBySlug(slug)` (Velite-compiled MDX from `content/articles/*.mdx`).
 - Compiled MDX body: `article.body` (function-body string) is `run()` through `@mdx-js/mdx` at request time — build-time-trusted input, not user input.
-- Frontmatter schema (title, summary, publishedAt, updatedAt, readingTime, wordCount, tags, devtoUrl, coverArt, ogImage): see `architecture.md` and `articles-decision-log.md` §4.
+- Frontmatter schema (title, summary, publishedAt, readingTime, wordCount, tags, devtoUrl, coverArt, ogImage): see `architecture.md` and `articles-decision-log.md` §4.
 
 ---
 
@@ -385,7 +385,7 @@ The document outline on `/notes` is `page-h1 (NOTES)` — and nothing else. Each
 1. **Top return** — `<ArrowLink direction="back">back to notes</ArrowLink>` pointing to `/notes`, sitting above the note block (`pt-8`). Mirrors the article-detail pattern; gives keyboard and mouse users a one-tab exit before they commit to reading.
 2. **Note block** — a single `<NoteBlock surface="detail" />`. Cluster order: `<h1>` title → meta → MDX body.
 3. **Bottom return** — `<ArrowLink direction="back">back to notes</ArrowLink>` again, sitting in a `pb-12` block so the last interactive element clears the footer border by a comfortable margin. Duplicating the top return is the same convention used on `/articles/[slug]` — top for short-attention exit, bottom for end-of-read return.
-4. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the page. Carries `headline` (note title), `datePublished` (note `publishedAt`), `author`, `url` (canonical `/notes/{slug}`), `image` (absolute `/og/notes/default.png` — the single shared notes OG card, see `architecture.md` §7), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/notes`). No `description` (notes have no `summary`), no `wordCount` / `timeRequired` (notes have no reading-time metadata), no `keywords` (notes have no tags), no `dateModified` (notes have no `updatedAt`). Server Component, no client overhead.
+4. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the page. Carries `headline` (note title), `datePublished` (note `publishedAt`), `author`, `url` (canonical `/notes/{slug}`), `image` (absolute `/og/notes/default.png` — the single shared notes OG card, see `architecture.md` §7), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/notes`). No `description` (notes have no `summary`), no `wordCount` / `timeRequired` (notes have no reading-time metadata), no `keywords` (notes have no tags), no `dateModified`. Server Component, no client overhead.
 
 **No prev/next chronological nav.** The detail page does not surface older/newer affordances — the back-link to `/notes` is the only navigation off the page. This matches `/articles/[slug]`, which also has no inter-article nav. Readers traverse the feed from the index, not laterally between detail pages.
 

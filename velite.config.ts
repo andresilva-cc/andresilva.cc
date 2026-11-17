@@ -48,7 +48,6 @@ const article = defineCollection({
       title: s.string(),
       summary: s.string().max(200),
       publishedAt: s.isodate(),
-      updatedAt: s.isodate().optional(),
       tags: s.array(s.string()),
       devtoUrl: s.string().url().optional(),
       coverArt: s

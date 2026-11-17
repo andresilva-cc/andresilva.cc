@@ -40,7 +40,7 @@ The guide is **descriptive** — it captures what is. When a surface comes up th
 
 ## 2. No eyebrows
 
-Section H2s, page titles, and article/note titles stand alone. No `// NN / phrase` labels above headings — they were removed site-wide (2026-11) because the numbered mono eyebrow reads as a generated-template tell and mostly restated the heading. Don't reintroduce them. OG cards (`tools/og-*.tsx`) still carry `// article` / `// note`; that's an image convention, not a site one.
+Section H2s, page titles, and article/note titles stand alone. No `// NN / phrase` labels above headings — they were removed site-wide (2026-11) because the numbered mono eyebrow reads as a generated-template tell and mostly restated the heading. Don't reintroduce them. OG cards (`tools/og-*.tsx`) name the content type as the first item of the grey meta line (`Article · 2024.07.10 · 4 min`, `Note · 2026.06.02`), not as an eyebrow.
 
 ---
 
