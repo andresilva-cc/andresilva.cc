@@ -57,10 +57,10 @@ Footer is verbatim across all pages: a centered, wrapping row of lowercase socia
    - Right column: hero plasma (`HeroPlasma`, lg+ only — `hidden lg:block`). Static frame under `prefers-reduced-motion: reduce`.
    - Source: `src/app/(site)/page.tsx` for hero copy; current role from `src/repositories/implementations/static-jobs-repository.tsx` (first entry).
 2. **Now band** (`section`, `aria-labelledby="now-h"`)
-   - Eyebrow: `// 01 / current focus`. H2: `Now`. No right-rail link.
+   - H2: `Now`. No right-rail link.
    - One paragraph about André's current parallel builds — three projects in flight (`Calcloak`, `Infinity`, and the redesign of this site) plus a day-job framing (`MPA`, shipping features end-to-end with Claude Code). Two inline links (`InlineLink`) to `https://calcloak.com/` and `https://meet.agentairforce.com`; the project nouns inside those links are in `<strong>`, and `MPA` is in `<strong>` as a plain (non-link) noun.
 3. **Latest band** (`section`, `aria-labelledby="latest-h"`)
-   - Eyebrow: `// 02 / recent activity`. H2: `Latest`.
+   - H2: `Latest`.
    - `<ul>` of up to four `<li>` items, one per category in this fixed order: a Career row (current role), a Project row (most recent featured project), an Article row (most recent article), a Note row (most recent note). The Article row is omitted entirely when no articles are published; the Note row is omitted entirely when no notes are published. The four are independent — a missing Article does not move Note up the category list; the order is `Career · Project · Article · Note` whenever each row is present.
    - Each row is a `LatestRow` (`<a>`) with a badge (`Career` / `Project` / `Article` / `Note`), the noun, and a trailing link-arrow icon (no visible "Read more" text — the badge names the category, the arrow carries the affordance, the whole row is the link surface). The Career and Project rows link to their list pages (`/career`, `/projects`); the Article and Note rows link straight to the detail page (`/articles/<slug>` and `/notes/<slug>` respectively), not the list — the latest item *is* the destination. The Note row reuses the existing `LatestRow` component verbatim; no new component is needed.
    - Sources: jobs repo → first entry; projects repo → first `featured` entry; articles repo → first entry from the local MDX feed; notes repo → first entry (most recent `publishedAt`) from the local MDX notes collection.
@@ -97,17 +97,17 @@ Footer is verbatim across all pages: a centered, wrapping row of lowercase socia
 
 1. **Page-head** — `<h1 class="title t-pixel"><ABOUT /></h1>` in the brace pattern (VT323 28px, `--accent` noun, `--lo` braces).
 2. **Bio band** (`aria-labelledby="bio-h"`)
-   - Eyebrow: `// 01 / in my own words`. H2: `Bio`.
+   - H2: `Bio`.
    - Two-column grid (`.about-grid`): portrait left (`.photo-wrap`, lime duotone with CRT scanline overlay, clears on focus/hover), three-paragraph bio right with technology nouns in `<strong>`.
    - Source: `src/app/about/page.tsx`. Portrait image: `public/me.jpg`.
-3. **Education band** (`aria-labelledby="edu-h"`, `.sec-head--flush`)
-   - Eyebrow: `// 02 / where i studied`. H2: `Education`.
+3. **Education band** (`aria-labelledby="edu-h"`)
+   - H2: `Education`.
    - `.grid-frame.grid-frame--2col` of 2 `.education-cell` items: BS in Computer Science (UNIVALI · 2015 — 2019) and Technical Leadership (Full Cycle · 2024 — 2025).
-4. **Facts band** (`aria-labelledby="facts-h"`, `.sec-head--flush`)
-   - Eyebrow: `// 03 / at a glance`. H2: `Facts`.
+4. **Facts band** (`aria-labelledby="facts-h"`)
+   - H2: `Facts`.
    - `.grid-frame.grid-frame--2col` of 4 `.facts-cell` items: location (Florianópolis, BR), timezone (UTC-03), languages, interests.
 5. **Resume band** (`aria-labelledby="resume-h"`)
-   - Eyebrow: `// 04 / full work history`. H2: `Resume`.
+   - H2: `Resume`.
    - One `.button-cta` link: `Download résumé →` pointing to `/resume.pdf`.
 
 ### Key interactions
@@ -123,7 +123,6 @@ Footer is verbatim across all pages: a centered, wrapping row of lowercase socia
 ### Accessibility
 
 - `.photo-wrap` is `tabindex="0"` with `aria-label="Portrait of André Silva — focus or tap to reveal natural color"` so keyboard users can trigger the reveal.
-- `.sec-head--flush` on Education and Facts prevents the section head's bottom border from doubling with the grid-frame's top border (standing rule 07).
 - Focus order: skip-link → wordmark → 6 nav links → photo wrap → résumé button → footer links.
 
 ---
@@ -262,7 +261,7 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 
 ## Page: Article detail (`/articles/[slug]`)
 
-**Purpose** — The reading surface for a single article. One MDX post rendered with the site's prose treatment, framed by an identity cluster (eyebrow / title / summary / meta) at the top and syndication + return affordances at the bottom.
+**Purpose** — The reading surface for a single article. One MDX post rendered with the site's prose treatment, framed by an identity cluster (title / summary / meta) at the top and syndication + return affordances at the bottom.
 
 **Audience moment** — A reader who clicked through from the feed (or landed via search / external link) and wants to read end-to-end without friction. Long-form attention — the page should disappear, the prose should carry.
 
@@ -270,7 +269,6 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 
 1. **Top return** — `ArrowLink` `direction="back"` reading `back to articles`, sitting above the identity cluster (`pt-8`). Gives keyboard and mouse users a one-tab exit before they commit to scrolling.
 2. **Identity cluster** (page header)
-   - **Eyebrow** — `// article` (authored as a string variable to dodge the `react/jsx-no-comment-textnodes` lint; lowercase string, uppercased via CSS), `--accent`.
    - **H1 title** — `Text variant="h1"` in `--fg`. **Not** `t-display` / VT323 — the display register is reserved for the Home identity moment (standing rule). Article titles get the standard h1 mono treatment so 50+ posts at varying lengths read consistently.
    - **Summary** — `Text variant="body"`, `--fg-muted`, capped at `--prose-w-wide` (matches the body column below).
    - **Meta strip** — single `<p>` with `<time dateTime>` (in `--fg-muted`) followed by `·` and `${readingTime} min` (in `--fg-subtle`). **No tags inline** (Q1 reversal — tags render as chips in the footer only). Optional second meta line `// last updated {date}` in italic `--fg-subtle` when `updatedAt` is set.
@@ -283,7 +281,7 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
    - Tables, ordered/unordered lists, blockquotes, inline code, and horizontal rules all inherit from `article-prose` — see the design-system prose section.
 5. **Footer** (in DOM order)
    - **Tag chips** — `<ul>` of `Tag` chips (brand-cased per `tag.tsx`), wrapping, when `article.tags.length > 0`. Chips are the **only** surface where tags appear on this page (Q1 reversal).
-   - **Syndication block** — when `article.devtoUrl` is present: `Eyebrow` reading `// elsewhere`, then an `ArrowLink` to the dev.to mirror reading `also on dev.to`. Omitted entirely for posts that never crossposted.
+   - **Syndication block** — when `article.devtoUrl` is present: a single unlabeled `ArrowLink` to the dev.to mirror reading `also on dev.to`. Omitted entirely for posts that never crossposted.
    - **Bottom return** — `ArrowLink` `direction="back"` reading `back to articles`, sitting in a `pb-12` block so the last interactive element clears the footer border by a comfortable margin.
 6. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the `<article>` element. Carries `headline`, `description`, `datePublished`, `dateModified`, `author`, `url`, `image` (absolute `ogImage`), `keywords` (tags joined by `, `), `wordCount`, `timeRequired` (`PT{readingTime}M`), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/articles` Blog). The serialized JSON escapes any literal `</script>` substring (defensive — frontmatter strings can in principle contain it).
 
@@ -301,7 +299,7 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 
 ### Accessibility
 
-- Document outline: `page-h1 (article title) → article-prose headings`. The eyebrow is a `<p>`, not a heading. The cover-art section is named with `aria-label`, never a visible h2.
+- Document outline: `page-h1 (article title) → article-prose headings`. The cover-art section is named with `aria-label`, never a visible h2.
 - Cover-art `<section aria-label="Cover art">` so screen readers can skip the stipple field; the `<StippleArt>` itself is decorative.
 - The two `ArrowLink direction="back"` instances are both reachable in the tab order — duplication is intentional (top for short-attention exit, bottom for end-of-read return).
 - Code-block `CopyButton` is a real `<button>` with `aria-live` feedback for the copy result, focusable from keyboard.
@@ -336,10 +334,10 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 The single rendering unit, shared verbatim with the detail page. Layout is a vertical stack, no grid, full prose-wide column (`max-w-prose-wide` / 68ch); the wider 80ch `max-w-prose-figure` is still available to in-body figures via the existing MDX components.
 
 - **Wrapping element**: `<article id="{slug}">` so `/notes#{slug}` deep-links into the block on the index. The `id` is `{slug}`, not `note-{slug}`, to keep permalink URLs short.
-- **Meta line** — a single row using `<Text variant="meta">`, matching `ArticleCard` exactly (no `<Eyebrow>` wrapper, no comment-tag register, no `//` prefix, no accent color). Format: `{ISO date} · {kind}` where the `<time dateTime>` carries the machine-readable ISO date and the visible string is `YYYY.MM.DD` (e.g., `2026.05.21`) in `text-fg-muted`, followed by a `·` middle-dot with a single space on each side, followed by `kind` (one of `til | take | snippet | aside`, lowercase) in `text-fg-subtle`. The two-tone treatment mirrors `ArticleCard`'s `{date} · {readingTime} min` row: date is the primary metadata, the secondary value sits one step quieter. **Nothing else sits on this row** — the permalink lives at the foot of the block (see below). No right-floated affordances.
+- **Meta line** — a single row using `<Text variant="meta">`, matching `ArticleCard` exactly (no comment-tag register, no `//` prefix, no accent color). Format: `{ISO date} · {kind}` where the `<time dateTime>` carries the machine-readable ISO date and the visible string is `YYYY.MM.DD` (e.g., `2026.05.21`) in `text-fg-muted`, followed by a `·` middle-dot with a single space on each side, followed by `kind` (one of `til | take | snippet | aside`, lowercase) in `text-fg-subtle`. The two-tone treatment mirrors `ArticleCard`'s `{date} · {readingTime} min` row: date is the primary metadata, the secondary value sits one step quieter. **Nothing else sits on this row** — the permalink lives at the foot of the block (see below). No right-floated affordances.
 - **Title** — a `<p>` element rendered in the `h3` visual variant (`text-h3` — mono 600, 16px, line-height 1.3), color `--fg`. Sentence case, no terminal period. The title is **plain text, not a link** — the trailing permalink ArrowLink is the only navigation affordance on the block, and the title is the block's own headline, not a CTA. Standing rule 03 governs: card-list and list-item titles are non-heading elements. (On the detail page the title becomes a real `<h1>` rendered in the `h1` visual variant — VT323 display font, matching `/articles/[slug]`. See the `/notes/[slug]` spec below for the semantic and visual upgrade rationale.)
 - **Body** — the compiled MDX, styled by the same `.article-prose` rules as `/articles/[slug]`: paragraphs, headings (`h4`+ inside the note body — `h2`/`h3` are reserved for structure outside the body to keep the outline clean), code blocks (Shiki-themed via `PreShiki` with `CopyButton`), inline code, blockquotes, lists, tables, `<Figure>`, `<YouTube>`, `<ImageMdx>`. No restrictions. The body sits at `max-w-prose-wide` to match prose elsewhere.
-- **Trailing permalink** (index only) — a single `<ArrowLink href="/notes/{slug}">permalink</ArrowLink>` sitting **directly below the MDX body**, left-aligned, separated from the body by `mt-4`. This mirrors the `read article` ArrowLink at the foot of `ArticleCard` — same component, same accent-at-rest treatment, same 2px arrow-nudge on hover. The label is `permalink` lowercase (per `copy-guide.md` §7); `aria-label` is `permalink to {note title}`. **Only rendered on the `/notes` index** — the detail page suppresses it (the reader is already at the canonical URL; an affordance pointing to the page they're on is noise). The block receives a `surface` prop (`'list' | 'detail'`, default `'list'`); the detail page passes `surface="detail"`, which also prepends an `<Eyebrow>// note</Eyebrow>` above the title (mirroring `/articles/[slug]`'s eyebrow → h1 → meta rhythm), flips the title to `<h1>` + `h1` visual variant (VT323 display), and drops the meta below the title (see the `/notes/[slug]` spec).
+- **Trailing permalink** (index only) — a single `<ArrowLink href="/notes/{slug}">permalink</ArrowLink>` sitting **directly below the MDX body**, left-aligned, separated from the body by `mt-4`. This mirrors the `read article` ArrowLink at the foot of `ArticleCard` — same component, same accent-at-rest treatment, same 2px arrow-nudge on hover. The label is `permalink` lowercase (per `copy-guide.md` §7); `aria-label` is `permalink to {note title}`. **Only rendered on the `/notes` index** — the detail page suppresses it (the reader is already at the canonical URL; an affordance pointing to the page they're on is noise). The block receives a `surface` prop (`'list' | 'detail'`, default `'list'`); the detail page passes `surface="detail"`, which flips the title to `<h1>` + `h1` visual variant (VT323 display), and drops the meta below the title (see the `/notes/[slug]` spec).
 - **No cover art, no tags, no reading time, no card border, no numeric badge.** The hairline rule between sibling blocks is the only separator. No element is ever right-floated on the block — top-down, left-aligned rhythm only.
 
 ### Heading-outline note
@@ -378,14 +376,14 @@ The document outline on `/notes` is `page-h1 (NOTES)` — and nothing else. Each
 
 ## Page: Note detail (`/notes/[slug]`)
 
-**Purpose** — Canonical permalink for a single note. Same `<NoteBlock>` component as on the index, rendered with `surface="detail"` (no trailing permalink; `<Eyebrow>// note</Eyebrow>` prepended above the title, matching `/articles/[slug]`'s eyebrow → h1 → meta rhythm; title upgraded to `<h1>` in the `h1` visual variant — VT323 display font, matching `/articles/[slug]`; meta dropped below the title), plus top and bottom "back to notes" affordances. This is the page search engines and social previews land on; the index hash anchor (`/notes#{slug}`) is a convenience, not a canonical target.
+**Purpose** — Canonical permalink for a single note. Same `<NoteBlock>` component as on the index, rendered with `surface="detail"` (no trailing permalink; matching `/articles/[slug]`'s h1 → meta rhythm; title upgraded to `<h1>` in the `h1` visual variant — VT323 display font, matching `/articles/[slug]`; meta dropped below the title), plus top and bottom "back to notes" affordances. This is the page search engines and social previews land on; the index hash anchor (`/notes#{slug}`) is a convenience, not a canonical target.
 
 **Audience moment** — Someone who followed a shared permalink, a search-engine result, or a syndicated link. They land mid-stream, read the one note, and return to the full index.
 
 ### Sections (in order)
 
 1. **Top return** — `<ArrowLink direction="back">back to notes</ArrowLink>` pointing to `/notes`, sitting above the note block (`pt-8`). Mirrors the article-detail pattern; gives keyboard and mouse users a one-tab exit before they commit to reading.
-2. **Note block** — a single `<NoteBlock surface="detail" />`. Cluster order: `<Eyebrow>// note</Eyebrow>` → `<h1>` title → meta → MDX body. **Eyebrow** — `// note` (authored as a string variable per `react/jsx-no-comment-textnodes`, same construction as `// article` on `/articles/[slug]`), `--accent`, sitting above the title with the same eyebrow → h1 → meta cadence used on the article detail. A cold-link visitor landing on `/notes/{slug}` doesn't have the index page-head's framing, and the `til | take | snippet | aside` kind labels in meta aren't self-identifying as "kinds of notes" to an uninitiated reader — the explicit `// note` does the framing the meta can't. Generic `// note` as category, specific kind in meta as instance; the two are hierarchical, not redundant. The list surface keeps **no** eyebrow (the page-head `<NOTES />` already frames the stream — a per-note eyebrow on the list would triplicate); the asymmetry is intentional. **Title** — a real `<h1>` rendered in the `h1` visual variant (VT323 display font, matching `/articles/[slug]` — semantic *and* visual upgrade from the `<p>`-as-`h3` used on the index. The note title IS the document h1 on this page: there is no `<PageHead>` above it (the brace pattern is reserved for page identity, not content identity — see the heading note below), so the title carries the page-h1 role directly. Font asymmetry between articles and notes detail titles would read as sloppiness, not register signal). **Meta line** — `{ISO date} · {kind}` via `<Text variant="meta">`, identical to the index, dropping beneath the title (the inversion vs the index is deliberate: on the index the meta sits above so the reader scans date/kind first across a stream of items, but on the detail page the title is the destination and earns top placement, with the meta in a supporting caption role). **No trailing permalink ArrowLink** — the reader is already at the canonical URL, so an affordance pointing to the page they're on is noise. The shared component contract is preserved by gating eyebrow presence, title element, title visual variant, title/meta order, and permalink presence on a single `surface` prop (`'list' | 'detail'`) rather than duplicating the block.
+2. **Note block** — a single `<NoteBlock surface="detail" />`. Cluster order: `<h1>` title → meta → MDX body.
 3. **Bottom return** — `<ArrowLink direction="back">back to notes</ArrowLink>` again, sitting in a `pb-12` block so the last interactive element clears the footer border by a comfortable margin. Duplicating the top return is the same convention used on `/articles/[slug]` — top for short-attention exit, bottom for end-of-read return.
 4. **JSON-LD `BlogPosting`** — `<script type="application/ld+json">` block at the end of the page. Carries `headline` (note title), `datePublished` (note `publishedAt`), `author`, `url` (canonical `/notes/{slug}`), `image` (absolute `/og/notes/default.png` — the single shared notes OG card, see `architecture.md` §7), `inLanguage` (`en`), and `isPartOf` (`andresilva.cc/notes`). No `description` (notes have no `summary`), no `wordCount` / `timeRequired` (notes have no reading-time metadata), no `keywords` (notes have no tags), no `dateModified` (notes have no `updatedAt`). Server Component, no client overhead.
 
@@ -410,7 +408,7 @@ The note's title is a real `<h1>` rendered in the `h1` visual variant (VT323 dis
 
 - `<link rel="canonical" href="{absolute /notes/{slug} URL}" />` in `<head>` so search engines treat the detail page as canonical and the index hash anchor as a navigational alias.
 - `<title>` is `{note title} · André Silva`. Browser tab and back-button history label both communicate which note is open.
-- Document outline: `h1 (note title) → h4+ in-body`. The `<h1>` is both semantic and visually upgraded on the detail page (unlike the `<p>`-as-h3 used on the index) because the note title carries the document h1 role directly — there is no `<PageHead>` above it. The `<Eyebrow>// note</Eyebrow>` above the title is a `<p>`, not a heading, so it does not affect the outline.
+- Document outline: `h1 (note title) → h4+ in-body`. The `<h1>` is both semantic and visually upgraded on the detail page (unlike the `<p>`-as-h3 used on the index) because the note title carries the document h1 role directly — there is no `<PageHead>` above it.
 - The two top/bottom back-links are both reachable in tab order — duplication is intentional, mirroring `/articles/[slug]`.
 - Focus order: skip-link → wordmark → 6 nav links → top back-link → any in-prose links + code-block copy buttons + YouTube façades in DOM order → bottom back-link → footer links. The detail page does not render the block's permalink ArrowLink (per `surface="detail"`), so it is absent from this order. No prev/next arrows exist on this surface.
 
@@ -431,10 +429,9 @@ The note's title is a real `<h1>` rendered in the `h1` visual variant (VT323 dis
 
 1. **Page-head** — `<h1 class="title t-pixel"><NOT_FOUND /></h1>` in the brace pattern. Authored in caps (`NOT_FOUND`); the underscore preserves token-style readability. Same VT323 28px and `.brace` decoration as `<ABOUT />`, `<CAREER />`, etc., so the 404 reads as a first-class interior page rather than a generic error frame.
 2. **Status band** (`section.band`, `aria-labelledby="status-h"`)
-   - Eyebrow: `// 01 / status 404`. H2: `Page not found.`
+   - H2: `Page not found.`
    - One short paragraph: `The URL didn’t match any page on this site. Try one of the surfaces below.`
    - One `ArrowLink` to `/` labeled `home`. Placed below the paragraph (not in the SectionHead `cta` slot — this is the page’s primary action, not a section header right-rail link).
-   - This is the *only* section on the page. Numbering still uses `// 01` because eyebrow numbering restarts per page (per copy-guide §2).
 
 ### Pseudo-JSX
 
@@ -443,7 +440,6 @@ The note's title is a real `<h1>` rendered in the `h1` visual variant (VT323 dis
 
 <section aria-labelledby="status-h" className="band">
   <SectionHead
-    eyebrow="// 01 / status 404"
     title="Page not found."
     id="status-h"
   />
@@ -458,7 +454,7 @@ The note's title is a real `<h1>` rendered in the `h1` visual variant (VT323 dis
 
 ### Why the brace head reads `<NOT_FOUND />`, not `<404 />`
 
-In JSX, tag names cannot lead with a digit — `<404 />` is invalid syntax. For a site whose typographic conceit *is* developer-flavored, a brace head that wouldn’t parse breaks the joke. `NOT_FOUND` (uppercase snake_case) reads like an HTTP/enum constant, parses as a valid identifier, and pairs with the eyebrow `// 01 / status 404` which carries the numeric code. Together they say "the HTTP status this page represents is 404 NOT FOUND", split across two lines of typographic register — code in the eyebrow, identifier in the brace head, status text in the H2. The number itself never gets a display-scale moment, by design: the 404 is *not* more important than the home hero or the page-head of any real page.
+In JSX, tag names cannot lead with a digit — `<404 />` is invalid syntax. For a site whose typographic conceit *is* developer-flavored, a brace head that wouldn’t parse breaks the joke. `NOT_FOUND` (uppercase snake_case) reads like an HTTP/enum constant, and parses as a valid identifier; the H2 spells the status out (`Page not found.`). The numeric code isn't shown on the page — the identifier and the status text carry it. By design, the number never gets a display-scale moment: the 404 is *not* more important than the home hero or the page-head of any real page.
 
 ### Key interactions
 
@@ -489,7 +485,7 @@ In JSX, tag names cannot lead with a digit — `<404 />` is invalid syntax. For 
 ## Cross-page conventions
 
 - **Section bands**: 32px top/bottom padding (`--s8`), 1px `--rule` bottom border; the last `.band` in `<main>` drops its bottom border.
-- **Section head pattern**: a `SectionHead` (a `.comment-tag` eyebrow `// 01 / …` above an H2) delimits subdivisions *within* a page — it appears only on a page with two or more content sections (About, with Bio / Education / Facts / Resume). A single-section page (Career, Projects, Articles, Notes) omits the `SectionHead` entirely: it goes straight from the `PageHead` h1 into its content, and the lone `<section>` is named with `aria-label`, never a visible h2 that would duplicate the page h1. The 404 page is the deliberate exception — it has one section but keeps a `SectionHead` because its h2 (`Page not found.`) carries real, non-duplicating information. Where present, eyebrow numbering restarts per page.
+- **Section head pattern**: a `SectionHead` (an H2 with an optional right-aligned CTA) delimits subdivisions *within* a page — it appears only on a page with two or more content sections (About, with Bio / Education / Facts / Resume). A single-section page (Career, Projects, Articles, Notes) omits the `SectionHead` entirely: it goes straight from the `PageHead` h1 into its content, and the lone `<section>` is named with `aria-label`, never a visible h2 that would duplicate the page h1. The 404 page is the deliberate exception — it has one section but keeps a `SectionHead` because its h2 (`Page not found.`) carries real, non-duplicating information.
 - **Brace H1 pattern**: every inner page uses `<X />` (e.g., `<ABOUT />`); Home uses the name itself as the identity moment instead.
 - **Curly quotes everywhere in prose** (standing rule 09). Straight quotes only inside attributes, code, and CSS strings.
 - **Reduced motion** is honored globally; press-scale and looping animations are additionally gated with `@media (prefers-reduced-motion: no-preference)`.

@@ -27,8 +27,7 @@ type: project
 - GridFrame: applies border-t + border-l on container, border-r + border-b on children. Children must add their own padding (not GridFrame's job). Education cells: `py-5 px-6`. Facts cells: `py-4 px-5`. Project cards: `p-4`.
 
 ## Section head pattern (SectionHead component)
-- Default: `flex flex-col gap-2 pb-4 mb-5 border-b border-rule`
-- Flush (when next element has its own top border): removes `mb-5 border-b`
+- H2 + optional CTA, `pb-4` (16px to content), no rule of its own — the section band's `border-b` is the only separator. No eyebrow, no `flush` prop (both removed 2026-11).
 - Career, Projects, Articles pages have NO section head — just page head + section with aria-label directly containing the list
 
 ## Career / Role card

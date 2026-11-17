@@ -30,7 +30,6 @@ export default function NotFound() {
 
           <section aria-labelledby="status-h" className="py-8 max-w-prose-wide">
             <SectionHead
-              eyebrow="// 01 / status 404"
               title="Page not found."
               id="status-h"
             />

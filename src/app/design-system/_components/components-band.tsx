@@ -5,7 +5,6 @@ import { Text } from '@/components/text';
 import { SectionHead } from '@/components/section-head';
 import { NoteBlock } from '@/components/note-block';
 import { getRepositories } from '@/repositories';
-import { Eyebrow } from '@/components/eyebrow';
 import { Tag } from '@/components/tag';
 import { Badge } from '@/components/badge';
 import { StatusDot } from '@/components/status-dot';
@@ -78,9 +77,9 @@ function Demo({ number, name, api, children }: DemoProps) {
 export function ComponentsBand() {
   return (
     <section id="components" aria-labelledby="comp-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 06 / the parts in the kit" title="Components" id="comp-h" />
+      <SectionHead title="Components" id="comp-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
-        25 components, all rendered live (no screenshots). Markup is verbatim from page and
+        24 components, all rendered live (no screenshots). Markup is verbatim from page and
         article files. Where markup includes hard-coded SVG paths or attribute strings, those are
         reproduced exactly so you can copy them directly from this page&#x2019;s source.
       </Text>
@@ -119,17 +118,13 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="06" name="Section head" api="<SectionHead eyebrow… title… />">
+        <Demo number="06" name="Section head" api="<SectionHead title… />">
           <div className="w-full">
-            <SectionHead eyebrow="// 01 / who" title="Bio" />
+            <SectionHead title="Bio" />
           </div>
         </Demo>
 
-        <Demo number="07" name="Comment-tag eyebrow" api="<Eyebrow>…</Eyebrow>">
-          <Eyebrow>&#47;&#47; 01 / who</Eyebrow>
-        </Demo>
-
-        <Demo number="08" name="Tags & badges" api="<Tag /> · <Badge />">
+        <Demo number="07" name="Tags & badges" api="<Tag /> · <Badge />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             One primitive, three contextual variants. Shared shell:
             {' '}
@@ -176,18 +171,18 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="09" name="Status dot" api="<StatusDot ariaLabel… />">
+        <Demo number="08" name="Status dot" api="<StatusDot ariaLabel… />">
           <span className="inline-flex items-center gap-2">
             <StatusDot ariaLabel="current role" />
             <Text variant="meta" as="span" className="text-fg">current role</Text>
           </span>
         </Demo>
 
-        <Demo number="10" name="Link arrow" api="<ArrowLink href… />">
+        <Demo number="09" name="Link arrow" api="<ArrowLink href… />">
           <ArrowLink href="/about">full bio</ArrowLink>
         </Demo>
 
-        <Demo number="11" name="Inline link" api="<InlineLink href=&quot;…&quot;>…</InlineLink>">
+        <Demo number="10" name="Inline link" api="<InlineLink href=&quot;…&quot;>…</InlineLink>">
           <Text variant="body" className="text-fg-muted m-0">
             Also published on the
             {' '}
@@ -200,13 +195,13 @@ export function ComponentsBand() {
           </Text>
         </Demo>
 
-        <Demo number="12" name="Button CTA" api="<Button>…</Button>">
+        <Demo number="11" name="Button CTA" api="<Button>…</Button>">
           <Button asChild>
             <Link href="/resume.pdf" target="_blank">Download resume</Link>
           </Button>
         </Demo>
 
-        <Demo number="13" name="Card patterns" api="<LatestRow /> · <ProjectCard /> · <RoleCard /> · <ArticleCard />">
+        <Demo number="12" name="Card patterns" api="<LatestRow /> · <ProjectCard /> · <RoleCard /> · <ArticleCard />">
           <div className="w-full flex flex-col gap-5">
             <div>
               <Text variant="meta" as="p" className="mb-3 text-fg-subtle uppercase tracking-eyebrow m-0">
@@ -276,7 +271,7 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="14" name="Grid frame" api="<GridFrame />">
+        <Demo number="13" name="Grid frame" api="<GridFrame />">
           <GridFrame as="div" className="grid-cols-2 w-full">
             <div className="flex flex-col gap-1">
               <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle">cell 01</Text>
@@ -289,7 +284,7 @@ export function ComponentsBand() {
           </GridFrame>
         </Demo>
 
-        <Demo number="15" name="Portrait" api="<Portrait />">
+        <Demo number="14" name="Portrait" api="<Portrait />">
           <Portrait
             src="/me.jpg"
             alt="Portrait of André Silva — focus or tap to reveal natural color"
@@ -299,17 +294,17 @@ export function ComponentsBand() {
           />
         </Demo>
 
-        <Demo number="16" name="Hero art" api="<HeroArt />">
+        <Demo number="15" name="Hero art" api="<HeroArt />">
           <HeroArt />
         </Demo>
 
-        <Demo number="17" name="Footer" api="<Footer />">
+        <Demo number="16" name="Footer" api="<Footer />">
           <div className="w-full">
             <Footer />
           </div>
         </Demo>
 
-        <Demo number="18" name="StippleArt" api="<StippleArt config=… mode=… />">
+        <Demo number="17" name="StippleArt" api="<StippleArt config=… mode=… />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             React wrapper for the
             {' '}
@@ -332,7 +327,7 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="19" name="FigureCaption" api="<FigureCaption number={N} caption=&quot;…&quot; />">
+        <Demo number="18" name="FigureCaption" api="<FigureCaption number={N} caption=&quot;…&quot; />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Shared caption renderer used by
             {' '}
@@ -359,7 +354,7 @@ export function ComponentsBand() {
           </figure>
         </Demo>
 
-        <Demo number="20" name="Figure" api="<Figure caption=… number={N} src=… />">
+        <Demo number="19" name="Figure" api="<Figure caption=… number={N} src=… />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Flush diagram with numbered caption. No border (rule 18). Capped at
             {' '}
@@ -382,7 +377,7 @@ export function ComponentsBand() {
           </figure>
         </Demo>
 
-        <Demo number="21" name="ImageMdx" api="<ImageMdx src=… alt=… />">
+        <Demo number="20" name="ImageMdx" api="<ImageMdx src=… alt=… />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Bare flush image for the
             {' '}
@@ -404,7 +399,7 @@ export function ComponentsBand() {
           </Text>
         </Demo>
 
-        <Demo number="22" name="YouTube" api="<YouTube id=&quot;…&quot; caption=&quot;…&quot; number={N} />">
+        <Demo number="21" name="YouTube" api="<YouTube id=&quot;…&quot; caption=&quot;…&quot; number={N} />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Click-to-load video embed. Server Component renders a static thumbnail fa&#xe7;ade (LCP-friendly);
             the
@@ -436,7 +431,7 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="23" name="PreShiki" api="<PreShiki data-language=&quot;…&quot;>…</PreShiki>">
+        <Demo number="22" name="PreShiki" api="<PreShiki data-language=&quot;…&quot;>…</PreShiki>">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Styled
             {' '}
@@ -464,7 +459,7 @@ export function ComponentsBand() {
           </div>
         </Demo>
 
-        <Demo number="25" name="NoteBlock" api="<NoteBlock note={…} surface=&quot;list|detail&quot; />">
+        <Demo number="24" name="NoteBlock" api="<NoteBlock note={…} surface=&quot;list|detail&quot; />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Inline stream block for a single note. Two surfaces via the
             {' '}
@@ -486,7 +481,7 @@ export function ComponentsBand() {
           <NoteBlockDemo />
         </Demo>
 
-        <Demo number="24" name="CopyButton" api="<CopyButton code=&quot;…&quot; />">
+        <Demo number="23" name="CopyButton" api="<CopyButton code=&quot;…&quot; />">
           <Text variant="body" className="text-fg-muted m-0 w-full">
             Client island embedded inside
             {' '}

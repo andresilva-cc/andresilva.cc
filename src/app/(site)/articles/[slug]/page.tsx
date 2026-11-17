@@ -6,7 +6,6 @@ import * as jsxRuntime from 'react/jsx-runtime';
 
 import { Text } from '@/components/text';
 import { Tag } from '@/components/tag';
-import { Eyebrow } from '@/components/eyebrow';
 import { ArrowLink } from '@/components/arrow-link';
 import { InlineLink } from '@/components/inline-link';
 import { StippleArt } from '@/components/stipple-art';
@@ -104,11 +103,6 @@ export default async function ArticlePage({
     'isPartOf': { '@type': 'Blog', 'name': 'andresilva.cc/articles' },
   };
 
-  // The eyebrow label "// article" uses two forward-slashes — authored as a
-  // string variable to avoid the react/jsx-no-comment-textnodes lint rule which
-  // flags direct // text nodes in JSX as likely accidental comments.
-  const eyebrowLabel = '// article';
-  const syndicationEyebrow = '// elsewhere';
   const updatedPrefix = formattedUpdated ? `// last updated ${formattedUpdated}` : null;
 
   return (
@@ -118,14 +112,12 @@ export default async function ArticlePage({
           <ArrowLink href="/articles" direction="back">back to articles</ArrowLink>
         </div>
 
-        <Eyebrow className="mt-8 block">{ eyebrowLabel }</Eyebrow>
-
-        {/* Eyebrow → title → summary is the identity cluster (uninterrupted);
+        {/* Title → summary is the identity cluster (uninterrupted);
             meta sits below as publication info / soft transition into the body. */}
         <Text
           variant="h1"
           as="h1"
-          className="mt-3 mb-0"
+          className="mt-8 mb-0"
         >
           { article.title }
         </Text>
@@ -193,7 +185,6 @@ export default async function ArticlePage({
 
         { article.devtoUrl && (
           <div className="mt-6">
-            <Eyebrow className="block mb-2">{ syndicationEyebrow }</Eyebrow>
             <ArrowLink href={article.devtoUrl}>also on dev.to</ArrowLink>
           </div>
         ) }

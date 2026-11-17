@@ -54,8 +54,8 @@ const typeScale = [
   {
     token: 'text-micro',
     size: '11px · mono 600 · lh 1.50',
-    sampleClass: 'text-micro font-mono font-semibold text-accent uppercase tracking-eyebrow',
-    sample: '// 01 / current focus',
+    sampleClass: 'text-micro font-mono font-semibold text-fg-subtle uppercase tracking-eyebrow',
+    sample: 'Foreground · Ratio',
   },
 ];
 
@@ -68,7 +68,7 @@ const weights = [
 export function TypographyBand() {
   return (
     <section id="typography" aria-labelledby="type-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 03 / how the words look" title="Typography" id="type-h" />
+      <SectionHead title="Typography" id="type-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Two faces, both fixed-width.
         {' '}
@@ -180,7 +180,7 @@ export function TypographyBand() {
                 <br />
                 Body prose, bullets, chip text
                 <br />
-                Eyebrows, badges, footer
+                Labels, badges, footer
                 <br />
                 All UI text (buttons, nav, meta)
               </td>

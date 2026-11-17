@@ -1,11 +1,9 @@
 import { Text } from '@/components/text';
-import { Eyebrow } from '@/components/eyebrow';
 
 export function Cover() {
   return (
     <section aria-labelledby="ds-cover-h" className="pt-16 pb-12 border-b border-rule">
-      <Eyebrow>&#47;&#47; 00 / how the site is built</Eyebrow>
-      <Text variant="display" id="ds-cover-h" className="text-accent mt-3 leading-none tracking-display">
+      <Text variant="display" id="ds-cover-h" className="text-accent leading-none tracking-display">
         <span className="text-fg-subtle">&lt;</span>
         DESIGN&nbsp;SYSTEM
         <span className="text-fg-subtle"> /&gt;</span>

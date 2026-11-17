@@ -4,7 +4,7 @@ import { SectionHead } from '@/components/section-head';
 export function PrinciplesBand() {
   return (
     <section id="principles" aria-labelledby="principles-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 01 / what we won&#x2019;t compromise on" title="Design principles" id="principles-h" />
+      <SectionHead title="Design principles" id="principles-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         Nineteen rules. Each one is load-bearing &mdash; removing it would compromise either consistency,
         accessibility, or affordance hygiene. They override local taste.
@@ -137,17 +137,14 @@ export function PrinciplesBand() {
         <div className="py-5 border-b border-rule">
           <Text variant="body" as="p" className="font-semibold text-fg m-0">
             <Text variant="micro" as="span" className="uppercase tracking-eyebrow text-fg-subtle mr-2">07</Text>
-            <span className="text-accent">flush</span>
-            {' '}
-            on SectionHead zeros both margin-bottom and border-bottom.
+            One separator per section.
           </Text>
           <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
-            When the next element provides its own top rule (a
+            The section band&#x2019;s bottom border is the only rule between sections.
             {' '}
-            <code className="text-accent">&lt;GridFrame&gt;</code>
+            <code className="text-accent">&lt;SectionHead&gt;</code>
             {' '}
-            or a list with a top border), the section head&#x2019;s bottom border would otherwise stack
-            with it into a doubled 2px line at the seam. Zero both so the rule reads as a single 1px stroke.
+            carries none, so a title is never boxed between two lines.
           </Text>
         </div>
 
@@ -251,7 +248,7 @@ export function PrinciplesBand() {
           </Text>
           <Text variant="body" as="p" className="text-fg-muted max-w-prose-wide m-0 mt-2">
             Differentiate them by color and weight only. Reserve size shifts for content that lives on its
-            own line or in its own slot (metadata rows, eyebrows, captions), not for glyphs sharing a
+            own line or in its own slot (metadata rows, captions), not for glyphs sharing a
             baseline with display text. This is why Home and Career both render the
             {' '}
             <code className="text-accent">@</code>
@@ -383,7 +380,7 @@ export function PrinciplesBand() {
             {' '}
             <code className="text-accent">&lt;SectionHead&gt;</code>
             {' '}
-            (eyebrow + h2) is used only on pages with two or more content sections. A single-section page
+            (h2) is used only on pages with two or more content sections. A single-section page
             (Career, Projects, Articles) goes straight from the
             {' '}
             <code className="text-accent">PageHead</code>

@@ -43,7 +43,7 @@ const contrast = [
 export function ColorBand() {
   return (
     <section id="color" aria-labelledby="color-h" className="py-8 border-b border-rule">
-      <SectionHead eyebrow="// 02 / how the page is colored" title="Color tokens" id="color-h" />
+      <SectionHead title="Color tokens" id="color-h" />
       <Text variant="body" className="text-fg-muted max-w-prose-wide">
         A near-black ground (
         <code className="text-accent">--color-canvas</code>

@@ -6,7 +6,7 @@ import { ArrowLink } from '@/components/arrow-link';
 export function AccessibilityBand() {
   return (
     <section id="a11y" aria-labelledby="a11y-h" className="py-8">
-      <SectionHead eyebrow="// 08 / so everyone can read it" title="Accessibility" id="a11y-h" />
+      <SectionHead title="Accessibility" id="a11y-h" />
 
       <Text variant="h3" as="h3" className="mt-8 mb-3 text-fg">Focus indicator</Text>
       <div className="mt-4 border border-rule">
