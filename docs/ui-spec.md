@@ -271,7 +271,7 @@ A 2-column grid at `md+` (`grid-cols-article-card` — 240px left, body right) *
 2. **Identity cluster** (page header)
    - **H1 title** — `Text variant="h1"` in `--fg`. **Not** `t-display` / VT323 — the display register is reserved for the Home identity moment (standing rule). Article titles get the standard h1 mono treatment so 50+ posts at varying lengths read consistently.
    - **Summary** — `Text variant="body"`, `--fg-muted`, capped at `--prose-w-wide` (matches the body column below).
-   - **Meta strip** — single `<p>` with `<time dateTime>` (in `--fg-muted`) followed by `·` and `${readingTime} min` (in `--fg-subtle`). **No tags inline** (Q1 reversal — tags render as chips in the footer only). Optional second meta line `// last updated {date}` in italic `--fg-subtle` when `updatedAt` is set.
+   - **Meta strip** — single `<p>` with `<time dateTime>` (in `--fg-muted`) followed by `·` and `${readingTime} min` (in `--fg-subtle`). **No tags inline** (Q1 reversal — tags render as chips in the footer only). Optional second meta line `Last updated {date}` in italic `--fg-subtle` when `updatedAt` is set.
 3. **Cover art** (optional — only when `article.coverArt` is present in frontmatter)
    - Preceded by a `<hr>` rule (8px top margin) to separate the identity cluster from the visual.
    - `<section aria-label="Cover art">` containing a `.article-cover-art` frame: `border border-rule bg-canvas`, `overflow-hidden`, `max-w-prose-wide`, aspect ratio `16 / 7` on desktop and `4 / 3` on mobile (set in `globals.css`). Standing rule 19 — identity surface keeps the border even though the art is transparent.

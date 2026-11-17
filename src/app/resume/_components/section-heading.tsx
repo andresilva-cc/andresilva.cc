@@ -4,19 +4,7 @@ export interface SectionHeadingProps {
   children: ReactNode;
 }
 
-/*
- * SectionHeading — the site's section-marking language (section-head.tsx:
- * an eyebrow, an H2, a bottom rule) collapsed for paper. The two-line
- * eyebrow is dropped outright — unaffordable at this density, and its
- * editorial "// nn / phrasing" register doesn't belong on a resume —
- * rather than compressed into a mark glyph or an uppercase treatment.
- * On the site the bottom rule alone marks a section boundary and a
- * section title (as opposed to a subordinate label like a table header
- * or the About page's Facts keys) is always sentence case — see
- * about/page.tsx's "Bio" / "Education" / "Facts". The heading only
- * shrank to 10.5pt for print economy; that doesn't demote what it is,
- * so this stays sentence case with no eyebrow-style letterspacing.
- */
+// The site's SectionHead (H2 + one rule) at print size; sentence case, no letterspacing.
 export function SectionHeading({ children }: SectionHeadingProps) {
   return (
     <>

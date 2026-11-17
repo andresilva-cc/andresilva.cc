@@ -103,7 +103,7 @@ export default async function ArticlePage({
     'isPartOf': { '@type': 'Blog', 'name': 'andresilva.cc/articles' },
   };
 
-  const updatedPrefix = formattedUpdated ? `// last updated ${formattedUpdated}` : null;
+  const updatedPrefix = formattedUpdated ? `Last updated ${formattedUpdated}` : null;
 
   return (
     <article>
