@@ -25,10 +25,10 @@ This document describes **what is**, not what should be. Treat the code as the s
 
 | Area                    | Choice                                                                                     |
 | ----------------------- | ------------------------------------------------------------------------------------------ |
-| Framework               | Next.js **16.2.6** (App Router, Turbopack dev server)                                      |
-| UI library              | React **19.2.6** + React DOM 19.2.6                                                        |
-| Language                | TypeScript **5.9.3** (`strict: true`, `moduleResolution: bundler`, `@/*` → `src/*`)        |
-| Styling                 | Tailwind CSS **4.3.0** via `@tailwindcss/postcss` (CSS-first config, no `tailwind.config`) |
+| Framework               | Next.js **16.4.6** (App Router, Turbopack dev server)                                      |
+| UI library              | React **19.3.1** + React DOM 19.3.1                                                        |
+| Language                | TypeScript **6.0.3** (`strict: true`, `moduleResolution: bundler`, `@/*` → `src/*`)        |
+| Styling                 | Tailwind CSS **4.3.5** via `@tailwindcss/postcss` (CSS-first config, no `tailwind.config`) |
 | Headless UI primitives  | `@radix-ui/react-slot` (for the `asChild` polymorphism in `Text`)                          |
 | Icons                   | Hand-rolled inline SVG components (`icon-arrow.tsx`, `icon-heart.tsx`) — no icon-library dependency |
 | HTTP client             | None — no runtime HTTP. All content is hard-coded or compiled from MDX at build time.      |
@@ -40,7 +40,7 @@ This document describes **what is**, not what should be. Treat the code as the s
 | Class utilities         | `clsx`                                                                                     |
 | Analytics               | Vercel Analytics via `@vercel/analytics/next` — `<Analytics />` in root layout             |
 | Fonts                   | **JetBrains Mono** (body) + **VT323** (pixel-display headings), via `next/font/google`; plus route-local **static** JetBrains Mono `.woff2` files via `next/font/local` on `/resume` only (see §8) |
-| Package manager         | pnpm **10.27.0**                                                                           |
+| Package manager         | pnpm **11.15.1**                                                                           |
 | Lint                    | ESLint **9** flat config: `eslint-config-next/core-web-vitals` + `@stylistic/eslint-plugin`, airbnb base |
 | Hosting                 | Vercel (auto-deploy from `main`)                                                           |
 
@@ -553,6 +553,7 @@ Flat config (`eslint.config.mjs`):
 
 - Extends `eslint-config-next/core-web-vitals` and the airbnb base.
 - Adds `@stylistic/eslint-plugin` with `arrowParens: true`, `semi: true`.
+- Turns off `@stylistic/eslint-plugin` v6's `list-style` rule to keep compact data arrays and wrapped prop lists.
 - Re-applies the default ignores (`.next/**`, `out/**`, `build/**`, `next-env.d.ts`) because `globalIgnores()` resets them.
 
 ### TypeScript
